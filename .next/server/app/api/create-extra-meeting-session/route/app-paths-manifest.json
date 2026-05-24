@@ -1,0 +1,3 @@
+{
+  "/api/create-extra-meeting-session/route": "app/api/create-extra-meeting-session/route.js"
+}

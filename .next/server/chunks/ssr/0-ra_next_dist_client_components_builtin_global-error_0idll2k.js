@@ -1,0 +1,3 @@
+module.exports=[28036,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(37449);a.n(d("[project]/Desktop/soulmate/node_modules/next/dist/client/components/builtin/global-error.js <module evaluation>"))},48357,(a,b,c)=>{let{createClientModuleProxy:d}=a.r(37449);a.n(d("[project]/Desktop/soulmate/node_modules/next/dist/client/components/builtin/global-error.js"))},90217,a=>{"use strict";a.i(28036);var b=a.i(48357);a.n(b)},32962,a=>{a.n(a.i(90217))}];
+
+//# sourceMappingURL=0-ra_next_dist_client_components_builtin_global-error_0idll2k.js.map

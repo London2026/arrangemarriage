@@ -1,0 +1,17 @@
+{
+  "node": {
+    "40233e6a6ae48465baea7193d8c19f573436b5405d": {
+      "workers": {
+        "app/pricing/page": {
+          "moduleId": 18491,
+          "async": false,
+          "exportedName": "selectPlan",
+          "filename": "Desktop/soulmate/app/pricing/actions.ts"
+        }
+      },
+      "exportedName": "selectPlan",
+      "filename": "Desktop/soulmate/app/pricing/actions.ts"
+    }
+  },
+  "edge": {}
+}
