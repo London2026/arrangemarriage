@@ -13,7 +13,7 @@ const c = {
 
 const STYLE = `
   .auth-page { min-height:100dvh; background:#f4f1eb; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1rem; box-sizing:border-box; }
-  .auth-logo { width:150px; height:150px; object-fit:contain; border-radius:12px; box-shadow:0 6px 30px rgba(13,31,60,0.13); display:block; margin:0 auto 1.5rem; }
+  .auth-logo { width:auto; height:80px; max-width:280px; object-fit:contain; display:block; margin:0 auto 1.5rem; }
   .auth-card { width:100%; max-width:420px; background:#fff; border-radius:10px; box-shadow:0 16px 60px rgba(13,31,60,0.12); border:1px solid rgba(13,31,60,0.15); overflow:hidden; }
   .auth-card-head { padding:1.8rem 2rem 1.4rem; border-bottom:1px solid rgba(13,31,60,0.15); text-align:center; background:#f4f1eb; }
   .auth-card-body { padding:1.75rem 2rem; }

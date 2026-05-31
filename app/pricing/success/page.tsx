@@ -16,7 +16,7 @@ export default function PaymentSuccessPage() {
       <main style={{ maxWidth: '520px', margin: '0 auto', padding: '8rem 1.5rem 4rem', textAlign: 'center' }}>
 
         {/* Logo */}
-        <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: '160px', height: '160px', objectFit: 'contain', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.4)', margin: '0 auto 2rem', display: 'block' }} />
+        <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: 'auto', height: '90px', maxWidth: '320px', objectFit: 'contain', margin: '0 auto 2rem', display: 'block' }} />
 
         {/* Heading */}
         <h1 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '2.6rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.75rem' }}>

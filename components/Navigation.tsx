@@ -110,7 +110,7 @@ export default function Navigation() {
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ height: '80px', width: '80px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ height: '72px', width: 'auto', maxWidth: '220px', objectFit: 'contain', display: 'block' }} />
         </Link>
 
         {user ? (
