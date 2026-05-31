@@ -651,8 +651,8 @@
 
   .meeting-layout {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 4rem;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2.5rem;
     align-items: center;
     margin-top: 3rem;
   }
@@ -704,8 +704,8 @@
 
   @keyframes slideFade {
     0%, 100% { opacity: 0; }
-    8%, 88% { opacity: 1; }
-    96% { opacity: 0; }
+    4%, 16% { opacity: 1; }
+    20% { opacity: 0; }
   }
 
   .meeting-slide {
@@ -715,6 +715,7 @@
     object-fit: cover;
     opacity: 0;
     animation: slideFade 25s infinite;
+    animation-fill-mode: backwards;
   }
   .meeting-slide:nth-child(1) { animation-delay: 0s; }
   .meeting-slide:nth-child(2) { animation-delay: 5s; }
