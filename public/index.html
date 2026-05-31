@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arrange Marriage – Your Perfect Match Awaits</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600&family=Raleway:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;0,6..96,900;1,6..96,400;1,6..96,600&family=Raleway:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Gurmukhi:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #FFF9F2;
@@ -2033,7 +2033,7 @@
 <!-- HERO -->
 <header class="hero">
 
-  <p style="font-family:'Noto Sans Devanagari',sans-serif;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--rose);font-weight:700;margin-bottom:0.5rem;letter-spacing:0.02em;animation:fadeUp 1.2s ease 0.1s both;">आपका जीवनसाथी यहाँ है</p>
+  <p id="lang-cycle" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--rose);font-weight:700;margin-bottom:0.5rem;letter-spacing:0.02em;animation:fadeUp 1.2s ease 0.1s both;transition:opacity 0.6s ease;">आपका जीवनसाथी यहाँ है</p>
   <h1>Find Your <em>Perfect Match</em></h1>
 
   <p class="hero-tagline">✦ आवाज़ पहले · व्यक्तित्व पहले · गोपनीयता पहले ✦</p>
@@ -3085,6 +3085,29 @@
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 4000);
   }
+
+  // ── Language cycler ──────────────────────────────────────────────
+  (function() {
+    var phrases = [
+      { text: 'आपका जीवनसाथी यहाँ है',          font: "'Noto Sans Devanagari', sans-serif" },
+      { text: 'உங்கள் வாழ்க்கைத் துணை இங்கே',   font: "'Noto Sans Tamil', sans-serif" },
+      { text: 'ਤੁਹਾਡਾ ਜੀਵਨ ਸਾਥੀ ਇੱਥੇ ਹੈ',        font: "'Noto Sans Gurmukhi', sans-serif" },
+      { text: 'আপনার জীবনসাথী এখানে আছেন',       font: "'Noto Sans Bengali', sans-serif" },
+      { text: 'તમારો જીવનસાથી અહીં છે',          font: "'Noto Sans Gujarati', sans-serif" },
+    ];
+    var el = document.getElementById('lang-cycle');
+    if (!el) return;
+    var idx = 0;
+    setInterval(function() {
+      el.style.opacity = '0';
+      setTimeout(function() {
+        idx = (idx + 1) % phrases.length;
+        el.textContent = phrases[idx].text;
+        el.style.fontFamily = phrases[idx].font;
+        el.style.opacity = '1';
+      }, 600);
+    }, 3000);
+  })();
 </script>
 </body>
 </html>
