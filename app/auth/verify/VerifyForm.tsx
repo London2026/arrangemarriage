@@ -94,11 +94,11 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
         <Link href="/" style={{ textDecoration: 'none' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }}>💘</div>
           <h1 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '2.4rem', fontWeight: 700, color: c.navy, margin: '0 0 0.3rem', letterSpacing: '0.02em' }}>
-            Soul Mate
+            Arrange Marriage
           </h1>
         </Link>
         <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', letterSpacing: '0.3em', textTransform: 'uppercase', color: c.gold, margin: 0 }}>
-          ✦ Find Your Forever ✦
+          ✦ Your Perfect Match Awaits ✦
         </p>
       </div>
 

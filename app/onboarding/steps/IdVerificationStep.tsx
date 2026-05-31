@@ -62,7 +62,7 @@ export default function IdVerificationStep({ idCountry, idFile, onIdChange }: Pr
             Earn a verified green tick
           </p>
           <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.textMid, margin: 0, lineHeight: 1.65 }}>
-            Once your ID has been reviewed and approved by the Soul Mate team, a green verification tick will appear on your profile. This lets other members know that you are who you say you are, giving them greater confidence to connect with you.
+            Once your ID has been reviewed and approved by the Arrange Marriage team, a green verification tick will appear on your profile. This lets other members know that you are who you say you are, giving them greater confidence to connect with you.
           </p>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function IdVerificationStep({ idCountry, idFile, onIdChange }: Pr
       {/* Privacy note */}
       <div style={{ background: 'rgba(139,105,20,0.06)', border: '1px solid rgba(139,105,20,0.18)', borderRadius: '6px', padding: '0.75rem 1rem' }}>
         <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.sepia, margin: 0, lineHeight: 1.6 }}>
-          🔒 <strong>Your document is private.</strong> It is only seen by the Soul Mate team for verification purposes and is never shared with other members.
+          🔒 <strong>Your document is private.</strong> It is only seen by the Arrange Marriage team for verification purposes and is never shared with other members.
         </p>
       </div>
     </div>

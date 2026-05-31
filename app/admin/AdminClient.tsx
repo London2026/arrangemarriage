@@ -160,7 +160,7 @@ export default function AdminClient({ stats, members, meetings, reveals, planCou
         display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '1.5rem 1.25rem 1rem', borderBottom: `1px solid ${c.border}` }}>
           <span className="brand-text" style={{ fontFamily: '"Playfair Display", serif', fontStyle: 'italic',
-            fontSize: '1.25rem', color: c.gold, display: 'block' }}>Soul Mate</span>
+            fontSize: '1.25rem', color: c.gold, display: 'block' }}>Arrange Marriage</span>
           <span className="brand-text" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem',
             letterSpacing: '0.3em', textTransform: 'uppercase', color: c.text3 }}>Admin Panel</span>
         </div>

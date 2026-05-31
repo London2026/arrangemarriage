@@ -100,7 +100,7 @@ export default function Navigation() {
     router.push('/')
   }
 
-  const planLabel = user?.plan === 'standard' ? 'Standard' : user?.plan === 'starter' ? 'Starter' : 'Free'
+  const planLabel = user?.plan === 'standard' ? 'Premium' : user?.plan === 'starter' ? 'Starter' : 'Free'
 
   const initials = user?.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() ?? ''
 
@@ -110,7 +110,7 @@ export default function Navigation() {
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-          <img src="/soulmate-logo-full.png" alt="Soul Mate" style={{ height: '52px', width: '52px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ height: '52px', width: '52px', objectFit: 'contain', borderRadius: '8px', display: 'block' }} />
         </Link>
 
         {user ? (
@@ -174,7 +174,7 @@ export default function Navigation() {
                     {user.plan !== 'free' && (
                       <BillingButton onClose={() => setOpen(false)} />
                     )}
-                    <a href="mailto:support@soulmate.com" onClick={() => setOpen(false)}
+                    <a href="mailto:support@arrangemarriage.live" onClick={() => setOpen(false)}
                       style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', letterSpacing: '0.06em', color: c.ivoryDim, textDecoration: 'none', padding: '0.55rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       ❓ Help &amp; Support
                     </a>

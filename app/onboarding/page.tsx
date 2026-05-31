@@ -228,7 +228,7 @@ function OnboardingPage() {
     return (
       <div style={{ minHeight: '100vh', background: c.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <img src="/soulmate-logo-full.png" alt="Soul Mate" style={{ width: '120px', height: '120px', objectFit: 'contain', borderRadius: '12px', marginBottom: '0.75rem' }} />
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: '120px', height: '120px', objectFit: 'contain', borderRadius: '12px', marginBottom: '0.75rem' }} />
           <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.sepia }}>Preparing your profile…</p>
         </div>
       </div>
@@ -282,7 +282,7 @@ function OnboardingPage() {
       <div className="ob-progress">
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            <img src="/soulmate-logo-full.png" alt="Soul Mate" className="ob-logo" style={{ objectFit: 'contain', borderRadius: '12px', boxShadow: '0 4px 20px rgba(13,31,60,0.12)' }} />
+            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="ob-logo" style={{ objectFit: 'contain', borderRadius: '12px', boxShadow: '0 4px 20px rgba(13,31,60,0.12)' }} />
           </Link>
         </div>
 

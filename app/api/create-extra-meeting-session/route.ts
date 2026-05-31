@@ -17,8 +17,8 @@ export async function POST() {
     mode: 'payment',
     line_items: [{ price: priceId, quantity: 1 }],
     metadata: { type: 'extra_meeting', user_id: user.id },
-    success_url: 'https://mysoulmate.live/discover?extra=1',
-    cancel_url:  'https://mysoulmate.live/discover',
+    success_url: 'https://arrangemarriage.live/discover?extra=1',
+    cancel_url:  'https://arrangemarriage.live/discover',
   })
 
   return NextResponse.json({ url: session.url })

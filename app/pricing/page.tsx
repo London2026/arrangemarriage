@@ -15,10 +15,10 @@ const plans = [
   {
     key: 'free',
     name: 'Free',
-    price: '$0',
+    price: '₹0',
     period: '',
     billing: 'No credit card required',
-    tagline: 'Try Soul Mate',
+    tagline: 'Try Arrange Marriage',
     cta: 'Continue Free',
     highlighted: false,
     meetings: 0,
@@ -34,9 +34,9 @@ const plans = [
   {
     key: 'starter',
     name: 'Starter',
-    price: '$6',
+    price: '₹350',
     period: '/month',
-    billing: 'Billed $6 every month',
+    billing: 'Billed ₹350 every month',
     tagline: 'Begin your journey',
     cta: 'Get Started',
     highlighted: false,
@@ -52,12 +52,12 @@ const plans = [
   },
   {
     key: 'standard',
-    name: 'Standard',
-    price: '$9',
+    name: 'Premium',
+    price: '₹550',
     period: '/month',
-    billing: 'Billed $9 every month',
+    billing: 'Billed ₹550 every month',
     tagline: 'Most popular',
-    cta: 'Start Standard',
+    cta: 'Start Premium',
     highlighted: true,
     meetings: 4,
     features: [
@@ -238,7 +238,7 @@ export default function PricingPage() {
             </div>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0 }}>
-            <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.75rem', fontWeight: 700, color: c.goldLight, margin: '0 0 0.1rem' }}>$3</p>
+            <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.75rem', fontWeight: 700, color: c.goldLight, margin: '0 0 0.1rem' }}>₹150</p>
             <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', color: c.ivoryDim, letterSpacing: '0.08em', textTransform: 'uppercase' }}>per extra meeting</p>
           </div>
         </div>
@@ -261,7 +261,7 @@ export default function PricingPage() {
         </div>
 
         <p style={{ textAlign: 'center', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', letterSpacing: '0.08em', color: 'rgba(189,181,166,0.35)', marginTop: '1.5rem' }}>
-          Prices in USD · Monthly subscription · Cancel before next billing date
+          Prices in INR · Monthly subscription · Cancel before next billing date
         </p>
       </main>
     </div>

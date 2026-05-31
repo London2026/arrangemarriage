@@ -16,11 +16,11 @@ export default function PaymentSuccessPage() {
       <main style={{ maxWidth: '520px', margin: '0 auto', padding: '8rem 1.5rem 4rem', textAlign: 'center' }}>
 
         {/* Logo */}
-        <img src="/soulmate-logo-full.png" alt="Soul Mate" style={{ width: '160px', height: '160px', objectFit: 'contain', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.4)', margin: '0 auto 2rem', display: 'block' }} />
+        <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: '160px', height: '160px', objectFit: 'contain', borderRadius: '16px', boxShadow: '0 8px 40px rgba(0,0,0,0.4)', margin: '0 auto 2rem', display: 'block' }} />
 
         {/* Heading */}
         <h1 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '2.6rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.75rem' }}>
-          Welcome to Soul Mate
+          Welcome to Arrange Marriage
         </h1>
         <div style={{ height: '1px', width: '60px', background: `linear-gradient(to right, transparent, ${c.goldLight}, transparent)`, margin: '0 auto 1.5rem' }} />
         <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.25rem', color: c.ivoryDim, margin: '0 0 2.25rem', lineHeight: 1.75 }}>

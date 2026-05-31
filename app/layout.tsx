@@ -10,8 +10,8 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Soul Mate | Voice-First Matrimony',
-  description: 'The privacy-first matrimony platform where personality comes before photos.',
+  title: 'Arrange Marriage | Indian Matrimony',
+  description: 'India\'s privacy-first matrimony platform where personality comes before photos.',
 }
 
 export default function RootLayout({

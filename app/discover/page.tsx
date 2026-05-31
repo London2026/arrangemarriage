@@ -185,7 +185,7 @@ function EmptyState() {
         No profiles yet
       </h2>
       <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: '#bdb5a6' }}>
-        Be the first to invite someone to Soul Mate.
+        Be the first to invite someone to Arrange Marriage.
       </p>
     </div>
   )

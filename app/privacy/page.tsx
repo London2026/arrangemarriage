@@ -27,17 +27,17 @@ export default function PrivacyPage() {
         </div>
 
         <p style={p}>
-          Soul Mate is committed to protecting your privacy. This Privacy Policy explains what personal data we collect, how we use it, and your rights under the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.
+          Arrange Marriage is committed to protecting your privacy. This Privacy Policy explains what personal data we collect, how we use it, and your rights under the UK General Data Protection Regulation (Indian Information Technology Act 2000 and applicable data protection laws.
         </p>
 
         <h2 style={h2}>1. Who We Are</h2>
         <p style={p}>
-          Soul Mate is a privacy-first matrimony platform based in the United Kingdom. For any privacy-related enquiries, please contact us at{' '}
-          <a href="mailto:support@soulmate.com" style={{ color: c.gold }}>support@soulmate.com</a>.
+          Arrange Marriage is a privacy-first matrimony platform based in the India. For any privacy-related enquiries, please contact us at{' '}
+          <a href="mailto:support@arrangemarriage.live" style={{ color: c.gold }}>support@arrangemarriage.live</a>.
         </p>
 
         <h2 style={h2}>2. Data We Collect</h2>
-        <p style={p}>When you create a Soul Mate account we collect:</p>
+        <p style={p}>When you create a Arrange Marriage account we collect:</p>
         <ul style={{ paddingLeft: '1.5rem', margin: '0 0 0.9rem' }}>
           {[
             'Email address (for account creation and communication)',
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
         <p style={p}>We use your personal data to:</p>
         <ul style={{ paddingLeft: '1.5rem', margin: '0 0 0.9rem' }}>
           {[
-            'Provide the Soul Mate matchmaking service',
+            'Provide the Arrange Marriage matchmaking service',
             'Display your profile to other members',
             'Facilitate photo reveals and video meeting requests',
             'Process subscription payments',
@@ -72,7 +72,7 @@ export default function PrivacyPage() {
 
         <h2 style={h2}>4. Your Face Photo</h2>
         <p style={p}>
-          Your face (reveal) photo is stored securely and is <strong style={{ color: c.ivory }}>never visible</strong> to other members by default. It is only revealed when you actively choose to reveal it on another member's profile. This is central to how Soul Mate works — personality and voice come before appearance.
+          Your face (reveal) photo is stored securely and is <strong style={{ color: c.ivory }}>never visible</strong> to other members by default. It is only revealed when you actively choose to reveal it on another member's profile. This is central to how Arrange Marriage works — personality and voice come before appearance.
         </p>
 
         <h2 style={h2}>5. Third-Party Services</h2>
@@ -106,13 +106,13 @@ export default function PrivacyPage() {
         </ul>
         <p style={p}>
           To exercise any of these rights, please email us at{' '}
-          <a href="mailto:support@soulmate.com" style={{ color: c.gold }}>support@soulmate.com</a>.
+          <a href="mailto:support@arrangemarriage.live" style={{ color: c.gold }}>support@arrangemarriage.live</a>.
           We will respond within 30 days.
         </p>
 
         <h2 style={h2}>8. Cookies</h2>
         <p style={p}>
-          Soul Mate uses only essential cookies required for authentication and security. We do not use advertising or tracking cookies.
+          Arrange Marriage uses only essential cookies required for authentication and security. We do not use advertising or tracking cookies.
         </p>
 
         <h2 style={h2}>9. Security</h2>

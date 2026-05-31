@@ -27,12 +27,12 @@ export default function TermsPage() {
         </div>
 
         <p style={p}>
-          Welcome to Soul Mate. These Terms of Service govern your use of our website and services. By creating an account or using Soul Mate, you agree to be bound by these terms. Please read them carefully.
+          Welcome to Arrange Marriage. These Terms of Service govern your use of our website and services. By creating an account or using Arrange Marriage, you agree to be bound by these terms. Please read them carefully.
         </p>
 
         <h2 style={h2}>1. Eligibility</h2>
         <p style={p}>
-          You must be at least 18 years old to use Soul Mate. By registering, you confirm that you are 18 or older and that all information you provide is accurate, current, and complete. Soul Mate is a matrimony platform intended for individuals seeking a long-term committed relationship or marriage.
+          You must be at least 18 years old to use Arrange Marriage. By registering, you confirm that you are 18 or older and that all information you provide is accurate, current, and complete. Arrange Marriage is a matrimony platform intended for individuals seeking a long-term committed relationship or marriage.
         </p>
 
         <h2 style={h2}>2. Your Account</h2>
@@ -51,10 +51,10 @@ export default function TermsPage() {
 
         <h2 style={h2}>3. Subscription & Payments</h2>
         <p style={p}>
-          Soul Mate offers a Free plan and paid subscription plans (Starter and Standard). Paid subscriptions are billed monthly. By subscribing to a paid plan, you authorise Soul Mate to charge your payment method on a recurring monthly basis until you cancel.
+          Arrange Marriage offers a Free plan and paid subscription plans (Starter and Premium). Paid subscriptions are billed monthly. By subscribing to a paid plan, you authorise Arrange Marriage to charge your payment method on a recurring monthly basis until you cancel.
         </p>
         <p style={p}>
-          All payments are processed securely through Stripe. Soul Mate does not store your card details. Prices are displayed in USD and may be subject to currency conversion by your bank.
+          All payments are processed securely through Stripe. Arrange Marriage does not store your card details. Prices are displayed in INR and may be subject to currency conversion by your bank.
         </p>
 
         <h2 style={h2}>4. Cancellation Policy</h2>
@@ -64,7 +64,7 @@ export default function TermsPage() {
 
         <h2 style={h2}>5. User Content</h2>
         <p style={p}>
-          You retain ownership of the photos, voice recordings, and other content you upload to Soul Mate. By uploading content, you grant Soul Mate a limited licence to display that content to other members as part of the service. You must not upload content that is offensive, illegal, or that you do not have the right to share.
+          You retain ownership of the photos, voice recordings, and other content you upload to Arrange Marriage. By uploading content, you grant Arrange Marriage a limited licence to display that content to other members as part of the service. You must not upload content that is offensive, illegal, or that you do not have the right to share.
         </p>
 
         <h2 style={h2}>6. Privacy</h2>
@@ -85,17 +85,17 @@ export default function TermsPage() {
           ].map(item => <li key={item} style={li}>{item}</li>)}
         </ul>
         <p style={p}>
-          Soul Mate reserves the right to suspend or permanently ban any account found to be in violation of these terms.
+          Arrange Marriage reserves the right to suspend or permanently ban any account found to be in violation of these terms.
         </p>
 
         <h2 style={h2}>8. Limitation of Liability</h2>
         <p style={p}>
-          Soul Mate is a platform that facilitates connections between individuals. We do not conduct background checks on members and are not responsible for the conduct of any member on or off the platform. You use the service at your own risk. Soul Mate's total liability to you shall not exceed the amount you paid us in the three months prior to the claim.
+          Arrange Marriage is a platform that facilitates connections between individuals. We do not conduct background checks on members and are not responsible for the conduct of any member on or off the platform. You use the service at your own risk. Arrange Marriage's total liability to you shall not exceed the amount you paid us in the three months prior to the claim.
         </p>
 
         <h2 style={h2}>9. Changes to These Terms</h2>
         <p style={p}>
-          We may update these Terms of Service from time to time. We will notify you of significant changes by email or through a notice on the platform. Continued use of Soul Mate after changes take effect constitutes your acceptance of the revised terms.
+          We may update these Terms of Service from time to time. We will notify you of significant changes by email or through a notice on the platform. Continued use of Arrange Marriage after changes take effect constitutes your acceptance of the revised terms.
         </p>
 
         <h2 style={h2}>10. Governing Law</h2>
@@ -106,7 +106,7 @@ export default function TermsPage() {
         <h2 style={h2}>11. Contact</h2>
         <p style={p}>
           If you have any questions about these Terms, please contact us at{' '}
-          <a href="mailto:support@soulmate.com" style={{ color: c.gold }}>support@soulmate.com</a>.
+          <a href="mailto:support@arrangemarriage.live" style={{ color: c.gold }}>support@arrangemarriage.live</a>.
         </p>
 
         <div style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: `1px solid ${c.border}`, display: 'flex', gap: '1.5rem' }}>

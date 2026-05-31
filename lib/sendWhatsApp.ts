@@ -36,10 +36,10 @@ async function twilioSend(toPhone: string, body: string) {
 
 export async function sendPhotoRevealWhatsApp(toPhone: string, ownerFirstName: string, viewerProfileId: string) {
   await twilioSend(toPhone, [
-    `💘 *Soul Mate* — Hi ${ownerFirstName},`,
+    `💘 *Arrange Marriage* — Hi ${ownerFirstName},`,
     `Profile *#${viewerProfileId}* has revealed your photo.`,
     `They may send you a video meeting request. Log in to view their profile:`,
-    `https://mysoulmate.live/discover`,
+    `https://arrangemarriage.live/discover`,
   ].join('\n'))
 }
 
@@ -51,10 +51,10 @@ export async function sendMeetingRequestWhatsApp(
   time: string,
 ) {
   await twilioSend(toPhone, [
-    `📅 *Soul Mate* — Hi ${recipientFirstName},`,
+    `📅 *Arrange Marriage* — Hi ${recipientFirstName},`,
     `*${requesterName}* has requested a video meeting with you on *${dateStr}* at *${time}*.`,
     `Log in to accept or decline:`,
-    `https://mysoulmate.live/profile`,
+    `https://arrangemarriage.live/profile`,
   ].join('\n'))
 }
 
@@ -65,10 +65,10 @@ export async function sendMeetingDeclinedWhatsApp(
   dateStr: string,
 ) {
   await twilioSend(toPhone, [
-    `💔 *Soul Mate* — Hi ${requesterFirstName},`,
+    `💔 *Arrange Marriage* — Hi ${requesterFirstName},`,
     `*${declinerName}* is unavailable for *${dateStr}*.`,
     `You can send a new request with a different date:`,
-    `https://mysoulmate.live/discover`,
+    `https://arrangemarriage.live/discover`,
   ].join('\n'))
 }
 
@@ -81,11 +81,11 @@ export async function sendMeetingAcceptedWhatsApp(
   roomId: string,
 ) {
   await twilioSend(toPhone, [
-    `✅ *Soul Mate* — Hi ${requesterFirstName},`,
+    `✅ *Arrange Marriage* — Hi ${requesterFirstName},`,
     `Your video meeting with *${acceptorName}* is confirmed for *${dateStr}* at *${time}*.`,
-    `🎥 Join at the scheduled time: https://meet.jit.si/SoulMate-${roomId}`,
+    `🎥 Join at the scheduled time: https://meet.jit.si/ArrangeMarriage-${roomId}`,
     ``,
-    `💡 *Soul Mate Safety Advice:*`,
+    `💡 *Arrange Marriage Safety Advice:*`,
     `🪪 Please keep your ID ready to show to the other person, and ask to see their ID before the conversation begins.`,
     `📵 We advise you not to share or ask for a mobile number during your first meeting, unless you feel completely comfortable doing so.`,
   ].join('\n'))
@@ -100,11 +100,11 @@ export async function sendMeetingConfirmedAcceptorWhatsApp(
   roomId: string,
 ) {
   await twilioSend(toPhone, [
-    `✅ *Soul Mate* — Hi ${acceptorFirstName},`,
+    `✅ *Arrange Marriage* — Hi ${acceptorFirstName},`,
     `Your video meeting with *${requesterName}* is confirmed for *${dateStr}* at *${time}*.`,
-    `🎥 Join at the scheduled time: https://meet.jit.si/SoulMate-${roomId}`,
+    `🎥 Join at the scheduled time: https://meet.jit.si/ArrangeMarriage-${roomId}`,
     ``,
-    `💡 *Soul Mate Safety Advice:*`,
+    `💡 *Arrange Marriage Safety Advice:*`,
     `🪪 Please keep your ID ready to show to the other person, and ask to see their ID before the conversation begins.`,
     `📵 We advise you not to share or ask for a mobile number during your first meeting, unless you feel completely comfortable doing so.`,
   ].join('\n'))

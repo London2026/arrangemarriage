@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const priceId = PRICE_IDS[planKey]
   if (!priceId) return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
 
-  const origin = request.headers.get('origin') ?? 'https://soulmate.vercel.app'
+  const origin = request.headers.get('origin') ?? 'https://arrangemarriage.live'
 
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',

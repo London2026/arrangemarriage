@@ -263,7 +263,7 @@ export default function DiscoverClient({
         )}
       </div>
 
-      {/* Find My Soul Mate button */}
+      {/* Find My Match button */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.75rem' }}>
         <button onClick={handleAiMatch} disabled={aiLoading} className="ai-btn"
           style={{
@@ -276,7 +276,7 @@ export default function DiscoverClient({
           }}>
           {aiLoading
             ? <><span style={{ animation: 'spin 1s linear infinite', display: 'inline-block', fontSize: '1rem' }}>✦</span> Analysing your profile…</>
-            : <><span style={{ fontSize: '1.1rem' }}>✨</span> Find My Soul Mate</>}
+            : <><span style={{ fontSize: '1.1rem' }}>✨</span> Find My Match</>}
         </button>
       </div>
 
@@ -291,7 +291,7 @@ export default function DiscoverClient({
       {aiMatches && (
         <div style={{ marginBottom: '2rem', background: c.card, border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: `1px solid rgba(201,168,76,0.12)`, background: 'linear-gradient(to right, rgba(201,168,76,0.08), transparent)' }}>
-            <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.1rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.2rem' }}>✨ Your Soul Mate Matches</p>
+            <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.1rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.2rem' }}>✨ Your Matches</p>
             <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.88rem', color: c.sepia, margin: 0 }}>Tap any result to view their full profile</p>
           </div>
 
