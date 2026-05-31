@@ -24,7 +24,7 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
   body {
     font-family: 'Cormorant Garamond', serif;
@@ -51,7 +51,7 @@
     top: 0;
     width: 100%;
     z-index: 1000;
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -75,7 +75,7 @@
 
   .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.2rem;
     list-style: none;
   }
 
@@ -98,7 +98,7 @@
     text-transform: uppercase;
     background: var(--burgundy);
     color: var(--cream);
-    padding: 0.6rem 1.6rem;
+    padding: 0.55rem 1.1rem;
     border: none;
     cursor: pointer;
     transition: background 0.3s;
@@ -489,19 +489,69 @@
   }
 
   .profile-card-body {
-    padding: 1.5rem;
+    padding: 1.25rem 1.4rem;
   }
 
+  /* Tag chips row */
+  .profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .profile-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .tag-religion {
+    background: rgba(29,82,82,0.1);
+    color: var(--burgundy);
+    border: 1px solid rgba(29,82,82,0.25);
+  }
+
+  .tag-edu {
+    background: rgba(180,140,20,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(180,140,20,0.25);
+  }
+
+  .tag-seeking {
+    background: rgba(196,120,32,0.1);
+    color: var(--rose);
+    border: 1px solid rgba(196,120,32,0.25);
+  }
+
+  /* Info rows */
   .profile-field {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(139,111,71,0.2);
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.35rem 0;
     font-size: 0.92rem;
   }
 
-  .profile-field:last-of-type { border-bottom: none; }
+  .field-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+    width: 18px;
+    text-align: center;
+  }
+
+  .field-value {
+    color: var(--text-mid);
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+  }
 
   .field-label {
     font-family: 'Raleway', sans-serif;
@@ -510,8 +560,6 @@
     text-transform: uppercase;
     color: var(--sepia);
   }
-
-  .field-value { color: var(--text-mid); font-weight: 500; }
 
   .profile-voice-btn {
     width: 100%;
@@ -2035,33 +2083,30 @@
               <path d="M8 75 Q8 48 30 46 Q52 48 52 75" fill="#f4f1eb"/>
             </svg>
           </div>
-          <div class="profile-name" style="position:relative;z-index:2;">Oliver H.</div>
-          <div class="profile-meta" style="position:relative;z-index:2;">28 · London, England · Software Engineer</div>
+          <div class="profile-name" style="position:relative;z-index:2;">Arjun S.</div>
+          <div class="profile-meta" style="position:relative;z-index:2;">28 · Mumbai, Maharashtra · Software Engineer</div>
         </div>
         <div class="profile-card-body">
           <div class="profile-field">
-            <span class="field-label">Religion</span>
-            <span class="field-value">Christian · Church of England</span>
+            <span class="field-icon">🕉️</span><span class="field-value">Hindu · Brahmin</span>
           </div>
           <div class="profile-field">
-            <span class="field-label">Education</span>
-            <span class="field-value">University of Edinburgh, BSc</span>
+            <span class="field-icon">🎓</span><span class="field-value">IIT Bombay, B.Tech</span>
           </div>
           <div class="profile-field">
-            <span class="field-label">Looking for</span>
-            <span class="field-value">Life Partner</span>
+            <span class="field-icon">💍</span><span class="field-value">Life Partner</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Loves</span>
-            <span class="field-value">Kyoto · Pasta · Claude AI</span>
+            <span class="field-value">Cricket · Biryani · Mountains</span>
           </div>
-          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Oliver speaks for 90 seconds about his life and dreams.')">
+          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Arjun speaks about his love for cricket, travel and family values.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
             Listen to Voice Intro
           </button>
-          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Oliver has been notified you\'d like to see his photo.')">
+          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Arjun has been notified you\'d like to see his photo.')">
             👁 Request Photo Reveal
           </button>
         </div>
@@ -2081,33 +2126,30 @@
               <path d="M18 18 Q20 8 30 8 Q42 10 42 20" fill="none" stroke="#f4f1eb" stroke-width="3"/>
             </svg>
           </div>
-          <div class="profile-name" style="position:relative;z-index:2;">Charlotte W.</div>
-          <div class="profile-meta" style="position:relative;z-index:2;">26 · Manchester · Doctor</div>
+          <div class="profile-name" style="position:relative;z-index:2;">Priya M.</div>
+          <div class="profile-meta" style="position:relative;z-index:2;">26 · Delhi, NCR · Doctor</div>
         </div>
         <div class="profile-card-body">
           <div class="profile-field">
-            <span class="field-label">Religion</span>
-            <span class="field-value">Christian · Catholic</span>
+            <span class="field-icon">🕉️</span><span class="field-value">Hindu · Sharma</span>
           </div>
           <div class="profile-field">
-            <span class="field-label">Education</span>
-            <span class="field-value">University of Oxford, MBBCh</span>
+            <span class="field-icon">🎓</span><span class="field-value">AIIMS Delhi, MBBS</span>
           </div>
           <div class="profile-field">
-            <span class="field-label">Looking for</span>
-            <span class="field-value">Soulful Connection</span>
+            <span class="field-icon">💍</span><span class="field-value">Soulful Connection</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Loves</span>
-            <span class="field-value">Amalfi Coast · Roast Dinner · ChatGPT</span>
+            <span class="field-value">Bharatanatyam · Travel · Chai</span>
           </div>
-          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Charlotte shares her dreams of travelling the world with her partner.')">
+          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Priya shares her passion for medicine, family values and classical dance.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
             Listen to Voice Intro
           </button>
-          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Charlotte has been notified you\'d like to see her photo.')">
+          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Priya has been notified you\'d like to see her photo.')">
             👁 Request Photo Reveal
           </button>
         </div>
@@ -2117,17 +2159,17 @@
       <div class="profile-card reveal">
         <div class="profile-card-top oliver-card-top james-card-top">
           <div class="reveal-locked">🔒 Face Hidden</div>
-          <div class="profile-name" style="position:relative;z-index:2;color:#f5efe0;">James T.</div>
-          <div class="profile-meta" style="position:relative;z-index:2;">30 · Edinburgh, Scotland · Architect</div>
+          <div class="profile-name" style="position:relative;z-index:2;color:#f5efe0;">Rahul K.</div>
+          <div class="profile-meta" style="position:relative;z-index:2;">30 · Bengaluru, Karnataka · Architect</div>
         </div>
         <div class="profile-card-body">
           <div class="profile-field">
             <span class="field-label">Religion</span>
-            <span class="field-value">Christian · Presbyterian</span>
+            <span class="field-value">Hindu · Nair</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Education</span>
-            <span class="field-value">University of Cambridge, B.Arch</span>
+            <span class="field-value">NIT Surathkal, B.Arch</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Looking for</span>
@@ -2143,7 +2185,7 @@
             </div>
             Listen to Voice Intro
           </button>
-          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'James has been notified you\'d like to see his photo.')">
+          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Rahul has been notified you\'d like to see his photo.')">
             👁 Request Photo Reveal
           </button>
         </div>
@@ -2154,17 +2196,17 @@
       <div class="profile-card reveal">
         <div class="profile-card-top oliver-card-top sophie-card-top">
           <div class="reveal-locked">🔒 Face Hidden</div>
-          <div class="profile-name" style="position:relative;z-index:2;color:#f5efe0;">Sophie B.</div>
-          <div class="profile-meta" style="position:relative;z-index:2;">27 · Bristol, England · Nurse</div>
+          <div class="profile-name" style="position:relative;z-index:2;color:#f5efe0;">Ananya P.</div>
+          <div class="profile-meta" style="position:relative;z-index:2;">27 · Chennai, Tamil Nadu · Teacher</div>
         </div>
         <div class="profile-card-body">
           <div class="profile-field">
             <span class="field-label">Religion</span>
-            <span class="field-value">Christian · Methodist</span>
+            <span class="field-value">Hindu · Iyer</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Education</span>
-            <span class="field-value">University of Bristol, BSc Nursing</span>
+            <span class="field-value">University of Madras, B.Ed</span>
           </div>
           <div class="profile-field">
             <span class="field-label">Looking for</span>
@@ -2180,7 +2222,7 @@
             </div>
             Listen to Voice Intro
           </button>
-          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Sophie has been notified you\'d like to see her photo.')">
+          <button class="photo-reveal-btn" onclick="showToast('📸 Reveal Request Sent!', 'Ananya has been notified you\'d like to see her photo.')">
             👁 Request Photo Reveal
           </button>
         </div>
