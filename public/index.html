@@ -49,9 +49,10 @@
   nav {
     position: fixed;
     top: 0;
-    width: 100%;
+    left: 0;
+    right: 0;
     z-index: 1000;
-    padding: 0.85rem 1.2rem;
+    padding: 0.85rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -81,8 +82,8 @@
 
   .nav-links a {
     font-family: 'Raleway', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--text-mid);
     text-decoration: none;
@@ -921,8 +922,8 @@
 
   .personality-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
     margin-top: 3rem;
   }
 
@@ -2006,7 +2007,7 @@
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#safety">Safety</a></li>
   </ul>
-  <div id="nav-auth-area" style="flex-shrink:0;">
+  <div id="nav-auth-area" style="flex-shrink:0;padding-right:0.5rem;">
     <div style="display:flex;align-items:center;gap:0.75rem;">
       <a href="/login" class="nav-signin-btn">Sign In</a>
       <button class="nav-cta" onclick="openModal()">Begin Journey</button>
