@@ -24,7 +24,7 @@ export default function MeetingCard({ meeting }: Props) {
   const [status, setStatus] = useState(meeting.status)
   const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
 
-  const meetingUrl = `https://meet.jit.si/SoulMate-${meeting.room_id}`
+  const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${meeting.room_id}`
 
   const dateStr = meeting.preferred_date
     ? new Date(meeting.preferred_date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
