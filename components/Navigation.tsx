@@ -208,26 +208,28 @@ export default function Navigation() {
 function BillingButton({ onClose }: { onClose: () => void }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [confirmed, setConfirmed] = useState(false)
 
-  async function openPortal() {
+  async function cancelPlan() {
+    if (!confirmed) { setConfirmed(true); return }
     setLoading(true); setError('')
     try {
-      const res = await fetch('/api/create-portal-session', { method: 'POST' })
-      const { url, error: err } = await res.json()
-      if (err) { setError(err); setLoading(false); return }
+      const res = await fetch('/api/cancel-razorpay-subscription', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Could not cancel.'); setLoading(false); return }
       onClose()
-      window.location.href = url
+      window.location.href = '/pricing'
     } catch {
-      setError('Could not open billing portal.')
+      setError('Could not cancel subscription.')
       setLoading(false)
     }
   }
 
   return (
     <div>
-      <button onClick={openPortal} disabled={loading}
-        style={{ textAlign: 'left', width: '100%', fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', letterSpacing: '0.06em', color: '#c9a84c', background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer', padding: '0.55rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: loading ? 0.7 : 1 }}>
-        💳 {loading ? 'Opening…' : 'Billing & Cancel Plan'}
+      <button onClick={cancelPlan} disabled={loading}
+        style={{ textAlign: 'left', width: '100%', fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', letterSpacing: '0.06em', color: confirmed ? '#f87171' : '#c9a84c', background: 'none', border: 'none', cursor: loading ? 'default' : 'pointer', padding: '0.55rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: loading ? 0.7 : 1 }}>
+        💳 {loading ? 'Cancelling…' : confirmed ? '⚠️ Confirm Cancel?' : 'Cancel Plan'}
       </button>
       {error && <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', color: '#f87171', margin: '0 0 0.25rem' }}>{error}</p>}
     </div>

@@ -87,9 +87,30 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   async function handleBuyExtra() {
     setBuyingExtra(true)
     try {
-      const res = await fetch('/api/create-extra-meeting-session', { method: 'POST' })
-      const { url } = await res.json()
-      if (url) window.location.href = url
+      // Load Razorpay script
+      await new Promise<void>(resolve => {
+        if ((window as Window & { Razorpay?: unknown }).Razorpay) { resolve(); return }
+        const s = document.createElement('script')
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        s.onload = () => resolve(); s.onerror = () => resolve()
+        document.body.appendChild(s)
+      })
+
+      const res = await fetch('/api/create-razorpay-order', { method: 'POST' })
+      const { orderId, amount, keyId } = await res.json()
+      if (!orderId) throw new Error('Could not create order')
+
+      const RazorpayClass = (window as Window & { Razorpay: new (o: Record<string, unknown>) => { open(): void } }).Razorpay
+      const rzp = new RazorpayClass({
+        key: keyId, order_id: orderId, amount,
+        currency: 'INR', name: 'Arrange Marriage',
+        description: 'Extra Video Meeting Request — ₹150',
+        image: '/arrangemarriage-logo.png',
+        theme: { color: '#1D5252' },
+        handler: () => { window.location.reload() },
+        modal: { ondismiss: () => setBuyingExtra(false) },
+      })
+      rzp.open()
     } catch { setBuyingExtra(false) }
   }
 

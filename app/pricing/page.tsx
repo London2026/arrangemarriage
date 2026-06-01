@@ -5,6 +5,21 @@ import { useRouter } from 'next/navigation'
 import Navigation from '@/components/Navigation'
 import { selectPlan } from './actions'
 
+declare global {
+  interface Window { Razorpay: new (options: Record<string, unknown>) => { open(): void } }
+}
+
+function loadRazorpay(): Promise<boolean> {
+  return new Promise(resolve => {
+    if (typeof window !== 'undefined' && window.Razorpay) { resolve(true); return }
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    s.onload = () => resolve(true)
+    s.onerror = () => resolve(false)
+    document.body.appendChild(s)
+  })
+}
+
 const c = {
   navy: '#0d1f3c', navyMid: '#152240', cream: '#f4f1eb',
   gold: '#8b6914', goldLight: '#c9a84c', ivory: '#f5f0e6',
@@ -158,10 +173,13 @@ export default function PricingPage() {
       return
     }
 
-    // Paid plans — redirect to Stripe Checkout
+    // Paid plans — open Razorpay checkout
     setStripeLoading(true)
     try {
-      const res = await fetch('/api/create-checkout-session', {
+      const loaded = await loadRazorpay()
+      if (!loaded) throw new Error('Could not load payment gateway. Please try again.')
+
+      const res = await fetch('/api/create-razorpay-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planKey }),
@@ -170,8 +188,34 @@ export default function PricingPage() {
         const err = await res.json()
         throw new Error(err.error || 'Could not start checkout')
       }
-      const { url } = await res.json()
-      window.location.href = url
+      const { subscriptionId, keyId } = await res.json()
+      const planName = planKey === 'starter' ? 'Starter — ₹350/month' : 'Premium — ₹550/month'
+
+      const rzp = new window.Razorpay({
+        key: keyId,
+        subscription_id: subscriptionId,
+        name: 'Arrange Marriage',
+        description: planName,
+        image: '/arrangemarriage-logo.png',
+        theme: { color: '#1D5252' },
+        handler: async (response: Record<string, string>) => {
+          try {
+            const verify = await fetch('/api/verify-razorpay-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...response, planKey }),
+            })
+            if (!verify.ok) throw new Error('Payment verification failed')
+            router.push('/pricing/success')
+          } catch {
+            setStripeError('Payment verification failed. Please contact support.')
+          } finally {
+            setStripeLoading(false)
+          }
+        },
+        modal: { ondismiss: () => setStripeLoading(false) },
+      })
+      rzp.open()
     } catch (err) {
       setStripeError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
       setStripeLoading(false)
