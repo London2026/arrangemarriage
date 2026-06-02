@@ -274,7 +274,7 @@ function OnboardingPage() {
     return (
       <div style={{ minHeight: '100vh', background: c.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: '120px', height: '120px', objectFit: 'contain', borderRadius: '12px', marginBottom: '0.75rem' }} />
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: 'auto', height: '110px', maxWidth: '320px', objectFit: 'contain', marginBottom: '0.5rem', mixBlendMode: 'multiply' as const }} />
           <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.sepia }}>Preparing your profile…</p>
         </div>
       </div>
@@ -319,10 +319,10 @@ function OnboardingPage() {
   }
 
   return (
-    <div className="ob-page" style={{ minHeight: '100dvh', background: c.cream, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 0.75rem' }}>
+    <div className="ob-page" style={{ minHeight: '100dvh', background: c.cream, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 0.75rem' }}>
       <style>{`
         .ob-page { box-sizing: border-box; }
-        .ob-logo { width: 120px; height: 120px; }
+        .ob-logo { width: auto; height: 110px; max-width: 320px; mix-blend-mode: multiply; }
         .ob-progress { width: 100%; max-width: 720px; margin-bottom: 1rem; }
         .ob-topnav { width: 100%; max-width: 720px; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
         .ob-topnav a, .ob-topnav button { font-family: Raleway, sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.35rem 0.85rem; border-radius: 4px; cursor: pointer; border: 1px solid rgba(13,31,60,0.18); background: transparent; color: #2c4a6e; }
@@ -335,7 +335,7 @@ function OnboardingPage() {
         .ob-step-h2 { font-family: var(--font-playfair, "Playfair Display", serif); font-size: 1.9rem; font-weight: 600; }
         @media (max-width: 640px) {
           .ob-page { justify-content: flex-start !important; padding-top: 1.25rem !important; padding-bottom: 1.5rem !important; }
-          .ob-logo { width: 80px !important; height: 80px !important; }
+          .ob-logo { width: auto !important; height: 85px !important; }
           .ob-progress { margin-bottom: 0.75rem; }
           .ob-card-inner { padding: 1.1rem 1rem 0.9rem !important; }
           .ob-nav { padding: 0.85rem 1rem 1.25rem !important; }
@@ -357,7 +357,7 @@ function OnboardingPage() {
       <div className="ob-progress">
         <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="ob-logo" style={{ objectFit: 'contain', borderRadius: '12px', boxShadow: '0 4px 20px rgba(13,31,60,0.12)' }} />
+            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="ob-logo" style={{ objectFit: 'contain', mixBlendMode: 'multiply' as const }} />
           </Link>
         </div>
 
