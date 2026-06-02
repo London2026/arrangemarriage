@@ -113,6 +113,20 @@ function OnboardingPage() {
           favAiTools: profile.fav_ai_tools ?? '',
           hobby: profile.hobby ?? '',
           idCountry: profile.id_country ?? '',
+          // New fields
+          brothers: profile.brothers ?? '',
+          sisters: profile.sisters ?? '',
+          fatherOccupation: profile.father_occupation ?? '',
+          motherOccupation: profile.mother_occupation ?? '',
+          housing: profile.housing ?? '',
+          disability: profile.disability ?? '',
+          foodHabits: profile.food_habits ?? '',
+          smoking: profile.smoking ?? '',
+          alcohol: profile.alcohol ?? '',
+          educationSubject: profile.education_subject ?? '',
+          otherQualifications: profile.other_qualifications ?? '',
+          occupationCity: profile.occupation_city ?? '',
+          annualSalary: profile.annual_salary ?? '',
         })
       } else {
         const rawName = (user.user_metadata?.full_name ?? '').trim()
