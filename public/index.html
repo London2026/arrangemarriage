@@ -768,8 +768,8 @@
 
   @keyframes slideFade {
     0%, 100% { opacity: 0; }
-    4%, 16% { opacity: 1; }
-    20% { opacity: 0; }
+    3.33%, 13.33% { opacity: 1; }
+    16.67% { opacity: 0; }
   }
 
   .meeting-slide {
@@ -778,7 +778,7 @@
     width: 100%; height: 100%;
     object-fit: cover;
     opacity: 0;
-    animation: slideFade 25s infinite;
+    animation: slideFade 30s infinite;
     animation-fill-mode: backwards;
   }
   .meeting-slide:nth-child(1) { animation-delay: 0s; }
@@ -786,6 +786,7 @@
   .meeting-slide:nth-child(3) { animation-delay: 10s; }
   .meeting-slide:nth-child(4) { animation-delay: 15s; }
   .meeting-slide:nth-child(5) { animation-delay: 20s; }
+  .meeting-slide:nth-child(6) { animation-delay: 25s; }
 
   .meeting-img {
     width: 100%;
@@ -2332,6 +2333,7 @@
               <img src="/meeting3.png" class="meeting-slide meeting-img" alt="South Indian video call">
               <img src="/meeting4.png" class="meeting-slide meeting-img" alt="Muslim couple video call">
               <img src="/meeting5.png" class="meeting-slide meeting-img" alt="Sikh family video call">
+              <img src="/meeting6.png" class="meeting-slide meeting-img" alt="Arrange Marriage" style="object-fit:contain;background:#FFF9F2;">
             </div>
           </div>
           <div class="laptop-hinge"></div>
