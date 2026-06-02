@@ -490,7 +490,22 @@
   }
 
   .profile-card-body {
-    padding: 0.9rem 1.1rem;
+    padding: 0.8rem 1rem 1rem;
+  }
+
+  .profile-fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.1rem 0.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .profile-field-full {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.15rem 0;
   }
 
   /* Tag chips row */
@@ -532,17 +547,16 @@
   /* Info rows */
   .profile-field {
     display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.25rem 0;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0;
     font-size: 0.92rem;
   }
 
   .field-icon {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     flex-shrink: 0;
-    margin-top: 0.1rem;
-    width: 18px;
+    width: 16px;
     text-align: center;
   }
 
@@ -860,7 +874,7 @@
 
   .oliver-card-top {
     position: relative;
-    min-height: 130px;
+    min-height: 170px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2088,13 +2102,15 @@
           <div class="profile-meta" style="position:relative;z-index:2;">28 · Mumbai, Maharashtra · Software Engineer</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Hindu · Brahmin</span></div>
-          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
-          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">IIT Bombay, B.Tech</span></div>
-          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Pune, Maharashtra</span></div>
-          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Mumbai, Maharashtra</span></div>
-          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Life Partner</span></div>
-          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Cricket · Biryani · Mountains</span></div>
+          <div class="profile-fields-grid">
+            <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Hindu · Brahmin</span></div>
+            <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+            <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">IIT Bombay, B.Tech</span></div>
+            <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Life Partner</span></div>
+            <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Pune, Maharashtra</span></div>
+            <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Mumbai, Maharashtra</span></div>
+            <div class="profile-field-full"><span class="field-icon">❤️</span><span class="field-value">Cricket · Biryani · Mountains</span></div>
+          </div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Arjun speaks about his love for cricket, travel and family values.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
@@ -2125,13 +2141,15 @@
           <div class="profile-meta" style="position:relative;z-index:2;">26 · Delhi, NCR · Doctor</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Buddhist · Theravada</span></div>
-          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
-          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">AIIMS Delhi, MBBS</span></div>
-          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Jaipur, Rajasthan</span></div>
-          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Delhi, NCR</span></div>
-          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Soulful Connection</span></div>
-          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Bharatanatyam · Travel · Chai</span></div>
+          <div class="profile-fields-grid">
+            <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Buddhist · Theravada</span></div>
+            <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+            <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">AIIMS Delhi, MBBS</span></div>
+            <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Soulful Connection</span></div>
+            <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Jaipur, Rajasthan</span></div>
+            <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Delhi, NCR</span></div>
+            <div class="profile-field-full"><span class="field-icon">❤️</span><span class="field-value">Bharatanatyam · Travel · Chai</span></div>
+          </div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Priya shares her passion for medicine, family values and classical dance.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
@@ -2152,13 +2170,15 @@
           <div class="profile-meta" style="position:relative;z-index:2;">30 · Bengaluru, Karnataka · Architect</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Christian · Catholic</span></div>
-          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
-          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">NIT Surathkal, B.Arch</span></div>
-          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Mangalore, Karnataka</span></div>
-          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Bengaluru, Karnataka</span></div>
-          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Marriage</span></div>
-          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Yoga · Carnatic Music · Filter Coffee</span></div>
+          <div class="profile-fields-grid">
+            <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Christian · Catholic</span></div>
+            <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+            <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">NIT Surathkal, B.Arch</span></div>
+            <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Marriage</span></div>
+            <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Mangalore, Karnataka</span></div>
+            <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Bengaluru, Karnataka</span></div>
+            <div class="profile-field-full"><span class="field-icon">❤️</span><span class="field-value">Yoga · Carnatic Music · Filter Coffee</span></div>
+          </div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Rahul speaks about architecture, Carnatic music and his love for South Indian culture.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
@@ -2180,13 +2200,15 @@
           <div class="profile-meta" style="position:relative;z-index:2;">27 · Chennai, Tamil Nadu · Teacher</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Jain · Digambar</span></div>
-          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
-          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">University of Madras, B.Ed</span></div>
-          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Madurai, Tamil Nadu</span></div>
-          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Chennai, Tamil Nadu</span></div>
-          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Long-term Partnership</span></div>
-          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Kolam · Cooking · Tamil Cinema</span></div>
+          <div class="profile-fields-grid">
+            <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Jain · Digambar</span></div>
+            <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+            <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">University of Madras, B.Ed</span></div>
+            <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Long-term Partnership</span></div>
+            <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Madurai, Tamil Nadu</span></div>
+            <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Chennai, Tamil Nadu</span></div>
+            <div class="profile-field-full"><span class="field-icon">❤️</span><span class="field-value">Kolam · Cooking · Tamil Cinema</span></div>
+          </div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Ananya talks about Tamil traditions, her love for teaching and family values.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
