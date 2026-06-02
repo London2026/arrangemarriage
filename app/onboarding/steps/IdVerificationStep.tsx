@@ -46,30 +46,46 @@ export default function IdVerificationStep({ idCountry, idFile, onIdChange }: Pr
 
   return (
     <div>
-      <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.25rem' }}>
-        ID Verification
-      </h2>
-      <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.1rem', color: c.sepia, margin: '0 0 1rem' }}>
-        Verify your identity to build trust with other members
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', margin: '0 0 0.5rem' }}>
+        <h2 className="ob-step-h2" style={{ color: c.navy, margin: 0 }}>ID Verification</h2>
+        <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: 'rgba(22,163,74,0.12)', color: c.green, border: '1px solid rgba(22,163,74,0.3)', borderRadius: '20px', padding: '0.2rem 0.7rem', flexShrink: 0 }}>
+          Optional
+        </span>
+      </div>
+      <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.sepia, margin: '0 0 1rem' }}>
+        You can skip this step and complete it later from your profile.
       </p>
-      <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginBottom: '1.5rem' }} />
+      <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginBottom: '1.25rem' }} />
 
-      {/* Green tick info box */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', background: 'rgba(22,163,74,0.07)', border: '1px solid rgba(22,163,74,0.25)', borderRadius: '8px', padding: '1rem 1.1rem', marginBottom: '1.75rem' }}>
-        <span style={{ fontSize: '1.75rem', flexShrink: 0, lineHeight: 1 }}>✅</span>
+      {/* Green tick benefit */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', background: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.25)', borderRadius: '8px', padding: '1rem 1.1rem', marginBottom: '1rem' }}>
+        <span style={{ fontSize: '1.5rem', flexShrink: 0, lineHeight: 1 }}>✅</span>
         <div>
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.green, margin: '0 0 0.4rem' }}>
-            Earn a verified green tick
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.green, margin: '0 0 0.35rem' }}>
+            Get a Verified Green Tick on your profile
           </p>
-          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.textMid, margin: 0, lineHeight: 1.65 }}>
-            Once your ID has been reviewed and approved by the Arrange Marriage team, a green verification tick will appear on your profile. This lets other members know that you are who you say you are, giving them greater confidence to connect with you.
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.textMid, margin: 0, lineHeight: 1.7 }}>
+            Members who upload a valid ID document receive a <strong style={{ color: c.green }}>green verification tick ✓</strong> on their profile. This instantly increases trust and significantly improves your chances of receiving meeting requests — other members know you are exactly who you say you are.
+          </p>
+        </div>
+      </div>
+
+      {/* Video meeting notice */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', background: 'rgba(29,82,82,0.05)', border: '1px solid rgba(29,82,82,0.2)', borderRadius: '8px', padding: '1rem 1.1rem', marginBottom: '1.75rem' }}>
+        <span style={{ fontSize: '1.4rem', flexShrink: 0, lineHeight: 1 }}>🎥</span>
+        <div>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#1D5252', margin: '0 0 0.35rem' }}>
+            Required at the start of every video meeting
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.textMid, margin: 0, lineHeight: 1.7 }}>
+            Please note: even if you do not upload your ID now, <strong>you will be required to show your valid photo ID</strong> (passport, Aadhaar, or driving licence) to the other person <strong>at the beginning of every video meeting</strong>. This protects all members and ensures every conversation is between verified individuals.
           </p>
         </div>
       </div>
 
       {/* Country */}
       <div style={{ marginBottom: '1.4rem' }}>
-        <label style={label}>Country of ID document <span style={{ color: '#c0392b' }}>*</span></label>
+        <label style={label}>Country of ID document</label>
         <select
           value={idCountry}
           onChange={e => onIdChange(e.target.value, idFile)}

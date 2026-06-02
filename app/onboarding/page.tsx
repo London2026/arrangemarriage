@@ -170,11 +170,7 @@ function OnboardingPage() {
       if ((!back1 || !back2) && !hasExistingPhotos) return 'Please upload both back-side photos.'
       if (!front && !hasExistingPhotos) return 'Please upload your reveal photo.'
     }
-    // Step 5 (personality) is optional — no validation required
-    if (step === 6) {
-      if (!draft.idCountry) return 'Please select the country of your ID document.'
-      if (!idFile) return 'Please upload a photo of your ID document.'
-    }
+    // Steps 5 & 6 are optional — no validation required
     return ''
   }
 
@@ -416,17 +412,18 @@ function OnboardingPage() {
       </div>
 
       {/* Save & Exit */}
-      <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+      <div style={{ marginTop: '1.25rem', textAlign: 'center' }}>
         <button onClick={saveAndExit} disabled={saving}
-          style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.sepia, background: 'none', border: `1px solid rgba(90,110,130,0.3)`, borderRadius: '4px', padding: '0.5rem 1.5rem', cursor: saving ? 'default' : 'pointer', transition: 'all 0.2s' }}>
+          style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#3B5A5A', background: '#fff', border: '2px solid rgba(29,82,82,0.35)', borderRadius: '6px', padding: '0.7rem 2rem', cursor: saving ? 'default' : 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
           💾 Save &amp; Exit
         </button>
-        <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.82rem', color: c.sepia, margin: '0.4rem 0 0', lineHeight: 1.55 }}>
-          You can save your progress and come back anytime — everything entered so far will be saved.
+        <p style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 600, fontSize: '0.78rem', color: '#3B5A5A', margin: '0.55rem 0 0', lineHeight: 1.6, letterSpacing: '0.02em' }}>
+          You can save your progress and come back anytime —<br />
+          everything entered so far will be saved.
         </p>
       </div>
-      <p style={{ marginTop: '0.75rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', letterSpacing: '0.1em', color: 'rgba(90,110,130,0.4)', textAlign: 'center' }}>
-        Your data is encrypted and private
+      <p style={{ marginTop: '0.75rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', letterSpacing: '0.1em', color: 'rgba(90,110,130,0.45)', textAlign: 'center' }}>
+        🔒 Your data is encrypted and private
       </p>
     </div>
   )
