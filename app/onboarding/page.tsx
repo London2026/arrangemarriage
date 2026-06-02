@@ -290,10 +290,12 @@ function OnboardingPage() {
   }
 
   async function saveAndExit() {
+    if (!userId) { setError('Session expired. Please refresh the page.'); return }
     setSaving(true)
+    setError('')
     try {
       const supabase = createClient()
-      await supabase.from('profiles').upsert({
+      const { error: saveErr } = await supabase.from('profiles').upsert({
         id: userId,
         full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim() || null,
         age: draft.age ? parseInt(draft.age) : null,
@@ -314,8 +316,14 @@ function OnboardingPage() {
         hobby: draft.hobby || null,
         updated_at: new Date().toISOString(),
       })
-      router.push('/discover')
-    } catch { /* ignore */ } finally { setSaving(false) }
+      if (saveErr) throw saveErr
+      // Redirect to home — user can sign back in to continue onboarding
+      router.push('/?saved=1')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not save. Please try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
