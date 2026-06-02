@@ -1937,6 +1937,119 @@
     .scroll-hint { margin-top: 2.5rem; }
   }
 
+
+  /* ── BLOOD TEST SECTION ── */
+  .bloodtest-section {
+    background: var(--cream);
+    border-top: 1px solid rgba(29,82,82,0.12);
+  }
+
+  .bloodtest-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .bloodtest-card {
+    background: #fff;
+    border: 1px solid rgba(29,82,82,0.15);
+    border-radius: 10px;
+    padding: 1.25rem 1.1rem;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+
+  .bloodtest-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(29,82,82,0.1);
+  }
+
+  .bloodtest-card-icon {
+    font-size: 1.6rem;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  .bloodtest-card-name {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--deep-brown);
+    margin: 0 0 0.3rem;
+    line-height: 1.4;
+  }
+
+  .bloodtest-card-sub {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sepia);
+    margin: 0 0 0.55rem;
+  }
+
+  .bloodtest-card-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.92rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .bloodtest-card-women {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.52rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(196,120,32,0.12);
+    color: var(--rose);
+    border: 1px solid rgba(196,120,32,0.3);
+    border-radius: 20px;
+    padding: 0.15rem 0.5rem;
+  }
+
+  .bloodtest-hiv-box {
+    background: linear-gradient(135deg, rgba(29,82,82,0.06) 0%, rgba(29,82,82,0.02) 100%);
+    border: 1.5px solid rgba(29,82,82,0.25);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .bloodtest-process {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+  }
+
+  .bloodtest-process-step {
+    background: #fff;
+    border: 1px solid rgba(29,82,82,0.15);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .bloodtest-grid { grid-template-columns: repeat(2, 1fr); }
+    .bloodtest-process { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .bloodtest-grid { grid-template-columns: 1fr; }
+  }
   /* ── VERY SMALL (≤380px) ── */
   @media (max-width: 380px) {
     .hero h1 { font-size: 1.85rem; }
@@ -2020,6 +2133,8 @@
     <li><a href="#personality">Personality</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#safety">Safety</a></li>
+    <li><a href="#bloodtest">Blood Tests</a></li>
+    <li><a href="#bloodtest">Blood Tests</a></li>
   </ul>
   <div id="nav-auth-area" style="flex-shrink:0;padding-right:0.5rem;">
     <div style="display:flex;align-items:center;gap:0.75rem;">
@@ -2041,6 +2156,7 @@
   <a href="#personality" onclick="toggleMenu()">Personality</a>
   <a href="#pricing" onclick="toggleMenu()">Pricing</a>
   <a href="#safety" onclick="toggleMenu()">Safety</a>
+  <a href="#bloodtest" onclick="toggleMenu()">Blood Tests</a>
   <button class="btn-primary" onclick="toggleMenu(); openModal();" style="margin-top:1rem; max-width:220px;">Begin Journey</button>
 </div>
 
@@ -2715,6 +2831,166 @@
   </div>
 </section>
 
+<!-- PRE-MARRIAGE BLOOD TEST -->
+<section class="section bloodtest-section" id="bloodtest">
+  <div class="section-inner">
+
+    <div class="section-header reveal">
+      <span class="section-label">Health &amp; Safety</span>
+      <h2 class="section-title">Pre-Marriage <em>Blood Test</em></h2>
+      <div class="ornament-divider"><span class="ornament-heart">🩸</span></div>
+      <p class="section-sub" style="max-width:640px;margin:0 auto;">
+        Once both partners have agreed to proceed with the marriage, Arrange Marriage requires each person
+        to submit their latest pre-marriage blood test report. This is a shared commitment to transparency,
+        health, and the long-term wellbeing of each other and your future family.
+      </p>
+    </div>
+
+    <!-- How it works steps -->
+    <div class="bloodtest-process reveal">
+      <div class="bloodtest-process-step">
+        <div style="font-size:1.75rem;margin-bottom:0.6rem;">🤝</div>
+        <p style="font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy);margin:0 0 0.4rem;">Step 1 — Mutual Agreement</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--text-mid);line-height:1.7;margin:0;">
+          Both partners consent to proceed with the marriage and agree to exchange health reports as a mark of trust and respect.
+        </p>
+      </div>
+      <div class="bloodtest-process-step">
+        <div style="font-size:1.75rem;margin-bottom:0.6rem;">🏥</div>
+        <p style="font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy);margin:0 0 0.4rem;">Step 2 — Get Tested</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--text-mid);line-height:1.7;margin:0;">
+          Each partner visits their nearest pathology lab or hospital and completes the full pre-marriage blood test checklist listed below.
+        </p>
+      </div>
+      <div class="bloodtest-process-step">
+        <div style="font-size:1.75rem;margin-bottom:0.6rem;">📋</div>
+        <p style="font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy);margin:0 0 0.4rem;">Step 3 — Submit Reports</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--text-mid);line-height:1.7;margin:0;">
+          Both partners upload their signed lab reports through the Arrange Marriage platform. Reports are reviewed privately and securely.
+        </p>
+      </div>
+    </div>
+
+    <!-- Test cards -->
+    <div style="margin-top:2.5rem;">
+      <p style="font-family:'Raleway',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--deep-brown);margin:0 0 1.5rem;text-align:center;">
+        ✦ Complete Pre-Marriage Blood Test Checklist ✦
+      </p>
+    </div>
+
+    <div class="bloodtest-grid reveal">
+
+      <!-- HIV -->
+      <div class="bloodtest-card" style="border-top:3px solid #dc2626;">
+        <span class="bloodtest-card-icon">🔴</span>
+        <p class="bloodtest-card-name">HIV 1 &amp; 2</p>
+        <p class="bloodtest-card-sub">Antibody / Antigen Test</p>
+        <p class="bloodtest-card-desc">
+          Detects HIV infection in both partners. Early detection protects your spouse and prevents transmission to future children. A clear result gives both families complete peace of mind.
+        </p>
+      </div>
+
+      <!-- Syphilis -->
+      <div class="bloodtest-card" style="border-top:3px solid #ea580c;">
+        <span class="bloodtest-card-icon">🟠</span>
+        <p class="bloodtest-card-name">Syphilis</p>
+        <p class="bloodtest-card-sub">VDRL / RPR Test</p>
+        <p class="bloodtest-card-desc">
+          Screens for syphilis, a bacterial infection that can be passed between partners and to unborn children if left undetected. Highly treatable when caught early.
+        </p>
+      </div>
+
+      <!-- Hepatitis B -->
+      <div class="bloodtest-card" style="border-top:3px solid #d97706;">
+        <span class="bloodtest-card-icon">🟡</span>
+        <p class="bloodtest-card-name">Hepatitis B</p>
+        <p class="bloodtest-card-sub">HBsAg Surface Antigen</p>
+        <p class="bloodtest-card-desc">
+          Identifies active or chronic Hepatitis B infection. Carriers may show no symptoms. Vaccination or treatment options are available once identified.
+        </p>
+      </div>
+
+      <!-- Hepatitis C -->
+      <div class="bloodtest-card" style="border-top:3px solid #ca8a04;">
+        <span class="bloodtest-card-icon">🔶</span>
+        <p class="bloodtest-card-name">Hepatitis C</p>
+        <p class="bloodtest-card-sub">Anti-HCV Antibody Test</p>
+        <p class="bloodtest-card-desc">
+          Screens for the Hepatitis C virus. Often asymptomatic for years, it can lead to liver disease if undetected. Modern treatments offer very high cure rates.
+        </p>
+      </div>
+
+      <!-- Blood Group -->
+      <div class="bloodtest-card" style="border-top:3px solid #1D5252;">
+        <span class="bloodtest-card-icon">🩸</span>
+        <p class="bloodtest-card-name">Blood Group &amp; Rh Typing</p>
+        <p class="bloodtest-card-sub">ABO &amp; Rh Factor</p>
+        <p class="bloodtest-card-desc">
+          Determines your blood group (A, B, AB or O) and Rh factor (positive or negative). Essential for pregnancy planning, particularly to identify Rh incompatibility risks.
+        </p>
+      </div>
+
+      <!-- Thalassaemia -->
+      <div class="bloodtest-card" style="border-top:3px solid #7c3aed;">
+        <span class="bloodtest-card-icon">🧬</span>
+        <p class="bloodtest-card-name">Thalassaemia Screening</p>
+        <p class="bloodtest-card-sub">Haemoglobin Electrophoresis</p>
+        <p class="bloodtest-card-desc">
+          Identifies thalassaemia trait or carrier status. Particularly important for South Asian, Middle Eastern and Mediterranean families. If both partners are carriers, children face serious risk.
+        </p>
+      </div>
+
+      <!-- CBC -->
+      <div class="bloodtest-card" style="border-top:3px solid #0891b2;">
+        <span class="bloodtest-card-icon">🔬</span>
+        <p class="bloodtest-card-name">Complete Blood Count</p>
+        <p class="bloodtest-card-sub">CBC / FBC Panel</p>
+        <p class="bloodtest-card-desc">
+          A comprehensive overview of overall health — checks for anaemia, infection, and other blood disorders. Provides a clear picture of your general wellbeing before marriage.
+        </p>
+      </div>
+
+      <!-- Rubella -->
+      <div class="bloodtest-card" style="border-top:3px solid #db2777;">
+        <span class="bloodtest-card-icon">🌸</span>
+        <span class="bloodtest-card-women">Women Only</span>
+        <p class="bloodtest-card-name">Rubella Antibodies</p>
+        <p class="bloodtest-card-sub">IgG Serology Test</p>
+        <p class="bloodtest-card-desc">
+          Checks whether a woman is immune to rubella (German measles). Rubella during early pregnancy can cause serious birth defects. Vaccination before conception is recommended if immunity is low.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- HIV callout -->
+    <div class="bloodtest-hiv-box reveal">
+      <span style="font-size:2rem;flex-shrink:0;line-height:1;">⚠️</span>
+      <div>
+        <p style="font-family:'Raleway',sans-serif;font-size:0.72rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#dc2626;margin:0 0 0.45rem;">
+          Why HIV Testing Before Marriage Matters
+        </p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--text-mid);line-height:1.8;margin:0 0 0.6rem;">
+          HIV testing before marriage is one of the most important health decisions a couple can make. Many people living with HIV are unaware of their status, as the virus can remain asymptomatic for years. An HIV test before marriage allows both partners to make fully informed decisions, access early treatment if needed, and take steps to prevent transmission to each other and to any children born of the marriage.
+        </p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--sepia);line-height:1.75;margin:0;font-style:italic;">
+          "Knowledge is the first step to protection. A simple blood test can safeguard the health of your entire family for generations."
+        </p>
+      </div>
+    </div>
+
+    <!-- Privacy note -->
+    <div style="margin-top:1.5rem;padding:1.1rem 1.5rem;background:rgba(29,82,82,0.05);border:1px solid rgba(29,82,82,0.15);border-radius:8px;display:flex;align-items:flex-start;gap:0.85rem;" class="reveal">
+      <span style="font-size:1.2rem;flex-shrink:0;">🔒</span>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--text-mid);line-height:1.75;margin:0;">
+        <strong>Your privacy is protected.</strong> All blood test reports submitted through Arrange Marriage are stored with end-to-end encryption and are shared only between the two consenting parties. Reports are never disclosed to third parties, family members, or anyone outside the agreed couple without explicit consent.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo-img-wrap">
@@ -2725,6 +3001,7 @@
     <li><a href="#how">How It Works</a></li>
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#safety">Safety</a></li>
+    <li><a href="#bloodtest">Blood Tests</a></li>
     <li><a href="/privacy">Privacy Policy</a></li>
     <li><a href="/terms">Terms of Service</a></li>
     <li><a href="/contact">Contact</a></li>
