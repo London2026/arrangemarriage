@@ -64,7 +64,7 @@ export default function SignupPage() {
 
   async function verifyCode(e: React.FormEvent) {
     e.preventDefault()
-    if (code.length !== 6) { setError('Please enter the full 6-digit code.'); return }
+    if (code.length !== 8) { setError('Please enter the full 8-digit code.'); return }
     setLoading(true); setError('')
     const supabase = createClient()
     const { data, error } = await supabase.auth.verifyOtp({
@@ -93,23 +93,23 @@ export default function SignupPage() {
             <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>📬</div>
             <h2 style={{ fontFamily: 'var(--font-playfair,"Playfair Display",serif)', fontSize: '1.5rem', fontWeight: 600, color: c.navy, margin: '0 0 0.2rem' }}>Enter your code</h2>
             <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '0.95rem', fontStyle: 'italic', color: c.sepia, margin: 0 }}>
-              We sent a 6-digit code to <strong style={{ color: c.navy, fontStyle: 'normal' }}>{email}</strong>
+              We sent a 8-digit code to <strong style={{ color: c.navy, fontStyle: 'normal' }}>{email}</strong>
             </p>
           </div>
           <div className="auth-card-body">
             <form onSubmit={verifyCode}>
               <div style={{ marginBottom: '1.25rem' }}>
                 <label className="auth-lbl">Verification Code</label>
-                <input type="text" inputMode="numeric" maxLength={6} value={code} autoFocus
-                  onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
-                  placeholder="000000"
+                <input type="text" inputMode="numeric" maxLength={8} value={code} autoFocus
+                  onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 8)); setError('') }}
+                  placeholder="00000000"
                   className="auth-inp auth-code-inp"
                   onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
                   onBlur={e => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')} />
               </div>
               {errBox}
-              <button type="submit" disabled={loading || code.length !== 6} className="auth-btn"
-                style={{ background: (loading || code.length !== 6) ? c.navyMid : c.navy, color: c.goldLight, cursor: (loading || code.length !== 6) ? 'default' : 'pointer' }}>
+              <button type="submit" disabled={loading || code.length !== 8} className="auth-btn"
+                style={{ background: (loading || code.length !== 8) ? c.navyMid : c.navy, color: c.goldLight, cursor: (loading || code.length !== 8) ? 'default' : 'pointer' }}>
                 {loading ? 'Verifying…' : 'Verify & Continue →'}
               </button>
             </form>

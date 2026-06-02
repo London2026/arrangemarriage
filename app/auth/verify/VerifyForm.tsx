@@ -19,7 +19,7 @@ const c = {
 }
 
 export default function VerifyForm({ email, phone, name, type }: Props) {
-  const [digits, setDigits] = useState<string[]>(Array(6).fill(''))
+  const [digits, setDigits] = useState<string[]>(Array(8).fill(''))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [resent, setResent] = useState(false)
@@ -37,7 +37,7 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
     next[index] = value.slice(-1)
     setDigits(next)
     setError('')
-    if (value && index < 5) inputRefs.current[index + 1]?.focus()
+    if (value && index < 7) inputRefs.current[index + 1]?.focus()
     if (next.every((d) => d !== '')) handleVerify(next.join(''))
   }
 
@@ -47,13 +47,13 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
 
   function handlePaste(e: ClipboardEvent<HTMLInputElement>) {
     e.preventDefault()
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 8)
     if (!pasted) return
     const next = [...digits]
     pasted.split('').forEach((ch, i) => { next[i] = ch })
     setDigits(next)
-    inputRefs.current[Math.min(pasted.length, 5)]?.focus()
-    if (pasted.length === 6) handleVerify(pasted)
+    inputRefs.current[Math.min(pasted.length, 7)]?.focus()
+    if (pasted.length === 8) handleVerify(pasted)
   }
 
   async function handleVerify(code: string) {
@@ -69,7 +69,7 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
       router.push(type === 'signup' ? '/pricing' : '/discover')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Invalid code. Please try again.')
-      setDigits(Array(6).fill(''))
+      setDigits(Array(8).fill(''))
       inputRefs.current[0]?.focus()
     } finally {
       setLoading(false)
@@ -81,7 +81,7 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
     if (email) await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: type === 'signup' } })
     else if (phone) await supabase.auth.signInWithOtp({ phone })
     setResent(true)
-    setDigits(Array(6).fill(''))
+    setDigits(Array(8).fill(''))
     inputRefs.current[0]?.focus()
     setTimeout(() => setResent(false), 4000)
   }
@@ -112,7 +112,7 @@ export default function VerifyForm({ email, phone, name, type }: Props) {
             Check Your {email ? 'Inbox' : 'Messages'}
           </h2>
           <p style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontSize: '1rem', color: c.sepia, margin: '0 0 0.25rem', fontStyle: 'italic' }}>
-            We sent a 6-digit code to
+            We sent a 8-digit code to
           </p>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 600, color: c.burgundy, margin: 0 }}>
             {masked || destination}
