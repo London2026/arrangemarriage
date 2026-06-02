@@ -333,6 +333,7 @@ function OnboardingPage() {
         .ob-btn-back { padding: 0.9rem 2rem; background: transparent; border: 1px solid rgba(13,31,60,0.2); color: #5a6e82; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 4px; white-space: nowrap; }
         .ob-btn-next { padding: 0.9rem 2.25rem; border: none; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 4px; transition: background 0.2s; white-space: nowrap; }
         .ob-step-h2 { font-family: var(--font-playfair, "Playfair Display", serif); font-size: 1.9rem; font-weight: 600; }
+        .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.1rem; }
         @media (max-width: 640px) {
           .ob-page { justify-content: flex-start !important; padding-top: 1.25rem !important; padding-bottom: 1.5rem !important; }
           .ob-logo { width: auto !important; height: 85px !important; }
@@ -341,8 +342,9 @@ function OnboardingPage() {
           .ob-nav { padding: 0.85rem 1rem 1.25rem !important; }
           .ob-btn-back { padding: 0.8rem 1rem !important; font-size: 0.75rem !important; }
           .ob-btn-next { padding: 0.8rem 1rem !important; font-size: 0.75rem !important; flex: 1 !important; }
-          .ob-step-h2 { font-size: 1.5rem !important; }
+          .ob-step-h2 { font-size: 1.4rem !important; }
           .ob-topnav a, .ob-topnav button { font-size: 0.65rem !important; padding: 0.3rem 0.6rem !important; }
+          .ob-row { grid-template-columns: 1fr !important; gap: 0 !important; }
         }
       `}</style>
 

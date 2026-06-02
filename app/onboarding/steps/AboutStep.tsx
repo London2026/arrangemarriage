@@ -24,11 +24,7 @@ interface Props {
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.1rem' }}>
-      {children}
-    </div>
-  )
+  return <div className="ob-row">{children}</div>
 }
 
 function Sel({ lbl, k, val, opts, ph, onChange }: { lbl: string; k: string; val: string; opts: string[]; ph: string; onChange: (k: string, v: string) => void }) {

@@ -1848,6 +1848,7 @@
 
   /* ── TABLET (≤900px) ── */
   @media (max-width: 1100px) {
+    .meeting-layout { grid-template-columns: 1fr !important; }
     .nav-links { display: none; }
     .nav-cta { display: none; }
     .nav-signin-btn { display: none; }
@@ -1863,12 +1864,19 @@
 
   /* ── MOBILE (≤600px) ── */
   @media (max-width: 600px) {
-    /* MEETING */
-    .meeting-layout { grid-template-columns: 1fr; }
-    .meeting-laptop-wrap { max-width: 100%; }
+    /* MEETING - First Conversation */
+    .meeting-layout { grid-template-columns: 1fr !important; gap: 1.5rem; }
+    .meeting-laptop-wrap { max-width: 100%; margin: 0 auto; }
+    .meeting-slideshow { aspect-ratio: 16/9; }
+    .laptop-screen { border-width: 4px !important; }
+    .laptop-base { height: 10px !important; }
+    .meeting-features { margin-top: 0; }
+    .meeting-feat-item { padding: 0.75rem 0.85rem; }
+    .meeting-feat-item h4 { font-size: 1rem !important; }
+    .meeting-feat-item p { font-size: 0.85rem !important; }
 
     /* NAV */
-    nav { padding: 0.9rem 1.2rem; }
+    nav { padding: 0.75rem 1rem; overflow: hidden; }
     .nav-logo-img { width: auto !important; height: 44px !important; }
     .nav-signin-btn { display: none; }
 
@@ -1882,12 +1890,12 @@
     .btn-primary, .btn-outline { width: 100%; max-width: 280px; text-align: center; }
 
     /* SECTIONS */
-    .section { padding: 4rem 1.2rem; }
-    .section-title { font-size: 1.7rem; }
+    .section { padding: 3rem 1rem; }
+    .section-title { font-size: 1.55rem; }
     .section-sub { font-size: 0.95rem; }
 
     /* PROFILES */
-    .profiles-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .profiles-grid { grid-template-columns: 1fr; gap: 1.25rem; }
 
     /* STEPS */
     .steps-flow { grid-template-columns: 1fr; }
@@ -1931,6 +1939,10 @@
     .toast { right: 1rem; left: 1rem; max-width: 100%; }
 
     /* DEMO BANNER */
+
+    /* BLOOD TEST */
+    .bloodtest-list { grid-template-columns: 1fr !important; }
+
     .demo-banner { font-size: 0.65rem; letter-spacing: 0.1em; padding: 0.7rem; }
 
     /* SCROLL HINT */

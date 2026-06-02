@@ -38,11 +38,7 @@ interface Props {
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.1rem' }}>
-      {children}
-    </div>
-  )
+  return <div className="ob-row">{children}</div>
 }
 
 export default function PreferencesStep({ data, onChange }: Props) {
