@@ -179,7 +179,7 @@
 
   .hero-logo-img {
     width: 220px;
-    height: 220px;
+    height: 160px;
     object-fit: contain;
     margin-bottom: 1.5rem;
     animation: fadeIn 1.5s ease forwards;
@@ -447,7 +447,7 @@
 
   .profile-card-top {
     background: var(--deep-brown);
-    padding: 2rem;
+    padding: 1.25rem;
     text-align: center;
     position: relative;
   }
@@ -490,7 +490,7 @@
   }
 
   .profile-card-body {
-    padding: 1.25rem 1.4rem;
+    padding: 0.9rem 1.1rem;
   }
 
   /* Tag chips row */
@@ -533,8 +533,8 @@
   .profile-field {
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
-    padding: 0.35rem 0;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
     font-size: 0.92rem;
   }
 
@@ -551,7 +551,7 @@
     font-weight: 500;
     font-size: 0.9rem;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
+    font-size: 0.88rem;
   }
 
   .field-label {
@@ -564,7 +564,7 @@
 
   .profile-voice-btn {
     width: 100%;
-    margin-top: 1.2rem;
+    margin-top: 0.75rem;
     padding: 0.7rem;
     background: rgba(124,31,31,0.08);
     border: 1px solid var(--burgundy);
@@ -860,12 +860,12 @@
 
   .oliver-card-top {
     position: relative;
-    min-height: 220px;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    padding-bottom: 1.5rem;
+    padding-bottom: 1rem;
   }
 
   .oliver-card-top .reveal-locked {
@@ -2088,19 +2088,13 @@
           <div class="profile-meta" style="position:relative;z-index:2;">28 · Mumbai, Maharashtra · Software Engineer</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field">
-            <span class="field-icon">🕉️</span><span class="field-value">Hindu · Brahmin</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-icon">🎓</span><span class="field-value">IIT Bombay, B.Tech</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-icon">💍</span><span class="field-value">Life Partner</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Loves</span>
-            <span class="field-value">Cricket · Biryani · Mountains</span>
-          </div>
+          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Hindu · Brahmin</span></div>
+          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">IIT Bombay, B.Tech</span></div>
+          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Pune, Maharashtra</span></div>
+          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Mumbai, Maharashtra</span></div>
+          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Life Partner</span></div>
+          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Cricket · Biryani · Mountains</span></div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Arjun speaks about his love for cricket, travel and family values.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
@@ -2131,19 +2125,13 @@
           <div class="profile-meta" style="position:relative;z-index:2;">26 · Delhi, NCR · Doctor</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field">
-            <span class="field-icon">🕉️</span><span class="field-value">Buddhist · Theravada</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-icon">🎓</span><span class="field-value">AIIMS Delhi, MBBS</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-icon">💍</span><span class="field-value">Soulful Connection</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Loves</span>
-            <span class="field-value">Bharatanatyam · Travel · Chai</span>
-          </div>
+          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Buddhist · Theravada</span></div>
+          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">AIIMS Delhi, MBBS</span></div>
+          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Jaipur, Rajasthan</span></div>
+          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Delhi, NCR</span></div>
+          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Soulful Connection</span></div>
+          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Bharatanatyam · Travel · Chai</span></div>
           <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Priya shares her passion for medicine, family values and classical dance.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
@@ -2164,23 +2152,14 @@
           <div class="profile-meta" style="position:relative;z-index:2;">30 · Bengaluru, Karnataka · Architect</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field">
-            <span class="field-label">Religion</span>
-            <span class="field-value">Christian · Catholic</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Education</span>
-            <span class="field-value">NIT Surathkal, B.Arch</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Looking for</span>
-            <span class="field-value">Marriage</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Loves</span>
-            <span class="field-value">Santorini · Fish &amp; Chips · Midjourney</span>
-          </div>
-          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'James speaks about his love for design and creating spaces that inspire.')">
+          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Christian · Catholic</span></div>
+          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">NIT Surathkal, B.Arch</span></div>
+          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Mangalore, Karnataka</span></div>
+          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Bengaluru, Karnataka</span></div>
+          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Marriage</span></div>
+          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Yoga · Carnatic Music · Filter Coffee</span></div>
+          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Rahul speaks about architecture, Carnatic music and his love for South Indian culture.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
@@ -2201,23 +2180,14 @@
           <div class="profile-meta" style="position:relative;z-index:2;">27 · Chennai, Tamil Nadu · Teacher</div>
         </div>
         <div class="profile-card-body">
-          <div class="profile-field">
-            <span class="field-label">Religion</span>
-            <span class="field-value">Jain · Digambar</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Education</span>
-            <span class="field-value">University of Madras, B.Ed</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Looking for</span>
-            <span class="field-value">Long-term Partnership</span>
-          </div>
-          <div class="profile-field">
-            <span class="field-label">Loves</span>
-            <span class="field-value">Tuscany · Afternoon Tea · Notion AI</span>
-          </div>
-          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Sophie talks warmly about her passion for caring for others and her love of the Cotswolds.')">
+          <div class="profile-field"><span class="field-icon">🕉️</span><span class="field-value">Jain · Digambar</span></div>
+          <div class="profile-field"><span class="field-icon">💍</span><span class="field-value">Never Married</span></div>
+          <div class="profile-field"><span class="field-icon">🎓</span><span class="field-value">University of Madras, B.Ed</span></div>
+          <div class="profile-field"><span class="field-icon">📍</span><span class="field-value">Native: Madurai, Tamil Nadu</span></div>
+          <div class="profile-field"><span class="field-icon">🏠</span><span class="field-value">Lives in: Chennai, Tamil Nadu</span></div>
+          <div class="profile-field"><span class="field-icon">💝</span><span class="field-value">Seeking: Long-term Partnership</span></div>
+          <div class="profile-field"><span class="field-icon">❤️</span><span class="field-value">Kolam · Cooking · Tamil Cinema</span></div>
+          <button class="profile-voice-btn" onclick="showToast('🎙️ Playing voice introduction...', 'Ananya talks about Tamil traditions, her love for teaching and family values.')">
             <div class="voice-wave">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
