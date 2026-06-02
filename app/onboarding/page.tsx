@@ -51,6 +51,7 @@ function OnboardingPage() {
   const [userId, setUserId] = useState('')
   const [draft, setDraft] = useState<Draft>(EMPTY)
   const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null)
+  const [voiceBlobEn, setVoiceBlobEn] = useState<Blob | null>(null)
   const [back1, setBack1] = useState<File | null>(null)
   const [back2, setBack2] = useState<File | null>(null)
   const [front, setFront] = useState<File | null>(null)
@@ -154,11 +155,14 @@ function OnboardingPage() {
       const supabase = createClient()
 
       let voicePath: string | null = null
+      const ext = MediaRecorder.isTypeSupported('audio/webm') ? 'webm' : 'mp4'
       if (voiceBlob) {
-        const ext = MediaRecorder.isTypeSupported('audio/webm') ? 'webm' : 'mp4'
         const { data, error: vErr } = await supabase.storage.from('profile-media').upload(`${userId}/voice.${ext}`, voiceBlob, { upsert: true })
         if (vErr) console.warn('Voice upload:', vErr.message)
         voicePath = data?.path ?? null
+      }
+      if (voiceBlobEn) {
+        await supabase.storage.from('profile-media').upload(`${userId}/voice-en.${ext}`, voiceBlobEn, { upsert: true })
       }
 
       // Only upload photos if new ones were selected
@@ -310,7 +314,7 @@ function OnboardingPage() {
           {step === 0 && <AboutStep data={draft} onChange={change} />}
           {step === 1 && <BackgroundStep data={{ religion: draft.religion, motherTongue: draft.motherTongue, education: draft.education, occupation: draft.occupation, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 2 && <PreferencesStep data={draft} onChange={change} />}
-          {step === 3 && <VoiceStep onVoiceChange={setVoiceBlob} hasRecording={!!voiceBlob} />}
+          {step === 3 && <VoiceStep onVoiceChange={setVoiceBlob} onVoiceEnChange={setVoiceBlobEn} hasRecording={!!voiceBlob} />}
           {step === 4 && <PhotosStep back1={back1} back2={back2} front={front} onPhotosChange={(b1, b2, f) => { setBack1(b1); setBack2(b2); setFront(f) }} />}
           {step === 5 && <PersonalityStep data={{ favReels: draft.favReels, favYoutube: draft.favYoutube, favWebSeries: draft.favWebSeries, favTravel: draft.favTravel, favFoods: draft.favFoods, favAiTools: draft.favAiTools, hobby: draft.hobby }} onChange={change} />}
           {step === 6 && <IdVerificationStep idCountry={draft.idCountry} idFile={idFile} onIdChange={(country, file) => { change('idCountry', country); setIdFile(file) }} />}
