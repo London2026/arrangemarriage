@@ -21,7 +21,12 @@ const c = {
 
 interface Draft {
   firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
-  religion: string; motherTongue: string; education: string; occupation: string; maritalStatus: string; hasKids: string
+  brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
+  housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string
+  religion: string; motherTongue: string
+  education: string; educationSubject: string; otherQualifications: string
+  occupation: string; occupationCity: string; annualSalary: string
+  maritalStatus: string; hasKids: string
   prefGender: string; prefAgeMin: string; prefAgeMax: string; prefLocation: string; prefReligion: string
   favReels: string; favYoutube: string; favWebSeries: string; favTravel: string; favFoods: string; favAiTools: string; hobby: string
   idCountry: string
@@ -29,7 +34,12 @@ interface Draft {
 
 const EMPTY: Draft = {
   firstName: '', lastName: '', age: '', gender: '', city: '', country: '', phone: '',
-  religion: '', motherTongue: '', education: '', occupation: '', maritalStatus: '', hasKids: '',
+  brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
+  housing: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
+  religion: '', motherTongue: '',
+  education: '', educationSubject: '', otherQualifications: '',
+  occupation: '', occupationCity: '', annualSalary: '',
+  maritalStatus: '', hasKids: '',
   prefGender: '', prefAgeMin: '18', prefAgeMax: '50', prefLocation: '', prefReligion: '',
   favReels: '', favYoutube: '', favWebSeries: '', favTravel: '', favFoods: '', favAiTools: '', hobby: '',
   idCountry: '',
@@ -123,8 +133,9 @@ function OnboardingPage() {
       if (!draft.gender) return 'Please select your gender.'
       if (!draft.city || !draft.country) return 'Please enter your city and country.'
     }
+    if (step === 0 && !draft.phone.trim()) return 'WhatsApp number is required.'
     if (step === 1 && (!draft.religion || !draft.motherTongue || !draft.education || !draft.occupation))
-      return 'Please complete all fields.'
+      return 'Please complete religion, mother tongue, education and occupation.'
     if (step === 2) {
       if (!draft.prefGender) return 'Please select who you are looking for.'
       if (parseInt(draft.prefAgeMin) >= parseInt(draft.prefAgeMax)) return 'Max age must be greater than min age.'
@@ -208,6 +219,14 @@ function OnboardingPage() {
         fav_foods: draft.favFoods || null, fav_ai_tools: draft.favAiTools || null,
         hobby: draft.hobby || null,
         id_country: draft.idCountry || null,
+        // New fields
+        brothers: draft.brothers || null, sisters: draft.sisters || null,
+        father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
+        housing: draft.housing || null, disability: draft.disability || null,
+        food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+        education_subject: draft.educationSubject || null,
+        other_qualifications: draft.otherQualifications || null,
+        occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
         onboarding_complete: true, updated_at: new Date().toISOString(),
       }
       if (idDocPath) update.id_document_path = idDocPath
@@ -245,6 +264,31 @@ function OnboardingPage() {
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/')
+  }
+
+  async function saveAndExit() {
+    setSaving(true)
+    try {
+      const supabase = createClient()
+      await supabase.from('profiles').upsert({
+        id: userId,
+        full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim() || null,
+        age: draft.age ? parseInt(draft.age) : null,
+        gender: draft.gender || null, city: draft.city || null, country: draft.country || null,
+        phone: draft.phone.trim() || null, religion: draft.religion || null,
+        mother_tongue: draft.motherTongue || null, education: draft.education || null,
+        occupation: draft.occupation || null, marital_status: draft.maritalStatus || null,
+        brothers: draft.brothers || null, sisters: draft.sisters || null,
+        father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
+        housing: draft.housing || null, disability: draft.disability || null,
+        food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+        education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
+        occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
+        hobby: draft.hobby || null,
+        updated_at: new Date().toISOString(),
+      })
+      router.push('/discover')
+    } catch { /* ignore */ } finally { setSaving(false) }
   }
 
   return (
@@ -311,8 +355,8 @@ function OnboardingPage() {
       <div className="ob-card">
 
         <div className="ob-card-inner">
-          {step === 0 && <AboutStep data={draft} onChange={change} />}
-          {step === 1 && <BackgroundStep data={{ religion: draft.religion, motherTongue: draft.motherTongue, education: draft.education, occupation: draft.occupation, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
+          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
+          {step === 1 && <BackgroundStep data={{ religion: draft.religion, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 2 && <PreferencesStep data={draft} onChange={change} />}
           {step === 3 && <VoiceStep onVoiceChange={setVoiceBlob} onVoiceEnChange={setVoiceBlobEn} hasRecording={!!voiceBlob} />}
           {step === 4 && <PhotosStep back1={back1} back2={back2} front={front} onPhotosChange={(b1, b2, f) => { setBack1(b1); setBack2(b2); setFront(f) }} />}
@@ -340,7 +384,17 @@ function OnboardingPage() {
         </div>
       </div>
 
-      <p style={{ marginTop: '1rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', letterSpacing: '0.1em', color: c.sepia, textAlign: 'center' }}>
+      {/* Save & Exit */}
+      <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <button onClick={saveAndExit} disabled={saving}
+          style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.sepia, background: 'none', border: `1px solid rgba(90,110,130,0.3)`, borderRadius: '4px', padding: '0.5rem 1.5rem', cursor: saving ? 'default' : 'pointer', transition: 'all 0.2s' }}>
+          💾 Save &amp; Exit
+        </button>
+        <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.82rem', color: c.sepia, margin: '0.4rem 0 0', lineHeight: 1.55 }}>
+          You can save your progress and come back anytime — everything entered so far will be saved.
+        </p>
+      </div>
+      <p style={{ marginTop: '0.75rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', letterSpacing: '0.1em', color: 'rgba(90,110,130,0.4)', textAlign: 'center' }}>
         Your data is encrypted and private
       </p>
     </div>
