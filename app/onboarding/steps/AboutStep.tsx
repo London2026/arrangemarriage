@@ -16,6 +16,7 @@ const SMOKE_ALC = ['No', 'Yes', 'Occasionally']
 interface Props {
   data: {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
+    height: string; weight: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
     housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string; hobby: string
   }
@@ -87,6 +88,12 @@ export default function AboutStep({ data, onChange }: Props) {
             ))}
           </div>
         </div>
+      </Row>
+
+      {/* Height + Weight */}
+      <Row>
+        <Inp lbl="Height" k="height" val={data.height} ph="e.g. 5ft 8in or 173 cm" onChange={onChange} />
+        <Inp lbl="Weight" k="weight" val={data.weight} ph="e.g. 70 kg" onChange={onChange} />
       </Row>
 
       {/* City + Country */}

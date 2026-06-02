@@ -21,6 +21,7 @@ const c = {
 
 interface Draft {
   firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
+  height: string; weight: string
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
   housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string
   religion: string; motherTongue: string
@@ -28,12 +29,14 @@ interface Draft {
   occupation: string; occupationCity: string; annualSalary: string
   maritalStatus: string; hasKids: string
   prefGender: string; prefAgeMin: string; prefAgeMax: string; prefLocation: string; prefReligion: string
+  prefEducation: string; prefHeight: string; prefCooking: string
   favReels: string; favYoutube: string; favWebSeries: string; favTravel: string; favFoods: string; favAiTools: string; hobby: string
   idCountry: string
 }
 
 const EMPTY: Draft = {
   firstName: '', lastName: '', age: '', gender: '', city: '', country: '', phone: '',
+  height: '', weight: '',
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
   housing: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
   religion: '', motherTongue: '',
@@ -41,6 +44,7 @@ const EMPTY: Draft = {
   occupation: '', occupationCity: '', annualSalary: '',
   maritalStatus: '', hasKids: '',
   prefGender: '', prefAgeMin: '18', prefAgeMax: '50', prefLocation: '', prefReligion: '',
+  prefEducation: '', prefHeight: '', prefCooking: '',
   favReels: '', favYoutube: '', favWebSeries: '', favTravel: '', favFoods: '', favAiTools: '', hobby: '',
   idCountry: '',
 }
@@ -114,6 +118,8 @@ function OnboardingPage() {
           hobby: profile.hobby ?? '',
           idCountry: profile.id_country ?? '',
           // New fields
+          height: profile.height ?? '',
+          weight: profile.weight ?? '',
           brothers: profile.brothers ?? '',
           sisters: profile.sisters ?? '',
           fatherOccupation: profile.father_occupation ?? '',
@@ -127,6 +133,9 @@ function OnboardingPage() {
           otherQualifications: profile.other_qualifications ?? '',
           occupationCity: profile.occupation_city ?? '',
           annualSalary: profile.annual_salary ?? '',
+          prefEducation: profile.pref_education ?? '',
+          prefHeight: profile.pref_height ?? '',
+          prefCooking: profile.pref_cooking ?? '',
         })
       } else {
         const rawName = (user.user_metadata?.full_name ?? '').trim()
@@ -241,6 +250,10 @@ function OnboardingPage() {
         education_subject: draft.educationSubject || null,
         other_qualifications: draft.otherQualifications || null,
         occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
+        height: draft.height || null, weight: draft.weight || null,
+        pref_education: draft.prefEducation || null,
+        pref_height: draft.prefHeight || null,
+        pref_cooking: draft.prefCooking || null,
         onboarding_complete: true, updated_at: new Date().toISOString(),
       }
       if (idDocPath) update.id_document_path = idDocPath
@@ -298,6 +311,10 @@ function OnboardingPage() {
         food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
         education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
         occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
+        height: draft.height || null, weight: draft.weight || null,
+        pref_education: draft.prefEducation || null,
+        pref_height: draft.prefHeight || null,
+        pref_cooking: draft.prefCooking || null,
         hobby: draft.hobby || null,
         updated_at: new Date().toISOString(),
       })
@@ -369,9 +386,9 @@ function OnboardingPage() {
       <div className="ob-card">
 
         <div className="ob-card-inner">
-          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
+          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
           {step === 1 && <BackgroundStep data={{ religion: draft.religion, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
-          {step === 2 && <PreferencesStep data={draft} onChange={change} />}
+          {step === 2 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking }} onChange={change} />}
           {step === 3 && <VoiceStep onVoiceChange={setVoiceBlob} onVoiceEnChange={setVoiceBlobEn} hasRecording={!!voiceBlob} />}
           {step === 4 && <PhotosStep back1={back1} back2={back2} front={front} onPhotosChange={(b1, b2, f) => { setBack1(b1); setBack2(b2); setFront(f) }} />}
           {step === 5 && <PersonalityStep data={{ favReels: draft.favReels, favYoutube: draft.favYoutube, favWebSeries: draft.favWebSeries, favTravel: draft.favTravel, favFoods: draft.favFoods, favAiTools: draft.favAiTools, hobby: draft.hobby }} onChange={change} />}
