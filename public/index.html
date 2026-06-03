@@ -1171,37 +1171,47 @@
   .safety-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    margin-top: 3rem;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
   }
 
   .safety-item {
     text-align: center;
-    padding: 2rem 1.5rem;
-    border: 1px solid rgba(139,111,71,0.25);
-    transition: border-color 0.3s;
+    padding: 2.25rem 1.75rem;
+    border: 1px solid rgba(29,82,82,0.15);
+    background: #fff;
+    border-radius: 10px;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
   }
 
-  .safety-item:hover { border-color: var(--rose); }
+  .safety-item:hover {
+    border-color: #1D5252;
+    box-shadow: 0 8px 28px rgba(29,82,82,0.1);
+    transform: translateY(-3px);
+  }
 
   .safety-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 2.75rem;
+    margin-bottom: 1.1rem;
     display: block;
+    line-height: 1;
   }
 
   .safety-item h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--deep-brown);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     font-style: italic;
   }
 
   .safety-item p {
-    font-size: 0.88rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
     color: var(--text-mid);
-    line-height: 1.6;
+    line-height: 1.7;
+    margin: 0;
   }
 
   /* REGISTRATION MODAL TEASER */
@@ -1925,7 +1935,7 @@
     .usp-cards { grid-template-columns: 1fr; }
 
     /* SAFETY */
-    .safety-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .safety-grid { grid-template-columns: 1fr 1fr; gap: 0.85rem; }
     .safety-item { padding: 1.2rem 1rem; }
     .safety-icon { font-size: 1.8rem; }
 
@@ -2736,7 +2746,7 @@
 </section>
 
 <!-- SAFETY -->
-<section class="section" id="safety">
+<section class="section" id="safety" style="background:var(--cream);">
   <div class="section-inner">
     <div class="section-header reveal">
       <span class="section-label">Your Protection</span>
