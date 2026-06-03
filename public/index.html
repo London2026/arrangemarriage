@@ -643,32 +643,35 @@
   }
 
   /* JOURNEY STEPS */
-  .journey-section { background: var(--cream); }
+  .journey-section { background: var(--parchment); }
 
   .steps-flow {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0;
-    margin-top: 3rem;
+    margin-top: 2.5rem;
     position: relative;
+    border: 1px solid rgba(29,82,82,0.12);
+    border-radius: 10px;
+    overflow: hidden;
   }
 
   .step-item {
     text-align: center;
-    padding: 2.5rem 2rem;
+    padding: 2rem 1.75rem;
     position: relative;
-    border: 1px solid rgba(139,111,71,0.2);
-    background: rgba(255,255,255,0.4);
-    transition: background 0.3s;
+    border: 1px solid rgba(29,82,82,0.15);
+    background: #fff;
+    transition: box-shadow 0.3s, transform 0.2s;
   }
 
-  .step-item:hover { background: rgba(255,255,255,0.7); }
+  .step-item:hover { box-shadow: 0 8px 28px rgba(29,82,82,0.10); transform: translateY(-3px); }
 
   .step-number {
     font-family: 'Playfair Display', serif;
     font-size: 3.5rem;
     font-weight: 700;
-    color: rgba(124,31,31,0.12);
+    color: rgba(29,82,82,0.1);
     line-height: 1;
     margin-bottom: 0.5rem;
   }
@@ -682,16 +685,18 @@
   .step-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--deep-brown);
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.65rem;
     font-style: italic;
   }
 
   .step-desc {
-    font-size: 0.9rem;
-    line-height: 1.7;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    line-height: 1.75;
     color: var(--text-mid);
+    margin: 0;
   }
 
   /* ONLINE MEETING SHOWCASE */
@@ -1757,40 +1762,41 @@
   }
 
   .flow-icon-wrap {
-    width: 64px;
-    height: 64px;
-    border: 2px solid var(--burgundy);
+    width: 68px;
+    height: 68px;
+    border: 2.5px solid #1D5252;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
+    margin: 0 auto 0.85rem;
     font-size: 1.5rem;
-    background: rgba(124,31,31,0.05);
+    background: rgba(255,255,255,0.8);
     transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 12px rgba(29,82,82,0.1);
   }
 
   .flow-node:hover .flow-icon-wrap {
-    background: rgba(124,31,31,0.12);
+    background: rgba(29,82,82,0.08);
     transform: scale(1.1);
   }
 
   .flow-label {
     font-family: 'Playfair Display', serif;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     color: var(--deep-brown);
     font-style: italic;
-    line-height: 1.4;
+    line-height: 1.35;
   }
 
   .flow-arrow {
     align-self: center;
-    color: var(--rose);
-    font-size: 1.5rem;
-    padding: 0 0.5rem;
+    color: #1D5252;
+    font-size: 1.1rem;
+    padding: 0 0.25rem;
     flex-shrink: 0;
-    margin-top: -1rem;
-    opacity: 0.5;
+    margin-top: -0.5rem;
+    opacity: 0.45;
   }
 
   /* ── HAMBURGER MENU ── */
