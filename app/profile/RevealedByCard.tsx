@@ -35,7 +35,7 @@ export default function RevealedByCard({ viewer }: { viewer: Viewer }) {
     }
   }
 
-  const meetingUrl = roomId && roomId !== 'pending' ? `https://meet.jit.si/SoulMate-${roomId}` : null
+  const meetingUrl = roomId && roomId !== 'pending' ? `https://meet.jit.si/ArrangeMarriage-${roomId}` : null
 
   return (
     <div style={{ background: 'rgba(14,26,53,0.6)', border: `1px solid ${c.border}`, borderRadius: '10px', overflow: 'hidden' }}>

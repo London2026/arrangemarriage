@@ -42,7 +42,7 @@ export default async function DiscoverPage() {
     .from('profiles')
     .select(`
       id, full_name, age, gender, city, country,
-      religion, mother_tongue, education, occupation, marital_status, has_kids, id_verified,
+      religion, caste, mother_tongue, education, occupation, marital_status, has_kids, id_verified,
       back_photo_1_path, back_photo_2_path, voice_path, front_photo_path,
       fav_reels, fav_youtube, fav_web_series, fav_travel, fav_foods, fav_ai_tools
     `)
@@ -101,6 +101,7 @@ export default async function DiscoverPage() {
     city: p.city,
     country: p.country,
     religion: p.religion,
+    caste: p.caste ?? null,
     mother_tongue: p.mother_tongue,
     education: p.education,
     occupation: p.occupation,

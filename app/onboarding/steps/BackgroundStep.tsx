@@ -19,7 +19,7 @@ const SALARY_OPTIONS = [
 
 interface Props {
   data: {
-    religion: string; motherTongue: string
+    religion: string; caste: string; motherTongue: string
     education: string; educationSubject: string; otherQualifications: string
     occupation: string; occupationCity: string; annualSalary: string
     maritalStatus: string; hasKids: string
@@ -40,7 +40,7 @@ export default function BackgroundStep({ data, onChange }: Props) {
       </p>
       <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginBottom: '1.25rem' }} />
 
-      {/* Religion + Mother Tongue */}
+      {/* Religion + Caste */}
       <Row>
         <div>
           <label style={label}>Religion</label>
@@ -50,11 +50,18 @@ export default function BackgroundStep({ data, onChange }: Props) {
           </select>
         </div>
         <div>
-          <label style={label}>Mother Tongue</label>
-          <input type="text" value={data.motherTongue} onChange={e => onChange('motherTongue', e.target.value)}
-            placeholder="e.g. Hindi, Tamil…" style={inp} onFocus={focus} onBlur={blur} />
+          <label style={label}>Caste</label>
+          <input type="text" value={data.caste} onChange={e => onChange('caste', e.target.value)}
+            placeholder="e.g. Brahmin, Kshatriya…" style={inp} onFocus={focus} onBlur={blur} />
         </div>
       </Row>
+
+      {/* Mother Tongue */}
+      <div style={field}>
+        <label style={label}>Mother Tongue</label>
+        <input type="text" value={data.motherTongue} onChange={e => onChange('motherTongue', e.target.value)}
+          placeholder="e.g. Hindi, Tamil…" style={inp} onFocus={focus} onBlur={blur} />
+      </div>
 
       {/* Education level + Subject */}
       <Row>

@@ -13,6 +13,7 @@ export interface ProfileData {
   city: string
   country: string
   religion: string
+  caste?: string | null
   mother_tongue: string
   education: string
   occupation: string
@@ -181,9 +182,13 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               {profile.age} yrs · {profile.city}, {profile.country}
             </p>
           </div>
-          <span className="pc-tag" style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, color: c.goldLight, borderRadius: '20px', flexShrink: 0, whiteSpace: 'nowrap' }}>
-            {profile.religion}
-          </span>
+          <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {[profile.religion, profile.caste].filter(Boolean).map(tag => (
+              <span key={tag} className="pc-tag" style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, color: c.goldLight, borderRadius: '20px', whiteSpace: 'nowrap' }}>
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
           {tags.map(tag => (

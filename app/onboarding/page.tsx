@@ -24,7 +24,7 @@ interface Draft {
   height: string; weight: string
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
   housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string
-  religion: string; motherTongue: string
+  religion: string; caste: string; motherTongue: string
   education: string; educationSubject: string; otherQualifications: string
   occupation: string; occupationCity: string; annualSalary: string
   maritalStatus: string; hasKids: string
@@ -39,7 +39,7 @@ const EMPTY: Draft = {
   height: '', weight: '',
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
   housing: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
-  religion: '', motherTongue: '',
+  religion: '', caste: '', motherTongue: '',
   education: '', educationSubject: '', otherQualifications: '',
   occupation: '', occupationCity: '', annualSalary: '',
   maritalStatus: '', hasKids: '',
@@ -62,6 +62,7 @@ function OnboardingPage() {
   const [ready, setReady] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [savedMsg, setSavedMsg] = useState('')
   const [userId, setUserId] = useState('')
   const [draft, setDraft] = useState<Draft>(EMPTY)
   const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null)
@@ -86,6 +87,9 @@ function OnboardingPage() {
       setUserId(user.id)
       setHasExistingPhotos(!!(profile?.back_photo_1_path && profile?.back_photo_2_path && profile?.front_photo_path))
       setHasExistingVoice(!!profile?.voice_path)
+      // Restore saved step
+      const savedStep = localStorage.getItem(`ob_step_${user.id}`)
+      if (savedStep) setStep(parseInt(savedStep))
       // Pre-fill draft with existing profile data when editing
       if (profile) {
         const rawName = (profile.full_name ?? user.user_metadata?.full_name ?? '').trim()
@@ -98,6 +102,7 @@ function OnboardingPage() {
           city: profile.city ?? '',
           country: profile.country ?? '',
           religion: profile.religion ?? '',
+          caste: profile.caste ?? '',
           motherTongue: profile.mother_tongue ?? '',
           education: profile.education ?? '',
           occupation: profile.occupation ?? '',
@@ -147,7 +152,7 @@ function OnboardingPage() {
     init()
   }, [router, isEdit])
 
-  function change(key: string, value: string) { setDraft(d => ({ ...d, [key]: value })); setError('') }
+  function change(key: string, value: string) { setDraft(d => ({ ...d, [key]: value })); setError(''); setSavedMsg('') }
 
   function validate(): string {
     if (step === 0) {
@@ -178,7 +183,12 @@ function OnboardingPage() {
     const msg = validate()
     if (msg) { setError(msg); return }
     setError('')
-    if (step < 6) { setStep(s => s + 1); return }
+    if (step < 6) {
+      const next = step + 1
+      setStep(next)
+      if (userId) localStorage.setItem(`ob_step_${userId}`, String(next))
+      return
+    }
 
     setSaving(true)
     try {
@@ -227,6 +237,7 @@ function OnboardingPage() {
         full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim(),
         age: parseInt(draft.age), gender: draft.gender,
         city: draft.city, country: draft.country, religion: draft.religion,
+        caste: draft.caste || null,
         mother_tongue: draft.motherTongue, education: draft.education, occupation: draft.occupation,
         marital_status: draft.maritalStatus || null, has_kids: draft.hasKids || null,
         pref_gender: draft.prefGender, pref_age_min: parseInt(draft.prefAgeMin),
@@ -261,6 +272,7 @@ function OnboardingPage() {
       const { error: dbErr } = await supabase.from('profiles').upsert(update)
 
       if (dbErr) throw dbErr
+      localStorage.removeItem(`ob_step_${userId}`)
       router.refresh()
       router.push(isEdit ? '/profile' : '/discover')
     } catch (err) {
@@ -289,41 +301,64 @@ function OnboardingPage() {
     router.push('/')
   }
 
+  async function saveToDb(): Promise<string | null> {
+    const supabase = createClient()
+    const { error: saveErr } = await supabase.from('profiles').upsert({
+      id: userId,
+      full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim() || null,
+      age: draft.age ? parseInt(draft.age) : null,
+      gender: draft.gender || null, city: draft.city || null, country: draft.country || null,
+      phone: draft.phone.trim() || null,
+      religion: draft.religion || null, caste: draft.caste || null,
+      mother_tongue: draft.motherTongue || null, education: draft.education || null,
+      occupation: draft.occupation || null, marital_status: draft.maritalStatus || null,
+      has_kids: draft.hasKids || null,
+      brothers: draft.brothers || null, sisters: draft.sisters || null,
+      father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
+      housing: draft.housing || null, disability: draft.disability || null,
+      food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+      education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
+      occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
+      height: draft.height || null, weight: draft.weight || null,
+      pref_gender: draft.prefGender || null,
+      pref_age_min: draft.prefAgeMin ? parseInt(draft.prefAgeMin) : null,
+      pref_age_max: draft.prefAgeMax ? parseInt(draft.prefAgeMax) : null,
+      pref_location: draft.prefLocation || null, pref_religion: draft.prefReligion || null,
+      pref_education: draft.prefEducation || null,
+      pref_height: draft.prefHeight || null, pref_cooking: draft.prefCooking || null,
+      fav_reels: draft.favReels || null, fav_youtube: draft.favYoutube || null,
+      fav_web_series: draft.favWebSeries || null, fav_travel: draft.favTravel || null,
+      fav_foods: draft.favFoods || null, fav_ai_tools: draft.favAiTools || null,
+      hobby: draft.hobby || null,
+      id_country: draft.idCountry || null,
+      updated_at: new Date().toISOString(),
+    })
+    if (saveErr) return saveErr.message + (saveErr.details ? ` — ${saveErr.details}` : '')
+    localStorage.setItem(`ob_step_${userId}`, String(step))
+    return null
+  }
+
+  async function saveProgress() {
+    if (!userId) { setError('Session expired. Please refresh the page.'); return }
+    setSaving(true)
+    setError('')
+    setSavedMsg('')
+    const err = await saveToDb()
+    setSaving(false)
+    if (err) { setError(err); return }
+    setSavedMsg('Progress saved!')
+    setTimeout(() => setSavedMsg(''), 3000)
+  }
+
   async function saveAndExit() {
     if (!userId) { setError('Session expired. Please refresh the page.'); return }
     setSaving(true)
     setError('')
-    try {
-      const supabase = createClient()
-      const { error: saveErr } = await supabase.from('profiles').upsert({
-        id: userId,
-        full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim() || null,
-        age: draft.age ? parseInt(draft.age) : null,
-        gender: draft.gender || null, city: draft.city || null, country: draft.country || null,
-        phone: draft.phone.trim() || null, religion: draft.religion || null,
-        mother_tongue: draft.motherTongue || null, education: draft.education || null,
-        occupation: draft.occupation || null, marital_status: draft.maritalStatus || null,
-        brothers: draft.brothers || null, sisters: draft.sisters || null,
-        father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
-        housing: draft.housing || null, disability: draft.disability || null,
-        food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
-        education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
-        occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
-        height: draft.height || null, weight: draft.weight || null,
-        pref_education: draft.prefEducation || null,
-        pref_height: draft.prefHeight || null,
-        pref_cooking: draft.prefCooking || null,
-        hobby: draft.hobby || null,
-        updated_at: new Date().toISOString(),
-      })
-      if (saveErr) throw saveErr
-      // Redirect to home — user can sign back in to continue onboarding
-      router.push('/?saved=1')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save. Please try again.')
-    } finally {
-      setSaving(false)
-    }
+    setSavedMsg('')
+    const err = await saveToDb()
+    setSaving(false)
+    if (err) { setError(err); return }
+    router.push('/?saved=1')
   }
 
   return (
@@ -393,7 +428,7 @@ function OnboardingPage() {
 
         <div className="ob-card-inner">
           {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
-          {step === 1 && <BackgroundStep data={{ religion: draft.religion, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
+          {step === 1 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 2 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking }} onChange={change} />}
           {step === 3 && <VoiceStep onVoiceChange={setVoiceBlob} onVoiceEnChange={setVoiceBlobEn} hasRecording={!!voiceBlob} />}
           {step === 4 && <PhotosStep back1={back1} back2={back2} front={front} onPhotosChange={(b1, b2, f) => { setBack1(b1); setBack2(b2); setFront(f) }} />}
@@ -405,15 +440,26 @@ function OnboardingPage() {
               {error}
             </div>
           )}
+          {savedMsg && (
+            <div style={{ marginTop: '1rem', background: 'rgba(29,82,82,0.07)', border: '1px solid rgba(29,82,82,0.25)', borderRadius: '4px', padding: '0.65rem 0.9rem', color: '#1d5252', fontSize: '0.9rem', fontFamily: '"Cormorant Garamond", serif', textAlign: 'center' }}>
+              ✓ {savedMsg}
+            </div>
+          )}
         </div>
 
         {/* Navigation */}
-        <div className="ob-nav" style={{ justifyContent: step > 0 ? 'space-between' : 'flex-end' }}>
-          {step > 0 && (
-            <button onClick={() => { setStep(s => s - 1); setError('') }} disabled={saving} className="ob-btn-back">
-              ← Back
+        <div className="ob-nav" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {step > 0 && (
+              <button onClick={() => { const prev = step - 1; setStep(prev); setError(''); setSavedMsg(''); if (userId) localStorage.setItem(`ob_step_${userId}`, String(prev)) }} disabled={saving} className="ob-btn-back">
+                ← Back
+              </button>
+            )}
+            <button onClick={saveProgress} disabled={saving} className="ob-btn-back"
+              style={{ color: '#1d5252', borderColor: 'rgba(29,82,82,0.35)' }}>
+              {saving ? '…' : '💾 Save'}
             </button>
-          )}
+          </div>
           <button onClick={handleNext} disabled={saving} className="ob-btn-next"
             style={{ background: saving ? c.navyMid : c.navy, color: c.goldLight, cursor: saving ? 'default' : 'pointer' }}>
             {saving ? 'Saving…' : step === 6 ? (isEdit ? 'Save Changes ✓' : 'Complete Profile ✓') : 'Continue →'}

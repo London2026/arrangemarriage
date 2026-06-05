@@ -288,7 +288,7 @@ export default async function ProfilePage() {
             </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {[profile.religion, profile.mother_tongue, profile.education, profile.occupation, profile.marital_status, profile.has_kids]
+              {[profile.religion, profile.caste, profile.mother_tongue, profile.education, profile.occupation, profile.marital_status, profile.has_kids]
                 .filter(Boolean)
                 .map((tag) => (
                   <span key={tag} style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.08em', padding: '0.3rem 0.85rem', background: 'rgba(201,168,76,0.08)', border: `1px solid rgba(201,168,76,0.18)`, borderRadius: '20px', color: c.goldLight }}>

@@ -49,7 +49,7 @@ export default function PrivacyPage() {
             'Face/reveal photo (hidden until you choose to reveal)',
             'Voice introduction recording',
             'Personality and interest information',
-            'Subscription and billing information (processed by Stripe)',
+            'Subscription and billing information (processed by Razorpay)',
           ].map(item => <li key={item} style={li}>{item}</li>)}
         </ul>
 
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
         <ul style={{ paddingLeft: '1.5rem', margin: '0 0 0.9rem' }}>
           {[
             'Supabase — secure database and file storage (EU/US servers)',
-            'Stripe — payment processing (PCI-DSS compliant, no card data stored by us)',
+            'Razorpay — payment processing (PCI-DSS compliant, no card data stored by us)',
             'Vercel — website hosting',
             'Anthropic Claude — AI-powered compatibility matching (no data retained)',
             'Jitsi Meet — video calls (end-to-end encrypted, no data stored)',

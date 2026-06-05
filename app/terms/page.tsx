@@ -54,7 +54,7 @@ export default function TermsPage() {
           Arrange Marriage offers a Free plan and paid subscription plans (Starter and Premium). Paid subscriptions are billed monthly. By subscribing to a paid plan, you authorise Arrange Marriage to charge your payment method on a recurring monthly basis until you cancel.
         </p>
         <p style={p}>
-          All payments are processed securely through Stripe. Arrange Marriage does not store your card details. Prices are displayed in INR and may be subject to currency conversion by your bank.
+          All payments are processed securely through Razorpay. Arrange Marriage does not store your card details. Prices are displayed in INR.
         </p>
 
         <h2 style={h2}>4. Cancellation Policy</h2>
