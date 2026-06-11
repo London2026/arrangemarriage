@@ -1956,9 +1956,6 @@
 
     /* DEMO BANNER */
 
-    /* BLOOD TEST */
-    .bloodtest-list { grid-template-columns: 1fr !important; }
-
     .demo-banner { font-size: 0.65rem; letter-spacing: 0.1em; padding: 0.7rem; }
 
     /* SCROLL HINT */
@@ -1968,62 +1965,6 @@
 
   /* ── BLOOD TEST SECTION ── */
   .bloodtest-section { background: var(--parchment); border-top: 1px solid rgba(29,82,82,0.1); }
-
-  .bloodtest-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.75rem;
-    margin-top: 1.75rem;
-  }
-
-  .bloodtest-item {
-    background: #fff;
-    border: 1px solid rgba(29,82,82,0.15);
-    border-left: 3px solid var(--burgundy);
-    border-radius: 6px;
-    padding: 0.85rem 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
-  }
-
-  .bloodtest-item-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
-
-  .bloodtest-item-name {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: var(--deep-brown);
-    line-height: 1.4;
-    margin: 0 0 0.2rem;
-  }
-
-  .bloodtest-item-sub {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.58rem;
-    letter-spacing: 0.06em;
-    color: var(--sepia);
-    margin: 0;
-  }
-
-  .bloodtest-women-tag {
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.52rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    background: rgba(196,120,32,0.1);
-    color: var(--rose);
-    border: 1px solid rgba(196,120,32,0.3);
-    border-radius: 20px;
-    padding: 0.1rem 0.4rem;
-    white-space: nowrap;
-    margin-left: 0.3rem;
-  }
-
-  @media (max-width: 900px) { .bloodtest-list { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .bloodtest-list { grid-template-columns: 1fr; } }
 
   /* Big health note cards (HIV / Privacy) */
   .bloodtest-notes {
@@ -2868,45 +2809,6 @@
       <p class="section-sub" style="max-width:600px;margin:0 auto;">
         A healthy marriage begins with informed, honest conversations about health — for you, your partner, and your future family.
       </p>
-    </div>
-
-    <!-- Checklist -->
-    <div class="bloodtest-list reveal">
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🔴</span>
-        <div><p class="bloodtest-item-name">HIV 1 &amp; 2</p><p class="bloodtest-item-sub">Antibody / Antigen Test</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🟠</span>
-        <div><p class="bloodtest-item-name">Syphilis</p><p class="bloodtest-item-sub">VDRL / RPR Test</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🟡</span>
-        <div><p class="bloodtest-item-name">Hepatitis B</p><p class="bloodtest-item-sub">HBsAg Surface Antigen</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🔶</span>
-        <div><p class="bloodtest-item-name">Hepatitis C</p><p class="bloodtest-item-sub">Anti-HCV Antibody Test</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🩸</span>
-        <div><p class="bloodtest-item-name">Blood Group &amp; Rh Typing</p><p class="bloodtest-item-sub">ABO &amp; Rh Factor</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🧬</span>
-        <div><p class="bloodtest-item-name">Thalassaemia Screening</p><p class="bloodtest-item-sub">Haemoglobin Electrophoresis</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🔬</span>
-        <div><p class="bloodtest-item-name">Complete Blood Count</p><p class="bloodtest-item-sub">CBC / Full Blood Count</p></div>
-      </div>
-      <div class="bloodtest-item">
-        <span class="bloodtest-item-icon">🌸</span>
-        <div>
-          <p class="bloodtest-item-name">Rubella Antibodies <span class="bloodtest-women-tag">Women</span></p>
-          <p class="bloodtest-item-sub">IgG Serology Test</p>
-        </div>
-      </div>
     </div>
 
     <!-- HIV + Privacy notes -->
