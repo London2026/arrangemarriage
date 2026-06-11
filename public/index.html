@@ -2025,6 +2025,73 @@
   @media (max-width: 900px) { .bloodtest-list { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px) { .bloodtest-list { grid-template-columns: 1fr; } }
 
+  /* Big health note cards (HIV / Privacy) */
+  .bloodtest-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+  }
+
+  .bloodtest-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background: #fff;
+    border: 1px solid rgba(29,82,82,0.12);
+    border-radius: 10px;
+    padding: 1.75rem 2rem;
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+
+  .bloodtest-note:hover {
+    box-shadow: 0 8px 28px rgba(13,31,60,0.08);
+    transform: translateY(-3px);
+  }
+
+  .bloodtest-note--alert { border-left: 4px solid #dc2626; }
+  .bloodtest-note--privacy { border-left: 4px solid var(--burgundy); }
+
+  .bloodtest-note-icon { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+
+  .bloodtest-note-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 20px;
+    padding: 0.35rem 0.9rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .bloodtest-note-badge--alert { background: rgba(220,38,38,0.08); color: #dc2626; border: 1px solid rgba(220,38,38,0.25); }
+  .bloodtest-note-badge--privacy { background: rgba(29,82,82,0.08); color: var(--burgundy); border: 1px solid rgba(29,82,82,0.25); }
+
+  .bloodtest-note h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--deep-brown);
+    margin: 0 0 0.5rem;
+  }
+
+  .bloodtest-note p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 1.75;
+    margin: 0;
+  }
+
+  @media (max-width: 600px) {
+    .bloodtest-note { flex-direction: column; gap: 0.75rem; padding: 1.25rem 1.25rem; }
+    .bloodtest-note-icon { font-size: 2rem; }
+  }
+
   /* ── VERY SMALL (≤380px) ── */
   @media (max-width: 380px) {
     .hero h1 { font-size: 1.85rem; }
@@ -2795,13 +2862,11 @@
 <section class="section bloodtest-section" id="bloodtest">
   <div class="section-inner">
     <div class="section-header reveal">
-      <span class="section-label">Health &amp; Safety</span>
-      <h2 class="section-title">Pre-Marriage <em>Blood Tests</em></h2>
-      <div class="ornament-divider"><span class="ornament-heart">🩸</span></div>
+      <span class="section-label">Health &amp; Wellbeing</span>
+      <h2 class="section-title">Your Health <em>Matters</em></h2>
+      <div class="ornament-divider"><span class="ornament-heart">♥</span></div>
       <p class="section-sub" style="max-width:600px;margin:0 auto;">
-        Once both partners agree to proceed, Arrange Marriage requires each person to submit a recent
-        pre-marriage blood test report — a shared commitment to transparency, health, and the wellbeing
-        of each other and your future family.
+        A healthy marriage begins with informed, honest conversations about health — for you, your partner, and your future family.
       </p>
     </div>
 
@@ -2845,21 +2910,23 @@
     </div>
 
     <!-- HIV + Privacy notes -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.25rem;" class="reveal">
-      <div style="background:#fff;border:1px solid rgba(220,38,38,0.2);border-left:3px solid #dc2626;border-radius:6px;padding:1rem 1.1rem;display:flex;gap:0.75rem;align-items:flex-start;">
-        <span style="font-size:1.2rem;flex-shrink:0;">⚠️</span>
+    <div class="bloodtest-notes reveal">
+      <div class="bloodtest-note bloodtest-note--alert">
+        <span class="bloodtest-note-icon">💧</span>
         <div>
-          <p style="font-family:'Raleway',sans-serif;font-size:0.65rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#dc2626;margin:0 0 0.35rem;">HIV Testing Before Marriage</p>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--text-mid);line-height:1.7;margin:0;">
+          <span class="bloodtest-note-badge bloodtest-note-badge--alert">⚠ Recommended Before Marriage</span>
+          <h3>HIV Testing Before Marriage</h3>
+          <p>
             HIV testing before marriage protects both partners and future children. Many people are unaware of their status as the virus can remain asymptomatic for years. Early detection enables timely treatment and prevents transmission.
           </p>
         </div>
       </div>
-      <div style="background:#fff;border:1px solid rgba(29,82,82,0.15);border-left:3px solid var(--burgundy);border-radius:6px;padding:1rem 1.1rem;display:flex;gap:0.75rem;align-items:flex-start;">
-        <span style="font-size:1.2rem;flex-shrink:0;">🔒</span>
+      <div class="bloodtest-note bloodtest-note--privacy">
+        <span class="bloodtest-note-icon">🔒</span>
         <div>
-          <p style="font-family:'Raleway',sans-serif;font-size:0.65rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--burgundy);margin:0 0 0.35rem;">Complete Privacy</p>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--text-mid);line-height:1.7;margin:0;">
+          <span class="bloodtest-note-badge bloodtest-note-badge--privacy">🔒 Complete Privacy</span>
+          <h3>Your Reports Stay Private</h3>
+          <p>
             All reports are stored with end-to-end encryption and shared only between the two consenting parties. Reports are never disclosed to family members or third parties without explicit consent.
           </p>
         </div>
