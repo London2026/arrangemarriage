@@ -15,6 +15,7 @@ interface Props {
     preferred_date?: string | null
     preferred_time?: string | null
     message?: string | null
+    family_member?: string | null
   }
 }
 
@@ -64,6 +65,11 @@ export default function MeetingCard({ meeting }: Props) {
           {dateStr && (
             <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.goldLight, margin: '0 0 0.15rem', letterSpacing: '0.06em' }}>
               📅 {dateStr}{meeting.preferred_time ? ` at ${meeting.preferred_time}` : ''}
+            </p>
+          )}
+          {meeting.family_member && (
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.ivoryDim, margin: '0 0 0.15rem', letterSpacing: '0.04em' }}>
+              👥 Joining: {meeting.family_member}
             </p>
           )}
           {meeting.message && (

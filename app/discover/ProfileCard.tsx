@@ -126,6 +126,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   const [showForm, setShowForm] = useState(false)
   const [meetDate, setMeetDate] = useState('')
   const [meetTime, setMeetTime] = useState('18:00')
+  const [meetFamilyMember, setMeetFamilyMember] = useState('')
   const [meetMsg, setMeetMsg] = useState('')
   const [meetSent, setMeetSent] = useState(false)
   const [meetError, setMeetError] = useState('')
@@ -177,7 +178,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
     if (!meetDate) { setMeetError('Please select a preferred date.'); return }
     setRequesting(true); setMeetError('')
     try {
-      await requestVideoMeeting(profile.id, meetDate, meetTime, meetMsg || `I'd love to connect with you!`)
+      await requestVideoMeeting(profile.id, meetDate, meetTime, meetMsg || `I'd love to connect with you!`, meetFamilyMember)
       setMeetSent(true); setShowForm(false)
     } catch (err) {
       setMeetError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -505,6 +506,11 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                 <input type="time" required value={meetTime} onChange={e => setMeetTime(e.target.value)}
                   style={{ width: '100%', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', boxSizing: 'border-box', colorScheme: 'dark' }} />
               </div>
+            </div>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.3rem' }}>Family Member Joining (optional)</label>
+              <input type="text" value={meetFamilyMember} onChange={e => setMeetFamilyMember(e.target.value)} placeholder="e.g. My Mom, My Dad, My Uncle"
+                style={{ width: '100%', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', boxSizing: 'border-box' }} />
             </div>
             <div style={{ marginBottom: '0.75rem' }}>
               <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.3rem' }}>Message</label>

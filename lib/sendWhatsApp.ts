@@ -64,10 +64,12 @@ export async function sendMeetingRequestWhatsApp(
   requesterName: string,
   dateStr: string,
   time: string,
+  familyMember: string = '',
 ) {
   await twilioSend(toPhone, [
     `📅 *Arrange Marriage* — Hi ${recipientFirstName},`,
     `*${requesterName}* has requested a video meeting with you on *${dateStr}* at *${time}*.`,
+    ...(familyMember ? [`👥 Joining: *${familyMember}*`] : []),
     `Log in to accept or decline:`,
     `https://arrangemarriage.live/profile`,
   ].join('\n'))

@@ -109,7 +109,8 @@ export async function sendMeetingRequestEmail(
   requesterName: string,
   dateStr: string,
   time: string,
-  message: string
+  message: string,
+  familyMember: string = ''
 ) {
   const subject = `📅 ${requesterName} wants to meet you on Arrange Marriage`
   const html = wrap(`
@@ -125,6 +126,7 @@ export async function sendMeetingRequestEmail(
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">Meeting Details</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 4px;">📅 ${dateStr}</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">🕐 ${time}</p>
+      ${familyMember ? `<p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">👥 Joining: ${familyMember}</p>` : ''}
       ${message ? `<p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;font-style:italic;margin:8px 0 0;">"${message}"</p>` : ''}
     </div>
     <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 28px;">

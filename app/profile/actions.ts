@@ -10,7 +10,8 @@ export async function requestVideoMeeting(
   recipientId: string,
   preferredDate: string,
   preferredTime: string,
-  message: string
+  message: string,
+  familyMember: string = ''
 ): Promise<{ meetingId: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -44,6 +45,7 @@ export async function requestVideoMeeting(
     preferred_date: preferredDate || null,
     preferred_time: preferredTime || null,
     message: message || null,
+    family_member: familyMember || null,
   }).select('id').single()
 
   if (fullInsert.error) {
@@ -64,11 +66,13 @@ export async function requestVideoMeeting(
 
   const dateStr = new Date(preferredDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
 
+  const familyMemberNote = familyMember ? ` ${name} will be joined by ${familyMember}.` : ''
+
   await supabase.from('notifications').insert({
     recipient_id: recipientId,
     sender_id: user.id,
     type: 'video_meeting_request',
-    message: `${name} has requested a video meeting on ${dateStr} at ${preferredTime}. Message: "${message}"`,
+    message: `${name} has requested a video meeting on ${dateStr} at ${preferredTime}. Message: "${message}"${familyMemberNote}`,
   })
 
   // Email + WhatsApp the recipient
@@ -83,10 +87,10 @@ export async function requestVideoMeeting(
   const safeTime = preferredTime || 'time to be confirmed'
   await Promise.all([
     recipientEmail
-      ? sendMeetingRequestEmail(recipientEmail, recipientFirstName, name, safeDateStr, safeTime, message)
+      ? sendMeetingRequestEmail(recipientEmail, recipientFirstName, name, safeDateStr, safeTime, message, familyMember)
       : Promise.resolve(),
     recipientProfile?.phone
-      ? sendMeetingRequestWhatsApp(recipientProfile.phone, recipientFirstName, name, safeDateStr, safeTime)
+      ? sendMeetingRequestWhatsApp(recipientProfile.phone, recipientFirstName, name, safeDateStr, safeTime, familyMember)
       : Promise.resolve(),
   ])
 
