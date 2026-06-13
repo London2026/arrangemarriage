@@ -37,19 +37,27 @@ export default async function DiscoverPage() {
   const planLimit    = PLAN_LIMITS[userPlan] ?? 0
   const meetingsLeft = Math.max(0, planLimit + (extraPurchased ?? 0) - (meetingsSent ?? 0))
 
-  // Fetch all complete profiles except the current user
-  const { data: rows } = await supabase
-    .from('profiles')
-    .select(`
-      id, full_name, age, gender, city, country,
-      religion, caste, mother_tongue, education, occupation, marital_status, has_kids, id_verified,
-      back_photo_1_path, back_photo_2_path, voice_path, front_photo_path,
-      fav_reels, fav_youtube, fav_web_series, fav_travel, fav_foods, fav_ai_tools
-    `)
-    .eq('onboarding_complete', true)
-    .neq('id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(30)
+  const PROFILE_SELECT = `
+    id, full_name, age, gender, city, country,
+    religion, caste, mother_tongue, education, education_subject, other_qualifications,
+    occupation, occupation_city, annual_salary, marital_status, has_kids, id_verified,
+    height, weight, brothers, sisters, father_occupation, mother_occupation,
+    housing, disability, food_habits, smoking, alcohol, hobby,
+    back_photo_1_path, back_photo_2_path, voice_path, voice_en_path, front_photo_path,
+    fav_reels, fav_youtube, fav_web_series, fav_travel, fav_foods, fav_ai_tools,
+    pref_gender, pref_age_min, pref_age_max, pref_religion, pref_caste, pref_location,
+    pref_education, pref_height, pref_cooking, pref_other
+  `
+
+  // Fetch own profile + all other complete profiles in parallel
+  const [{ data: ownRow }, { data: rows }] = await Promise.all([
+    supabase.from('profiles').select(PROFILE_SELECT).eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select(PROFILE_SELECT)
+      .eq('onboarding_complete', true)
+      .neq('id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(30),
+  ])
 
   // Which profiles has the current user already revealed?
   const { data: myReveals } = await supabase
@@ -73,13 +81,15 @@ export default async function DiscoverPage() {
 
   // Collect all storage paths we need signed URLs for
   const allPaths: string[] = []
-  for (const p of rows ?? []) {
+  const addPaths = (p: Record<string, string | null | undefined>, includeFront = true) => {
     if (p.back_photo_1_path) allPaths.push(p.back_photo_1_path)
     if (p.back_photo_2_path) allPaths.push(p.back_photo_2_path)
     if (p.voice_path) allPaths.push(p.voice_path)
-    // front photo only for already-revealed profiles
-    if (revealedSet.has(p.id) && p.front_photo_path) allPaths.push(p.front_photo_path)
+    if (p.voice_en_path) allPaths.push(p.voice_en_path)
+    if (includeFront && p.front_photo_path) allPaths.push(p.front_photo_path)
   }
+  if (ownRow) addPaths(ownRow as Record<string, string | null | undefined>, true)
+  for (const p of rows ?? []) addPaths(p as Record<string, string | null | undefined>, true)
 
   // Batch sign all URLs in one call
   const urlMap: Record<string, string> = {}
@@ -93,38 +103,70 @@ export default async function DiscoverPage() {
     }
   }
 
-  const profiles: ProfileData[] = (rows ?? []).map((p) => ({
-    id: p.id,
-    full_name: p.full_name,
-    age: p.age,
-    gender: p.gender,
-    city: p.city,
-    country: p.country,
-    religion: p.religion,
-    caste: p.caste ?? null,
-    mother_tongue: p.mother_tongue,
-    education: p.education,
-    occupation: p.occupation,
-    marital_status: p.marital_status ?? null,
-    has_kids: p.has_kids ?? null,
-    id_verified: p.id_verified ?? false,
-    back_photo_1_url: p.back_photo_1_path ? (urlMap[p.back_photo_1_path] ?? null) : null,
-    back_photo_2_url: p.back_photo_2_path ? (urlMap[p.back_photo_2_path] ?? null) : null,
-    voice_url: p.voice_path ? (urlMap[p.voice_path] ?? null) : null,
-    front_photo_url:
-      revealedSet.has(p.id) && p.front_photo_path
-        ? (urlMap[p.front_photo_path] ?? null)
-        : null,
-    already_revealed: revealedSet.has(p.id),
-    meeting_room_id: meetingByOther[p.id]?.room_id ?? null,
-    meeting_status: meetingByOther[p.id]?.status ?? null,
-    fav_reels: p.fav_reels ?? null,
-    fav_youtube: p.fav_youtube ?? null,
-    fav_web_series: p.fav_web_series ?? null,
-    fav_travel: p.fav_travel ?? null,
-    fav_foods: p.fav_foods ?? null,
-    fav_ai_tools: p.fav_ai_tools ?? null,
-  }))
+  function mapProfile(p: NonNullable<typeof ownRow>, revealFront: boolean): ProfileData {
+    return {
+      id: p.id,
+      full_name: p.full_name,
+      age: p.age,
+      gender: p.gender,
+      city: p.city,
+      country: p.country,
+      religion: p.religion,
+      caste: p.caste ?? null,
+      mother_tongue: p.mother_tongue,
+      education: p.education,
+      occupation: p.occupation,
+      marital_status: p.marital_status ?? null,
+      has_kids: p.has_kids ?? null,
+      id_verified: p.id_verified ?? false,
+      back_photo_1_url: p.back_photo_1_path ? (urlMap[p.back_photo_1_path] ?? null) : null,
+      back_photo_2_url: p.back_photo_2_path ? (urlMap[p.back_photo_2_path] ?? null) : null,
+      voice_url: p.voice_path ? (urlMap[p.voice_path] ?? null) : null,
+      voice_en_url: p.voice_en_path ? (urlMap[p.voice_en_path] ?? null) : null,
+      // Always provide front photo URL (shown blurred until revealed)
+      front_photo_url: p.front_photo_path ? (urlMap[p.front_photo_path] ?? null) : null,
+      already_revealed: revealFront,
+      meeting_room_id: null,
+      meeting_status: null,
+      height: p.height ?? null, weight: p.weight ?? null,
+      brothers: p.brothers ?? null, sisters: p.sisters ?? null,
+      father_occupation: p.father_occupation ?? null, mother_occupation: p.mother_occupation ?? null,
+      housing: p.housing ?? null, disability: p.disability ?? null,
+      food_habits: p.food_habits ?? null, smoking: p.smoking ?? null, alcohol: p.alcohol ?? null,
+      hobby: p.hobby ?? null,
+      education_subject: p.education_subject ?? null,
+      other_qualifications: p.other_qualifications ?? null,
+      occupation_city: p.occupation_city ?? null,
+      annual_salary: p.annual_salary ?? null,
+      fav_reels: p.fav_reels ?? null,
+      fav_youtube: p.fav_youtube ?? null,
+      fav_web_series: p.fav_web_series ?? null,
+      fav_travel: p.fav_travel ?? null,
+      fav_foods: p.fav_foods ?? null,
+      fav_ai_tools: p.fav_ai_tools ?? null,
+      pref_gender: p.pref_gender ?? null,
+      pref_age_min: p.pref_age_min ?? null,
+      pref_age_max: p.pref_age_max ?? null,
+      pref_religion: p.pref_religion ?? null,
+      pref_caste: p.pref_caste ?? null,
+      pref_location: p.pref_location ?? null,
+      pref_education: p.pref_education ?? null,
+      pref_height: p.pref_height ?? null,
+      pref_cooking: p.pref_cooking ?? null,
+      pref_other: p.pref_other ?? null,
+    }
+  }
+
+  // Own profile: show exactly as others see it — front photo blurred, not revealed
+  const ownProfile: ProfileData | null = ownRow ? { ...mapProfile(ownRow, false), already_revealed: false } : null
+
+  const profiles: ProfileData[] = (rows ?? []).map(p => {
+    const base = mapProfile(p, revealedSet.has(p.id))
+    base.meeting_room_id = meetingByOther[p.id]?.room_id ?? null
+    base.meeting_status  = meetingByOther[p.id]?.status ?? null
+    if (revealedSet.has(p.id) && p.front_photo_path) base.front_photo_url = urlMap[p.front_photo_path] ?? null
+    return base
+  })
 
   // Fetch unread notifications for the current user
   const { data: notifications } = await supabase
@@ -169,7 +211,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} ownProfile={ownProfile} />
         )}
       </main>
     </div>

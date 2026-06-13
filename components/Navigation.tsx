@@ -174,7 +174,7 @@ export default function Navigation() {
                     {user.plan !== 'free' && (
                       <BillingButton onClose={() => setOpen(false)} />
                     )}
-                    <a href="mailto:support@arrangemarriage.live" onClick={() => setOpen(false)}
+                    <a href="/contact" onClick={() => setOpen(false)}
                       style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', letterSpacing: '0.06em', color: c.ivoryDim, textDecoration: 'none', padding: '0.55rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       ❓ Help &amp; Support
                     </a>

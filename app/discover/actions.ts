@@ -26,22 +26,23 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
       viewed_id: viewedUserId,
     })
 
-    const [meRes, ownerRes] = await Promise.all([
-      supabase.from('profiles').select('full_name').eq('id', user.id).single(),
-      supabase.from('profiles').select('full_name, phone').eq('id', viewedUserId).single(),
-    ])
-    const viewerName = meRes.data?.full_name ?? 'Someone'
+    // Format date/time in IST
+    const now = new Date()
+    const istOpts: Intl.DateTimeFormatOptions = { timeZone: 'Asia/Kolkata', hour12: true }
+    const dateStr = now.toLocaleDateString('en-IN', { ...istOpts, day: 'numeric', month: 'long', year: 'numeric' })
+    const timeStr = now.toLocaleTimeString('en-IN', { ...istOpts, hour: '2-digit', minute: '2-digit' })
+
+    const ownerRes = await supabase.from('profiles').select('full_name, phone').eq('id', viewedUserId).single()
     const ownerName  = ownerRes.data?.full_name ?? ''
     const ownerPhone = ownerRes.data?.phone ?? null
+    const viewerProfileId = user.id.slice(0, 8).toUpperCase()
 
     await supabase.from('notifications').insert({
       recipient_id: viewedUserId,
       sender_id: user.id,
       type: 'photo_revealed',
-      message: `Your photo was seen today by ${viewerName}. Would you like to check their profile? There is a chance that you may receive a request for an online video meeting.`,
+      message: `Today on ${dateStr} at ${timeStr} IST, your profile was viewed by Profile #${viewerProfileId}. You may receive a video call request — would you like to see their profile? Log in to Discover and search for #${viewerProfileId}.`,
     })
-
-    const viewerProfileId = user.id.slice(0, 8).toUpperCase()
 
     // Email + WhatsApp the photo owner
     const admin = createAdminClient()
@@ -49,10 +50,10 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
     const ownerEmail = ownerAuth?.user?.email
     await Promise.all([
       ownerEmail
-        ? sendPhotoRevealedEmail(ownerEmail, firstNameOnly(ownerName), viewerProfileId)
+        ? sendPhotoRevealedEmail(ownerEmail, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
         : Promise.resolve(),
       ownerPhone
-        ? sendPhotoRevealWhatsApp(ownerPhone, firstNameOnly(ownerName), viewerProfileId)
+        ? sendPhotoRevealWhatsApp(ownerPhone, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
         : Promise.resolve(),
     ])
   }

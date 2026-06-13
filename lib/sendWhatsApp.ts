@@ -34,12 +34,27 @@ async function twilioSend(toPhone: string, body: string) {
   }
 }
 
-export async function sendPhotoRevealWhatsApp(toPhone: string, ownerFirstName: string, viewerProfileId: string) {
+export async function sendPhotoRevealWhatsApp(
+  toPhone: string,
+  ownerFirstName: string,
+  viewerProfileId: string,
+  dateStr: string,
+  timeStr: string,
+) {
   await twilioSend(toPhone, [
-    `💘 *Arrange Marriage* — Hi ${ownerFirstName},`,
-    `Profile *#${viewerProfileId}* has revealed your photo.`,
-    `They may send you a video meeting request. Log in to view their profile:`,
-    `https://arrangemarriage.live/discover`,
+    `💘 *Arrange Marriage* — Dear ${ownerFirstName},`,
+    ``,
+    `🇬🇧 *English:*`,
+    `Today on *${dateStr}* at *${timeStr} IST*, your profile on Arrange Marriage was viewed by Profile *#${viewerProfileId}*.`,
+    `You may receive a video call request from this profile.`,
+    `Would you like to see their profile? Log in and search for *#${viewerProfileId}* on the Discover page.`,
+    ``,
+    `🇮🇳 *हिंदी:*`,
+    `आज *${dateStr}* को *${timeStr} IST* पर, Arrange Marriage पर आपकी प्रोफ़ाइल Profile *#${viewerProfileId}* द्वारा देखी गई।`,
+    `आपको इस प्रोफ़ाइल से एक वीडियो कॉल अनुरोध प्राप्त हो सकता है।`,
+    `क्या आप उनकी प्रोफ़ाइल देखना चाहेंगे?`,
+    ``,
+    `🔍 https://arrangemarriage.live/discover`,
   ].join('\n'))
 }
 

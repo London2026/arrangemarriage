@@ -55,26 +55,48 @@ function wrap(body: string) {
 
 // ── Email templates ──────────────────────────────────────────────────────────
 
-export async function sendPhotoRevealedEmail(to: string, ownerFirstName: string, viewerProfileId: string) {
-  const subject = `💘 Profile #${viewerProfileId} has revealed your photo on Arrange Marriage`
+export async function sendPhotoRevealedEmail(
+  to: string,
+  ownerFirstName: string,
+  viewerProfileId: string,
+  dateStr: string,
+  timeStr: string,
+) {
+  const subject = `💘 Your Arrange Marriage profile was viewed — Profile #${viewerProfileId}`
   const html = wrap(`
-    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 12px;">Your photo has been revealed</h2>
-    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:20px;"></div>
-    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 16px;">
-      Hi <strong>${ownerFirstName}</strong>,
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Your profile has been viewed</h2>
+    <p style="font-family:Arial,sans-serif;font-size:12px;color:#8b6914;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 16px;">आपकी प्रोफ़ाइल देखी गई</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 20px;">
+      Dear <strong>${ownerFirstName}</strong>,
     </p>
-    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.7;margin:0 0 16px;">
-      Profile <strong style="color:#0d1f3c;font-family:'Courier New',monospace;">#${viewerProfileId}</strong> has revealed your photo on Arrange Marriage.
+
+    <!-- English -->
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 8px;">
+      We are pleased to inform you that today, on <strong>${dateStr}</strong> at <strong>${timeStr} IST</strong>, your profile on Arrange Marriage was viewed by
+      <strong style="font-family:'Courier New',monospace;">Profile #${viewerProfileId}</strong>.
     </p>
-    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.7;margin:0 0 16px;">
-      You may receive an online video meeting request from this profile. If you would like to view their profile and connect with them, please log in to Arrange Marriage.
+    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.8;margin:0 0 8px;">
+      You may receive a video call request from this profile. Would you like to see their profile?
+      Simply log in to Arrange Marriage and search for <strong style="font-family:'Courier New',monospace;">#${viewerProfileId}</strong> on the Discover page.
     </p>
-    <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;font-style:italic;line-height:1.7;margin:0 0 28px;">
-      You can search for Profile <span style="font-family:'Courier New',monospace;font-style:normal;">#${viewerProfileId}</span> directly in the Discover page to view their full profile.
+
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+
+    <!-- Hindi -->
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 8px;">
+      हमें यह सूचित करते हुए प्रसन्नता हो रही है कि आज, <strong>${dateStr}</strong> को <strong>${timeStr} IST</strong> पर,
+      Arrange Marriage पर आपकी प्रोफ़ाइल <strong style="font-family:'Courier New',monospace;">Profile #${viewerProfileId}</strong> द्वारा देखी गई।
     </p>
+    <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.9;margin:0 0 24px;">
+      इस प्रोफ़ाइल से आपको एक वीडियो कॉल अनुरोध प्राप्त हो सकता है। क्या आप उनकी प्रोफ़ाइल देखना चाहेंगे?
+      बस Arrange Marriage में लॉग इन करें और Discover पेज पर <strong style="font-family:'Courier New',monospace;">#${viewerProfileId}</strong> खोजें।
+    </p>
+
     <div style="text-align:center;margin-bottom:8px;">
       <a href="https://arrangemarriage.live/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
-        Check Their Profile →
+        View Their Profile → / प्रोफ़ाइल देखें →
       </a>
     </div>
   `)
@@ -203,6 +225,62 @@ export async function sendMeetingConfirmedAcceptorEmail(
         📵 Arrange Marriage advises you <strong>not to share or ask for a mobile number</strong> during your first meeting, unless you feel completely comfortable doing so.
       </p>
     </div>
+  `)
+  await send(to, subject, html)
+}
+
+// ── Welcome email (sent on first sign-up) ────────────────────────────────────
+export async function sendWelcomeEmail(to: string, firstName: string) {
+  const subject = `Welcome to Arrange Marriage — Your Journey Begins Here 💘`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:24px;color:#0d1f3c;margin:0 0 4px;">Welcome to Arrange Marriage</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">Arrange Marriage में आपका स्वागत है</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">Welcome to <strong>Arrange Marriage</strong> — India's privacy-first platform for finding your life partner with dignity, care, and respect.</p>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">How to Get Started</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 9px;">📝 <strong>Step 1 — Create your profile</strong> — Share your background, education, family, lifestyle, and what you are looking for in a partner.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 9px;">📸 <strong>Step 2 — Upload your photos</strong> — Back-side photos are visible to all members; your face photo is shown only when you choose to reveal it.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 9px;">🎙 <strong>Step 3 — Record your voice</strong> — A short introduction in your mother tongue and in English makes your profile far more personal and appealing.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 9px;">🔍 <strong>Step 4 — Discover and Connect</strong> — Browse profiles, use filters for religion, caste, location, and more, and let our AI find your most compatible matches.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">🎥 <strong>Step 5 — Meet face-to-face</strong> — Request a private video meeting with members you are interested in.</p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;"><strong>Arrange Marriage</strong> में आपका हार्दिक स्वागत है — यह भारत का सबसे विश्वसनीय मंच है जहाँ आप गरिमा, देखभाल और सम्मान के साथ अपना जीवनसाथी खोज सकते हैं।</p>
+    <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">📝 <strong>चरण 1</strong> — प्रोफ़ाइल बनाएं&nbsp;&nbsp;📸 <strong>चरण 2</strong> — फ़ोटो अपलोड करें&nbsp;&nbsp;🎙 <strong>चरण 3</strong> — आवाज़ रिकॉर्ड करें&nbsp;&nbsp;🔍 <strong>चरण 4</strong> — प्रोफ़ाइल खोजें&nbsp;&nbsp;🎥 <strong>चरण 5</strong> — वीडियो मीटिंग करें</p>
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://arrangemarriage.live/onboarding" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Create My Profile →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Your privacy is our priority — your face photo stays blurred until you choose to reveal it.</p>
+  `)
+  await send(to, subject, html)
+}
+
+// ── Profile complete email (sent after onboarding finishes) ───────────────────
+export async function sendProfileCompleteEmail(to: string, firstName: string) {
+  const subject = `Your Arrange Marriage profile is live — here is what to do next 🎉`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:24px;color:#0d1f3c;margin:0 0 4px;">Your profile is live!</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपकी प्रोफ़ाइल लाइव हो गई!</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">Congratulations! 🎉 Your profile on Arrange Marriage is now complete and visible to other members. You have taken a wonderful and courageous step towards finding your life partner.</p>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">What You Can Do Now</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🔍 <strong>Discover profiles</strong> — Browse members using filters for religion, caste, location, education, and more.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">✨ <strong>Find My Match</strong> — Click the AI-powered "Find My Match" button to receive personalised compatibility scores for every profile based on your full profile.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">📸 <strong>Reveal face photos</strong> — Upgrade to a paid plan to reveal other members' face photos. They are notified the moment you do.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🎥 <strong>Request video meetings</strong> — Connect face-to-face with members you are interested in (available on paid plans).</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">✏️ <strong>Update your profile anytime</strong> — Go to My Profile → Edit Profile to update your details, photos, or voice recordings.</p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">बधाई हो! 🎉 Arrange Marriage पर आपकी प्रोफ़ाइल अब पूर्ण हो गई है और अन्य सदस्यों को दिखाई देने लगी है।</p>
+    <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">🔍 प्रोफ़ाइल खोजें &nbsp;✨ AI से जोड़ी खोजें &nbsp;📸 चेहरे की फ़ोटो देखें (पेड प्लान) &nbsp;🎥 वीडियो मीटिंग करें (पेड प्लान) &nbsp;✏️ प्रोफ़ाइल कभी भी अपडेट करें</p>
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://arrangemarriage.live/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Start Discovering →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
   `)
   await send(to, subject, html)
 }

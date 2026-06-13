@@ -57,7 +57,11 @@ export default function AboutStep({ data, onChange }: Props) {
       </p>
       <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginBottom: '1.25rem' }} />
 
-      <style>{`.ob-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.1rem} @media(max-width:480px){.ob-name-grid{grid-template-columns:1fr}}`}</style>
+      <style>{`
+        .ob-name-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.1rem}
+        @media(max-width:640px){.ob-name-grid{grid-template-columns:1fr}}
+        .ob-gender-btn{flex:1;min-height:48px;padding:0.75rem 0.3rem;border-radius:4px;font-family:Raleway,sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;touch-action:manipulation}
+      `}</style>
 
       {/* Name */}
       <div className="ob-name-grid">
@@ -77,8 +81,8 @@ export default function AboutStep({ data, onChange }: Props) {
           <label style={label}>I am a</label>
           <div style={{ display: 'flex', gap: '0.4rem' }}>
             {GENDERS.map(g => (
-              <button key={g} type="button" onClick={() => onChange('gender', g)}
-                style={{ flex: 1, padding: '0.7rem 0.3rem', border: data.gender === g ? '1px solid #1b3a6b' : '1px solid rgba(13,31,60,0.18)', background: data.gender === g ? 'rgba(27,58,107,0.07)' : 'transparent', color: data.gender === g ? '#1b3a6b' : c.sepia, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px', transition: 'all 0.2s' }}>
+              <button key={g} type="button" onClick={() => onChange('gender', g)} className="ob-gender-btn"
+                style={{ border: data.gender === g ? '1px solid #1b3a6b' : '1px solid rgba(13,31,60,0.18)', background: data.gender === g ? 'rgba(27,58,107,0.07)' : 'transparent', color: data.gender === g ? '#1b3a6b' : c.sepia }}>
                 {g}
               </button>
             ))}

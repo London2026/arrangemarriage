@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { sendWelcomeEmail } from '@/lib/sendEmail'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -31,18 +32,20 @@ export async function GET(request: NextRequest) {
       if (user) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('onboarding_complete, plan')
+          .select('onboarding_complete, plan, full_name')
           .eq('id', user.id)
           .maybeSingle()
 
         if (profile?.onboarding_complete) {
-          // Profile done → go straight to discover
           return NextResponse.redirect(`${origin}/discover`)
         } else if (profile?.plan) {
-          // Has picked a plan but not finished onboarding
           return NextResponse.redirect(`${origin}/onboarding`)
         } else {
-          // New user → pick a plan first
+          // Brand new user — send welcome email (fire and forget)
+          if (user.email) {
+            const firstName = (user.user_metadata?.full_name ?? user.email).split(' ')[0]
+            sendWelcomeEmail(user.email, firstName).catch(() => {})
+          }
           return NextResponse.redirect(`${origin}/pricing`)
         }
       }

@@ -31,8 +31,9 @@ const COOKING = [
 interface Props {
   data: {
     prefGender: string; prefAgeMin: string; prefAgeMax: string
-    prefLocation: string; prefReligion: string
+    prefLocation: string; prefReligion: string; prefCaste: string
     prefEducation: string; prefHeight: string; prefCooking: string
+    prefOther: string
   }
   onChange: (key: string, value: string) => void
 }
@@ -44,6 +45,11 @@ function Row({ children }: { children: React.ReactNode }) {
 export default function PreferencesStep({ data, onChange }: Props) {
   return (
     <div>
+      <style>{`
+        .pref-gender-btn{flex:1;min-height:48px;padding:0.75rem 0.5rem;border-radius:4px;font-family:Raleway,sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;touch-action:manipulation}
+        .pref-age-row{display:flex;align-items:center;gap:0.75rem}
+        @media(max-width:480px){.pref-age-row{flex-direction:column;align-items:stretch;gap:0.5rem}.pref-age-sep{display:none}}
+      `}</style>
       <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.25rem' }}>Who are you looking for?</h2>
       <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: c.sepia, margin: '0 0 1rem' }}>
         Set your partner preferences
@@ -55,8 +61,8 @@ export default function PreferencesStep({ data, onChange }: Props) {
         <label style={label}>Looking for a</label>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           {GENDERS.map(g => (
-            <button key={g} type="button" onClick={() => onChange('prefGender', g)}
-              style={{ flex: 1, padding: '0.75rem', border: data.prefGender === g ? '1px solid #1b3a6b' : '1px solid rgba(13,31,60,0.18)', background: data.prefGender === g ? 'rgba(27,58,107,0.07)' : 'transparent', color: data.prefGender === g ? '#1b3a6b' : c.sepia, fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '4px', transition: 'all 0.2s' }}>
+            <button key={g} type="button" onClick={() => onChange('prefGender', g)} className="pref-gender-btn"
+              style={{ border: data.prefGender === g ? '1px solid #1b3a6b' : '1px solid rgba(13,31,60,0.18)', background: data.prefGender === g ? 'rgba(27,58,107,0.07)' : 'transparent', color: data.prefGender === g ? '#1b3a6b' : c.sepia }}>
               {g}
             </button>
           ))}
@@ -66,11 +72,11 @@ export default function PreferencesStep({ data, onChange }: Props) {
       {/* Age range */}
       <div style={field}>
         <label style={label}>Age Range</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div className="pref-age-row">
           <input type="number" min={18} max={99} value={data.prefAgeMin}
             onChange={e => onChange('prefAgeMin', e.target.value)}
             style={{ ...inp, textAlign: 'center' }} onFocus={focus} onBlur={blur} />
-          <span style={{ fontFamily: '"Cormorant Garamond", serif', color: c.sepia, flexShrink: 0 }}>to</span>
+          <span className="pref-age-sep" style={{ fontFamily: '"Cormorant Garamond", serif', color: c.sepia, flexShrink: 0 }}>to</span>
           <input type="number" min={18} max={100} value={data.prefAgeMax}
             onChange={e => onChange('prefAgeMax', e.target.value)}
             style={{ ...inp, textAlign: 'center' }} onFocus={focus} onBlur={blur} />
@@ -92,6 +98,15 @@ export default function PreferencesStep({ data, onChange }: Props) {
           </select>
         </div>
       </Row>
+
+      {/* Caste Preference */}
+      <div style={field}>
+        <label style={label}>Caste Preference</label>
+        <input type="text" value={data.prefCaste} onChange={e => onChange('prefCaste', e.target.value)}
+          placeholder="e.g. Brahmin, Any caste, Open to all…" style={inp}
+          onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
+          onBlur={e => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')} />
+      </div>
 
       {/* Education + Height */}
       <Row>
@@ -118,6 +133,23 @@ export default function PreferencesStep({ data, onChange }: Props) {
           <option value="">Select preference</option>
           {COOKING.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+      </div>
+
+      {/* Other Preferences */}
+      <div style={field}>
+        <label style={label}>Other Preferences</label>
+        <textarea
+          value={data.prefOther}
+          onChange={e => onChange('prefOther', e.target.value)}
+          placeholder="Describe any other preferences — family background, lifestyle, values, location, profession, anything that matters to you…"
+          rows={5}
+          style={{ ...inp, resize: 'vertical', lineHeight: 1.6 }}
+          onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
+          onBlur={e => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')}
+        />
+        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.sepia, margin: '0.2rem 0 0' }}>
+          Write freely — this helps members understand exactly what you are looking for
+        </p>
       </div>
     </div>
   )

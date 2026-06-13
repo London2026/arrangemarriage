@@ -6,6 +6,8 @@ interface Props {
   onVoiceChange: (blob: Blob | null) => void
   onVoiceEnChange?: (blob: Blob | null) => void
   hasRecording: boolean
+  existingUrl?: string | null
+  existingEnUrl?: string | null
 }
 
 const c = {
@@ -14,17 +16,27 @@ const c = {
 }
 
 function Recorder({
-  label, sublabel, required, onSave,
+  label, sublabel, required, onSave, existingUrl,
 }: {
   label: string; sublabel: string; required?: boolean
   onSave: (blob: Blob | null) => void
+  existingUrl?: string | null
 }) {
   const [recording, setRecording] = useState(false)
   const [seconds, setSeconds] = useState(0)
-  const [audioUrl, setAudioUrl] = useState<string | null>(null)
+  const [audioUrl, setAudioUrl] = useState<string | null>(existingUrl ?? null)
+  const [isExisting, setIsExisting] = useState(!!existingUrl)
   const [denied, setDenied] = useState(false)
   const recorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<BlobPart[]>([])
+
+  // Sync when existingUrl arrives after mount (async init)
+  useEffect(() => {
+    if (existingUrl && !audioUrl) {
+      setAudioUrl(existingUrl)
+      setIsExisting(true)
+    }
+  }, [existingUrl]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => () => { recorderRef.current?.stream?.getTracks().forEach(t => t.stop()) }, [])
 
@@ -58,11 +70,11 @@ function Recorder({
   }
 
   function stopRecording() { recorderRef.current?.stop(); setRecording(false) }
-  function reRecord() { setAudioUrl(null); onSave(null); setSeconds(0) }
+  function reRecord() { setAudioUrl(null); setIsExisting(false); onSave(null); setSeconds(0) }
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
   return (
-    <div style={{ background: '#fff', border: `1.5px solid ${audioUrl ? c.teal : 'rgba(29,82,82,0.2)'}`, borderRadius: '10px', padding: '1.25rem 1.5rem', marginBottom: '1rem' }}>
+    <div style={{ background: '#fff', border: `1.5px solid ${audioUrl ? c.teal : 'rgba(29,82,82,0.2)'}`, borderRadius: '10px', padding: 'clamp(0.9rem, 3vw, 1.25rem) clamp(0.9rem, 4vw, 1.5rem)', marginBottom: '1rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
         <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: c.teal, margin: 0 }}>
           {label}
@@ -82,7 +94,7 @@ function Recorder({
       ) : audioUrl ? (
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.12em', color: c.green, marginBottom: '0.75rem', textTransform: 'uppercase' }}>
-            ✓ Saved ({fmt(seconds)})
+            {isExisting ? '✓ Previously saved — play to hear it' : `✓ Saved (${fmt(seconds)})`}
           </p>
           <audio controls src={audioUrl} preload="none" style={{ width: '100%', marginBottom: '0.75rem', accentColor: c.teal }} />
           <button onClick={reRecord} style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', color: c.sepia, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', letterSpacing: '0.05em' }}>
@@ -123,7 +135,7 @@ function Recorder({
   )
 }
 
-export default function VoiceStep({ onVoiceChange, onVoiceEnChange, hasRecording }: Props) {
+export default function VoiceStep({ onVoiceChange, onVoiceEnChange, hasRecording, existingUrl, existingEnUrl }: Props) {
   return (
     <div>
       <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.25rem' }}>
@@ -160,6 +172,7 @@ export default function VoiceStep({ onVoiceChange, onVoiceEnChange, hasRecording
         sublabel="Record in your native language — Hindi, Tamil, Punjabi, Gujarati, Bengali, or any Indian language."
         required
         onSave={onVoiceChange}
+        existingUrl={existingUrl}
       />
 
       {/* Recording 2 — English (Optional) */}
@@ -167,6 +180,7 @@ export default function VoiceStep({ onVoiceChange, onVoiceEnChange, hasRecording
         label="Recording 2 — English · अंग्रेज़ी में"
         sublabel="Optional but highly recommended — an English introduction greatly increases your matches."
         onSave={onVoiceEnChange ?? (() => {})}
+        existingUrl={existingEnUrl}
       />
 
       <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', letterSpacing: '0.08em', color: 'rgba(29,82,82,0.5)', textAlign: 'center', marginTop: '0.5rem' }}>
