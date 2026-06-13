@@ -12,11 +12,17 @@ const HOUSING   = ['Own House', 'Rented House', 'Family Home', 'Other']
 const YES_NO    = ['No', 'Yes']
 const FOOD      = ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Jain', 'Mix / Flexible']
 const SMOKE_ALC = ['No', 'Yes', 'Occasionally']
+const RASHI = [
+  'Mesha (Aries)', 'Vrishabha (Taurus)', 'Mithuna (Gemini)', 'Karka (Cancer)',
+  'Simha (Leo)', 'Kanya (Virgo)', 'Tula (Libra)', 'Vrishchika (Scorpio)',
+  'Dhanu (Sagittarius)', 'Makara (Capricorn)', 'Kumbha (Aquarius)', 'Meena (Pisces)',
+  "Don't know",
+]
 
 interface Props {
   data: {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
-    height: string; weight: string
+    height: string; weight: string; rashi: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
     housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string; hobby: string
   }
@@ -96,16 +102,21 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Weight" k="weight" val={data.weight} ph="e.g. 70 kg" onChange={onChange} />
       </Row>
 
+      {/* Rashi / Zodiac sign */}
+      <div style={field}>
+        <Sel lbl="Rashi / Zodiac Sign" k="rashi" val={data.rashi} opts={RASHI} ph="Select Rashi" onChange={onChange} />
+      </div>
+
       {/* City + Country */}
       <Row>
         <Inp lbl="City" k="city" val={data.city} ph="Mumbai" onChange={onChange} />
         <Inp lbl="Country" k="country" val={data.country} ph="India" onChange={onChange} />
       </Row>
 
-      {/* WhatsApp — required */}
+      {/* Mobile — required */}
       <div style={{ ...field }}>
         <label style={{ ...label, color: c.teal }}>
-          WhatsApp Number <span style={{ color: '#e74c3c' }}>*</span>
+          Mobile Number <span style={{ color: '#e74c3c' }}>*</span>
         </label>
         <input type="tel" value={data.phone} onChange={e => onChange('phone', e.target.value)}
           placeholder="+91 98765 43210" style={inp} onFocus={focus} onBlur={blur} required />

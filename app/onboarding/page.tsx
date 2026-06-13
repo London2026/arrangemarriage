@@ -22,7 +22,7 @@ const c = {
 
 interface Draft {
   firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
-  height: string; weight: string
+  height: string; weight: string; rashi: string
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
   housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string
   religion: string; caste: string; motherTongue: string
@@ -37,7 +37,7 @@ interface Draft {
 
 const EMPTY: Draft = {
   firstName: '', lastName: '', age: '', gender: '', city: '', country: '', phone: '',
-  height: '', weight: '',
+  height: '', weight: '', rashi: '',
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
   housing: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
   religion: '', caste: '', motherTongue: '',
@@ -148,6 +148,7 @@ function OnboardingPage() {
           // New fields
           height: profile.height ?? '',
           weight: profile.weight ?? '',
+          rashi: profile.rashi ?? '',
           brothers: profile.brothers ?? '',
           sisters: profile.sisters ?? '',
           fatherOccupation: profile.father_occupation ?? '',
@@ -258,7 +259,7 @@ function OnboardingPage() {
       if (!draft.gender) return 'Please select your gender.'
       if (!draft.city || !draft.country) return 'Please enter your city and country.'
     }
-    if (step === 0 && !draft.phone.trim()) return 'WhatsApp number is required.'
+    if (step === 0 && !draft.phone.trim()) return 'Mobile number is required.'
     if (step === 1 && (!draft.religion || !draft.motherTongue || !draft.education || !draft.occupation))
       return 'Please complete religion, mother tongue, education and occupation.'
     if (step === 2) {
@@ -360,7 +361,7 @@ function OnboardingPage() {
         education_subject: draft.educationSubject || null,
         other_qualifications: draft.otherQualifications || null,
         occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
-        height: draft.height || null, weight: draft.weight || null,
+        height: draft.height || null, weight: draft.weight || null, rashi: draft.rashi || null,
         pref_education: draft.prefEducation || null,
         pref_height: draft.prefHeight || null,
         pref_cooking: draft.prefCooking || null,
@@ -426,7 +427,7 @@ function OnboardingPage() {
       food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
       education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
       occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
-      height: draft.height || null, weight: draft.weight || null,
+      height: draft.height || null, weight: draft.weight || null, rashi: draft.rashi || null,
       pref_gender: draft.prefGender || null,
       pref_age_min: draft.prefAgeMin ? parseInt(draft.prefAgeMin) : null,
       pref_age_max: draft.prefAgeMax ? parseInt(draft.prefAgeMax) : null,
@@ -542,7 +543,7 @@ function OnboardingPage() {
       <div className="ob-card">
 
         <div className="ob-card-inner">
-          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
+          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
           {step === 1 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 2 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefCaste: draft.prefCaste, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking, prefOther: draft.prefOther }} onChange={change} />}
           {step === 3 && <VoiceStep

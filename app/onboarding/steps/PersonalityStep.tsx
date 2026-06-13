@@ -140,9 +140,12 @@ export default function PersonalityStep({ data, onChange }: Props) {
 
   return (
     <div>
-      <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.75rem', fontSize: '1.6rem' }}>
-        Your personality
+      <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.15rem', fontSize: '2.1rem' }}>
+        Your Personality
       </h2>
+      <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.35rem', color: c.gold, margin: '0 0 0.75rem' }}>
+        आपका व्यक्तित्व
+      </p>
 
       {hasSavedData ? (
         <div style={{ background: 'rgba(29,82,82,0.06)', border: '1px solid rgba(29,82,82,0.25)', borderRadius: '8px', padding: '0.75rem 1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

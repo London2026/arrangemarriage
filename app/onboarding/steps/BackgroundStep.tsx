@@ -10,7 +10,7 @@ const blur  = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.
 const RELIGIONS      = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'Jewish', 'Zoroastrian', 'Other', 'Prefer not to say']
 const EDUCATIONS     = ["High School", "Diploma", "Bachelor's Degree", "Master's Degree", "Doctorate (PhD)", "Other"]
 const MARITAL_STATUS = ['Single', 'Married', 'Separated', 'Widowed']
-const KIDS_OPTIONS   = ['No children', 'Has children']
+const KIDS_OPTIONS   = ['No children', 'Has children', 'Not Applicable']
 const SALARY_OPTIONS = [
   'Under ₹3 LPA', '₹3–5 LPA', '₹5–8 LPA', '₹8–12 LPA',
   '₹12–20 LPA', '₹20–35 LPA', '₹35–50 LPA', '₹50 LPA+',
