@@ -148,10 +148,10 @@ export default async function ProfilePage() {
         @keyframes petalFall {
           0%   { transform: translateY(-40px) translateX(0px) rotate(0deg); opacity: 0; }
           5%   { opacity: 1; }
-          85%  { opacity: 0.7; }
+          85%  { opacity: 0.85; }
           100% { transform: translateY(105vh) translateX(var(--sway)) rotate(var(--spin)); opacity: 0; }
         }
-        .petal { position:fixed; top:-40px; pointer-events:none; z-index:1; border-radius:150% 0 150% 0; animation:petalFall var(--dur) var(--delay) infinite ease-in; will-change:transform; }
+        .petal { position:fixed; top:-40px; pointer-events:none; z-index:1; line-height:1; animation:petalFall var(--dur) var(--delay) infinite ease-in; will-change:transform; filter: drop-shadow(0 0 4px rgba(255,77,109,0.35)); }
         .prof-main { max-width: 900px; margin: 0 auto; padding: 5.5rem 1.5rem 5rem; }
         .prof-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.5rem; }
         .prof-h1 { font-size: 2rem; }
@@ -173,22 +173,20 @@ export default async function ProfilePage() {
       {/* Rose petals */}
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1, overflow: 'hidden' }}>
         {([
-          { l:'3%',w:10,h:14,col:'#ff8fab',dur:'9s',delay:'0s',sway:'40px',spin:'600deg' },
-          { l:'15%',w:13,h:18,col:'#ff4d6d',dur:'8s',delay:'3s',sway:'50px',spin:'720deg' },
-          { l:'30%',w:11,h:16,col:'#ffb3c6',dur:'10s',delay:'5s',sway:'30px',spin:'660deg' },
-          { l:'45%',w:14,h:19,col:'#ff4d6d',dur:'9s',delay:'7s',sway:'55px',spin:'780deg' },
-          { l:'60%',w:11,h:15,col:'#ff8fab',dur:'8s',delay:'4s',sway:'45px',spin:'640deg' },
-          { l:'74%',w:12,h:17,col:'#ff4d6d',dur:'10s',delay:'6s',sway:'35px',spin:'700deg' },
-          { l:'88%',w:8,h:12,col:'#ff8fab',dur:'9s',delay:'8s',sway:'50px',spin:'480deg' },
-          { l:'52%',w:9,h:13,col:'#ffb3c6',dur:'13s',delay:'1s',sway:'-30px',spin:'500deg' },
+          { l:'3%', size:18, dur:'9s', delay:'0s', sway:'40px',  spin:'600deg' },
+          { l:'15%',size:24, dur:'8s', delay:'3s', sway:'50px',  spin:'720deg' },
+          { l:'30%',size:20, dur:'10s',delay:'5s', sway:'30px',  spin:'660deg' },
+          { l:'45%',size:26, dur:'9s', delay:'7s', sway:'55px',  spin:'780deg' },
+          { l:'60%',size:20, dur:'8s', delay:'4s', sway:'45px',  spin:'640deg' },
+          { l:'74%',size:22, dur:'10s',delay:'6s', sway:'35px',  spin:'700deg' },
+          { l:'88%',size:16, dur:'9s', delay:'8s', sway:'50px',  spin:'480deg' },
+          { l:'52%',size:18, dur:'13s',delay:'1s', sway:'-30px', spin:'500deg' },
         ] as const).map((p, i) => (
           <span key={i} className="petal" style={{
-            left: p.l, width: `${p.w}px`, height: `${p.h}px`,
-            background: `radial-gradient(ellipse at 40% 35%, ${p.col}cc, ${p.col}66)`,
-            boxShadow: `0 0 4px ${p.col}44`,
+            left: p.l, fontSize: `${p.size}px`,
             ['--dur' as string]: p.dur, ['--delay' as string]: p.delay,
             ['--sway' as string]: p.sway, ['--spin' as string]: p.spin,
-          }} />
+          }}>🌹</span>
         ))}
       </div>
 
