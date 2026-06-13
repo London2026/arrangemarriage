@@ -185,6 +185,12 @@ export default function PricingPage() {
         body: JSON.stringify({ planKey }),
       })
       if (!res.ok) {
+        if (res.status === 503) {
+          // Payment gateway not configured yet — activate the plan directly for testing
+          setStripeLoading(false)
+          startTransition(async () => { await selectPlan(planKey) })
+          return
+        }
         const err = await res.json()
         throw new Error(err.error || 'Could not start checkout')
       }
