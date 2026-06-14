@@ -148,16 +148,21 @@ export default function PersonalityStep({ data, onChange }: Props) {
       </p>
 
       {hasSavedData ? (
-        <div style={{ background: 'rgba(29,82,82,0.06)', border: '1px solid rgba(29,82,82,0.25)', borderRadius: '8px', padding: '0.75rem 1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.1rem' }}>✓</span>
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.82rem', color: '#1d5252', margin: 0, fontWeight: 600 }}>
-            Your previously saved entries are shown below — tap any category to add or remove items.
+        <div style={{ background: 'rgba(29,82,82,0.06)', border: '1px solid rgba(29,82,82,0.25)', borderRadius: '8px', padding: '0.85rem 1.1rem', marginBottom: '1rem' }}>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.9rem', color: '#1d5252', margin: 0, lineHeight: 1.7, fontWeight: 600 }}>
+            ✓ Sharing your favourites helps other members understand your personality and choices — and brings you closer to finding the right life partner. Tap any category below to add or remove items.
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: '#1d5252', margin: '0.4rem 0 0', lineHeight: 1.7 }}>
+            अपनी पसंद साझा करने से अन्य सदस्यों को आपका व्यक्तित्व और पसंद समझने में मदद मिलती है — और आपको सही जीवन साथी खोजने में आसानी होती है। नीचे किसी भी श्रेणी पर टैप करके आइटम जोड़ें या हटाएं।
           </p>
         </div>
       ) : (
         <div style={{ background: '#fff', border: `1px solid ${c.border}`, borderRadius: '8px', padding: '1rem 1.1rem', marginBottom: '1rem' }}>
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.9rem', color: c.navy, margin: 0, lineHeight: 1.7 }}>
-            Sharing your favourite content and interests gives other members a real sense of who you are — your tastes, your curiosity, and what makes you unique.
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.9rem', color: c.navy, margin: 0, lineHeight: 1.7, fontWeight: 600 }}>
+            Sharing your favourite movies, music, travel spots, foods and more helps other members understand your personality and choices — and brings you closer to finding the right life partner.
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.gold, margin: '0.4rem 0 0', lineHeight: 1.7 }}>
+            अपनी पसंदीदा फ़िल्में, संगीत, यात्रा स्थल, खाना और बहुत कुछ साझा करना अन्य सदस्यों को आपका व्यक्तित्व और पसंद समझने में मदद करता है — और आपको सही जीवन साथी खोजने के करीब लाता है।
           </p>
         </div>
       )}
