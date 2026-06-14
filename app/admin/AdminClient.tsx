@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { verifyMember, rejectMemberId } from './actions'
 
 const c = {
@@ -12,7 +14,7 @@ const c = {
   green: '#2e7d52', amber: '#c97a2e', rose: '#9e2a2b',
 }
 
-type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification'
+type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification' | 'analytics'
 
 interface IdVerification {
   id: string
@@ -22,6 +24,8 @@ interface IdVerification {
   created_at: string
 }
 
+interface CountItem { label: string; count: number }
+
 interface Props {
   stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number }
   members: Record<string, unknown>[]
@@ -29,6 +33,10 @@ interface Props {
   reveals: Record<string, unknown>[]
   planCounts: Record<string, number>
   idVerifications: IdVerification[]
+  earnings: { daily: number; weekly: number; monthly: number; yearly: number }
+  locationCounts: CountItem[]
+  casteCounts: CountItem[]
+  religionCounts: CountItem[]
   defaultTab?: Tab
 }
 
@@ -38,8 +46,13 @@ const TABS: { id: Tab; icon: string; label: string }[] = [
   { id: 'meetings',        icon: '🎥', label: 'Meetings' },
   { id: 'reveals',         icon: '💘', label: 'Reveals' },
   { id: 'subscriptions',   icon: '💳', label: 'Subscriptions' },
+  { id: 'analytics',       icon: '📊', label: 'Analytics' },
   { id: 'id_verification', icon: '🪪', label: 'ID Verify' },
 ]
+
+function rupees(n: number) {
+  return '₹' + n.toLocaleString('en-IN')
+}
 
 function fmt(dateStr: string) {
   if (!dateStr) return '—'
@@ -76,7 +89,7 @@ function statusBadge(status: string) {
   )
 }
 
-function StatCard({ icon, label, value, sub }: { icon: string; label: string; value: number; sub?: string }) {
+function StatCard({ icon, label, value, sub }: { icon: string; label: string; value: number | string; sub?: string }) {
   return (
     <div style={{ background: c.card2, border: `1px solid ${c.border}`, borderRadius: 8, padding: '1.25rem 1.5rem' }}>
       <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{icon}</div>
@@ -85,6 +98,28 @@ function StatCard({ icon, label, value, sub }: { icon: string; label: string; va
       <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '2.2rem', fontWeight: 700,
         color: c.gold, lineHeight: 1 }}>{value}</div>
       {sub && <div style={{ fontSize: '0.72rem', color: c.text3, marginTop: '0.3rem' }}>{sub}</div>}
+    </div>
+  )
+}
+
+function BarChart({ data, color }: { data: CountItem[]; color: string }) {
+  if (data.length === 0) {
+    return <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text3 }}>No data yet</p>
+  }
+  const max = Math.max(...data.map(d => d.count))
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+      {data.map(d => (
+        <div key={d.label} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ width: 150, flexShrink: 0, fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem',
+            color: c.text2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={d.label}>{d.label}</div>
+          <div style={{ flex: 1, background: c.card, borderRadius: 4, height: 18, overflow: 'hidden' }}>
+            <div style={{ width: `${(d.count / max) * 100}%`, minWidth: 4, background: color, height: '100%', borderRadius: 4 }} />
+          </div>
+          <div style={{ width: 28, textAlign: 'right', fontFamily: '"Playfair Display", serif', fontSize: '0.85rem',
+            fontWeight: 700, color: c.gold, flexShrink: 0 }}>{d.count}</div>
+        </div>
+      ))}
     </div>
   )
 }
@@ -100,10 +135,17 @@ const td: React.CSSProperties = {
   borderBottom: `1px solid ${c.border2}`, whiteSpace: 'nowrap',
 }
 
-export default function AdminClient({ stats, members, meetings, reveals, planCounts, idVerifications, defaultTab }: Props) {
+export default function AdminClient({ stats, members, meetings, reveals, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, defaultTab }: Props) {
+  const router = useRouter()
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
   const [idDocs, setIdDocs] = useState<IdVerification[]>(idVerifications)
   const [idAction, setIdAction] = useState<Record<string, 'verifying' | 'rejecting' | 'done'>>({})
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   async function handleVerify(profileId: string) {
     setIdAction(p => ({ ...p, [profileId]: 'verifying' }))
@@ -184,9 +226,14 @@ export default function AdminClient({ stats, members, meetings, reveals, planCou
             </button>
           ))}
         </nav>
-        <div style={{ padding: '1rem 1.25rem', borderTop: `1px solid ${c.border}` }}>
+        <div style={{ padding: '1rem 1.25rem', borderTop: `1px solid ${c.border}`, display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           <a href="/discover" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem',
             color: c.text3, textDecoration: 'none', letterSpacing: '0.1em' }}>← Back to app</a>
+          <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem',
+            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+            fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: '#f87171', letterSpacing: '0.1em' }}>
+            <span>⎋</span> <span className="nav-label">Logout</span>
+          </button>
         </div>
       </aside>
 
@@ -428,6 +475,47 @@ export default function AdminClient({ stats, members, meetings, reveals, planCou
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* ── ANALYTICS ── */}
+        {tab === 'analytics' && (
+          <div>
+            {sectionTitle('Analytics')}
+
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
+              Estimated Recurring Revenue
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '0.75rem' }}>
+              <StatCard icon="📅" label="Daily"   value={rupees(earnings.daily)} />
+              <StatCard icon="🗓️" label="Weekly"  value={rupees(earnings.weekly)} />
+              <StatCard icon="📆" label="Monthly" value={rupees(earnings.monthly)} />
+              <StatCard icon="📈" label="Yearly"  value={rupees(earnings.yearly)} />
+            </div>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.text3, margin: '0 0 2.5rem', lineHeight: 1.6 }}>
+              Based on current active Starter (₹350/mo) and Standard (₹550/mo) subscribers, projected forward. Actual collections may vary with renewals and cancellations.
+            </p>
+
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
+              Members by Location (City)
+            </h3>
+            <div style={{ background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8, padding: '1.25rem 1.5rem', marginBottom: '2.5rem' }}>
+              <BarChart data={locationCounts} color={c.gold} />
+            </div>
+
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
+              Members by Religion
+            </h3>
+            <div style={{ background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8, padding: '1.25rem 1.5rem', marginBottom: '2.5rem' }}>
+              <BarChart data={religionCounts} color="#4ade80" />
+            </div>
+
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
+              Members by Caste
+            </h3>
+            <div style={{ background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8, padding: '1.25rem 1.5rem' }}>
+              <BarChart data={casteCounts} color="#60a5fa" />
             </div>
           </div>
         )}

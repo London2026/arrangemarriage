@@ -15,7 +15,7 @@ export default async function AdminPage() {
 
   const [membersRes, meetingsRes, revealsRes] = await Promise.all([
     admin.from('profiles')
-      .select('id, full_name, age, gender, city, country, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country')
+      .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country')
       .order('created_at', { ascending: false }),
     admin.from('video_meetings')
       .select('id, room_id, requester_id, recipient_id, status, preferred_date, preferred_time, created_at')
@@ -53,6 +53,35 @@ export default async function AdminPage() {
     acc[plan] = (acc[plan] ?? 0) + 1
     return acc
   }, {} as Record<string, number>)
+
+  // Estimated recurring revenue based on current active subscriptions
+  const PLAN_PRICES_INR = { starter: 350, standard: 550 } // ₹ per month
+  const monthlyRevenue = (planCounts.starter ?? 0) * PLAN_PRICES_INR.starter
+    + (planCounts.standard ?? 0) * PLAN_PRICES_INR.standard
+  const earnings = {
+    daily:   Math.round(monthlyRevenue / 30),
+    weekly:  Math.round(monthlyRevenue / 30 * 7),
+    monthly: monthlyRevenue,
+    yearly:  monthlyRevenue * 12,
+  }
+
+  // Breakdown of completed profiles by location / caste / religion — for marketing insights
+  function countBy(field: 'city' | 'caste' | 'religion') {
+    const counts: Record<string, number> = {}
+    for (const m of members) {
+      if (!m.onboarding_complete) continue
+      const raw = (m as Record<string, unknown>)[field] as string | null | undefined
+      const country = (m as Record<string, unknown>).country as string | null | undefined
+      let label = (raw && raw.trim()) || 'Not specified'
+      if (field === 'city' && raw && raw.trim() && country) label = `${raw.trim()}, ${country}`
+      counts[label] = (counts[label] ?? 0) + 1
+    }
+    return Object.entries(counts).map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count)
+  }
+
+  const locationCounts = countBy('city')
+  const casteCounts    = countBy('caste')
+  const religionCounts = countBy('religion')
 
   const meetingsWithNames = meetings.map(m => ({
     ...m,
@@ -92,6 +121,10 @@ export default async function AdminPage() {
       reveals={revealsWithNames}
       planCounts={planCounts}
       idVerifications={idVerifications}
+      earnings={earnings}
+      locationCounts={locationCounts}
+      casteCounts={casteCounts}
+      religionCounts={religionCounts}
     />
   )
 }
