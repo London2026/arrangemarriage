@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { sendWelcomeEmail } from '@/lib/sendEmail'
 
 export async function GET(request: NextRequest) {
   const origin = new URL(request.url).origin
@@ -17,5 +18,12 @@ export async function GET(request: NextRequest) {
 
   if (profile?.onboarding_complete) return NextResponse.redirect(`${origin}/discover`)
   if (profile?.plan) return NextResponse.redirect(`${origin}/onboarding`)
+
+  // Brand new user (no profile row yet) — send welcome email (fire and forget)
+  if (!profile && user.email) {
+    const firstName = (user.user_metadata?.full_name ?? user.email).split(' ')[0]
+    sendWelcomeEmail(user.email, firstName).catch(() => {})
+  }
+
   return NextResponse.redirect(`${origin}/pricing`)
 }

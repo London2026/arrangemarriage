@@ -379,7 +379,7 @@ function OnboardingPage() {
       localStorage.removeItem(`ob_step_${userId}`)
       // Send profile-complete email only on first-time completion, not edits
       if (!isEdit) {
-        fetch('/api/notify-profile-complete', { method: 'POST' }).catch(() => {})
+        fetch('/api/notify-profile-complete', { method: 'POST', keepalive: true }).catch(() => {})
       }
       router.refresh()
       router.push(isEdit ? '/profile' : '/discover')
