@@ -48,11 +48,11 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 1rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, color: c.goldLight, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: '20px', cursor: 'pointer', flexShrink: 0 }}
+        style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.9rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivory, fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.1rem', fontWeight: 600, borderRadius: '8px', cursor: 'pointer', flexShrink: 0 }}
       >
         ✦ Inbox
         {unreadCount > 0 && (
-          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '18px', height: '18px', padding: '0 0.3rem', borderRadius: '999px', background: c.goldLight, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 800 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: '20px', height: '20px', padding: '0 0.35rem', borderRadius: '999px', background: c.goldLight, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 800 }}>
             {unreadCount}
           </span>
         )}
@@ -68,7 +68,7 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
             style={{ width: '100%', maxWidth: '720px', background: c.navy, border: `1px solid ${c.border}`, borderRadius: '14px', boxShadow: '0 16px 48px rgba(0,0,0,0.6)', overflow: 'hidden' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.1rem 1.5rem', borderBottom: `1px solid ${c.border}` }}>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.9rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.goldLight, margin: 0 }}>
+              <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.5rem', fontWeight: 600, color: c.ivory, margin: 0 }}>
                 ✦ Inbox
               </p>
               <button onClick={() => setOpen(false)} aria-label="Close" style={{ background: 'none', border: 'none', color: c.ivoryDim, fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer' }}>×</button>
