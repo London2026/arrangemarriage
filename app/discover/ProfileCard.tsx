@@ -424,6 +424,14 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         ) : (
           /* Always show blurred preview — reveal or upgrade button inside */
           <div>
+            <div style={{ marginBottom: '1rem', padding: '1.25rem 1.5rem', background: 'linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04))', border: `1px solid ${c.border}`, borderRadius: '10px', textAlign: 'center' }}>
+              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.3rem', fontStyle: 'italic', fontWeight: 600, color: c.goldLight, margin: 0, lineHeight: 1.6 }}>
+                💛 Liked the profile so far? Click below to reveal {firstName}&rsquo;s face photo.
+              </p>
+              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.15rem', fontStyle: 'italic', color: c.ivoryDim, margin: '0.5rem 0 0', lineHeight: 1.6 }}>
+                अब तक प्रोफ़ाइल पसंद आई? नीचे क्लिक करके फोटो देखें।
+              </p>
+            </div>
             <div style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', aspectRatio: '3/4' }}>
               <img src={frontUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'blur(22px)', transform: 'scale(1.1)' }} />
               <div style={{ position: 'absolute', inset: 0, background: 'rgba(7,17,31,0.55)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem', padding: '1.5rem' }}>
