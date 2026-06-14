@@ -39,7 +39,7 @@ export default async function DiscoverPage() {
 
   const PROFILE_SELECT = `
     id, full_name, age, gender, city, country,
-    religion, caste, mother_tongue, education, education_subject, other_qualifications,
+    religion, caste, mother_tongue, education, university_name, education_subject, other_qualifications,
     occupation, occupation_city, annual_salary, marital_status, has_kids, id_verified,
     height, weight, rashi, brothers, sisters, father_occupation, mother_occupation,
     housing, disability, food_habits, smoking, alcohol, hobby,
@@ -134,6 +134,7 @@ export default async function DiscoverPage() {
       housing: p.housing ?? null, disability: p.disability ?? null,
       food_habits: p.food_habits ?? null, smoking: p.smoking ?? null, alcohol: p.alcohol ?? null,
       hobby: p.hobby ?? null,
+      university_name: p.university_name ?? null,
       education_subject: p.education_subject ?? null,
       other_qualifications: p.other_qualifications ?? null,
       occupation_city: p.occupation_city ?? null,

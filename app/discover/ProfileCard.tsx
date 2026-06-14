@@ -16,6 +16,7 @@ export interface ProfileData {
   caste?: string | null
   mother_tongue: string
   education: string
+  university_name?: string | null
   education_subject?: string | null
   other_qualifications?: string | null
   occupation: string
@@ -289,6 +290,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
       <div className="pc-section">
         <SectionHead icon="🎓" title="Education & Career" />
         <Row label="Education Level" value={profile.education} />
+        <Row label="University / College" value={profile.university_name} />
         <Row label="Subject / Specialisation" value={profile.education_subject} />
         <Row label="Other Qualifications" value={profile.other_qualifications} />
         <Row label="Occupation" value={profile.occupation} />

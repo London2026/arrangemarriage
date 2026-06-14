@@ -297,6 +297,7 @@ export default async function ProfilePage() {
           <Section>
             <SecHead icon="🎓" title="Education & Career" />
             <Row label="Education Level"        value={profile.education} />
+            <Row label="University / College"   value={profile.university_name} />
             <Row label="Subject / Specialisation" value={profile.education_subject} />
             <Row label="Other Qualifications"   value={profile.other_qualifications} />
             <Row label="Occupation"             value={profile.occupation} />

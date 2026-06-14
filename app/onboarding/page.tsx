@@ -26,7 +26,7 @@ interface Draft {
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
   housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string
   religion: string; caste: string; motherTongue: string
-  education: string; educationSubject: string; otherQualifications: string
+  education: string; universityName: string; educationSubject: string; otherQualifications: string
   occupation: string; occupationCity: string; annualSalary: string
   maritalStatus: string; hasKids: string
   prefGender: string; prefAgeMin: string; prefAgeMax: string; prefLocation: string; prefReligion: string; prefCaste: string
@@ -41,7 +41,7 @@ const EMPTY: Draft = {
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
   housing: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
   religion: '', caste: '', motherTongue: '',
-  education: '', educationSubject: '', otherQualifications: '',
+  education: '', universityName: '', educationSubject: '', otherQualifications: '',
   occupation: '', occupationCity: '', annualSalary: '',
   maritalStatus: '', hasKids: '',
   prefGender: '', prefAgeMin: '18', prefAgeMax: '50', prefLocation: '', prefReligion: '', prefCaste: '',
@@ -158,6 +158,7 @@ function OnboardingPage() {
           foodHabits: profile.food_habits ?? '',
           smoking: profile.smoking ?? '',
           alcohol: profile.alcohol ?? '',
+          universityName: profile.university_name ?? '',
           educationSubject: profile.education_subject ?? '',
           otherQualifications: profile.other_qualifications ?? '',
           occupationCity: profile.occupation_city ?? '',
@@ -358,6 +359,7 @@ function OnboardingPage() {
         father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
         housing: draft.housing || null, disability: draft.disability || null,
         food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+        university_name: draft.universityName || null,
         education_subject: draft.educationSubject || null,
         other_qualifications: draft.otherQualifications || null,
         occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
@@ -425,6 +427,7 @@ function OnboardingPage() {
       father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
       housing: draft.housing || null, disability: draft.disability || null,
       food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+      university_name: draft.universityName || null,
       education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
       occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
       height: draft.height || null, weight: draft.weight || null, rashi: draft.rashi || null,
@@ -544,7 +547,7 @@ function OnboardingPage() {
 
         <div className="ob-card-inner">
           {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
-          {step === 1 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
+          {step === 1 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, universityName: draft.universityName, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 2 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefCaste: draft.prefCaste, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking, prefOther: draft.prefOther }} onChange={change} />}
           {step === 3 && <VoiceStep
             onVoiceChange={b => { setVoiceBlob(b); if (b) autoUploadVoice(b, false) }}

@@ -20,7 +20,7 @@ const SALARY_OPTIONS = [
 interface Props {
   data: {
     religion: string; caste: string; motherTongue: string
-    education: string; educationSubject: string; otherQualifications: string
+    education: string; universityName: string; educationSubject: string; otherQualifications: string
     occupation: string; occupationCity: string; annualSalary: string
     maritalStatus: string; hasKids: string
   }
@@ -63,7 +63,7 @@ export default function BackgroundStep({ data, onChange }: Props) {
           placeholder="e.g. Hindi, Tamil…" style={inp} onFocus={focus} onBlur={blur} />
       </div>
 
-      {/* Education level + Subject */}
+      {/* Education level + University name */}
       <Row>
         <div>
           <label style={label}>Education Level</label>
@@ -73,21 +73,28 @@ export default function BackgroundStep({ data, onChange }: Props) {
           </select>
         </div>
         <div>
+          <label style={label}>University / College Name</label>
+          <input type="text" value={data.universityName} onChange={e => onChange('universityName', e.target.value)}
+            placeholder="e.g. IIT Bombay, Delhi University…" style={inp} onFocus={focus} onBlur={blur} />
+        </div>
+      </Row>
+
+      {/* Subject + Other qualifications */}
+      <Row>
+        <div>
           <label style={label}>Subject / Specialization</label>
           <input type="text" value={data.educationSubject} onChange={e => onChange('educationSubject', e.target.value)}
             placeholder="e.g. Computer Science, MBA…" style={inp} onFocus={focus} onBlur={blur} />
         </div>
+        <div>
+          <label style={label}>Other Qualifications</label>
+          <input type="text" value={data.otherQualifications} onChange={e => onChange('otherQualifications', e.target.value)}
+            placeholder="e.g. PhD, CFA, AWS Certified, IELTS…" style={inp} onFocus={focus} onBlur={blur} />
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.sepia, margin: '0.2rem 0 0' }}>
+            PhD, professional certificates, courses — anything relevant
+          </p>
+        </div>
       </Row>
-
-      {/* Other qualifications */}
-      <div style={field}>
-        <label style={label}>Other Qualifications</label>
-        <input type="text" value={data.otherQualifications} onChange={e => onChange('otherQualifications', e.target.value)}
-          placeholder="e.g. PhD, CFA, AWS Certified, IELTS…" style={inp} onFocus={focus} onBlur={blur} />
-        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.sepia, margin: '0.2rem 0 0' }}>
-          PhD, professional certificates, courses — anything relevant
-        </p>
-      </div>
 
       {/* Occupation + City of occupation */}
       <Row>
