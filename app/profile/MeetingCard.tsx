@@ -16,6 +16,8 @@ interface Props {
     preferred_time?: string | null
     message?: string | null
     family_member?: string | null
+    acceptor_family_member?: string | null
+    acceptor_message?: string | null
   }
 }
 
@@ -24,6 +26,10 @@ const c = { navy: '#0d1f3c', gold: '#8b6914', goldLight: '#c9a84c', sepia: '#5a6
 export default function MeetingCard({ meeting }: Props) {
   const [status, setStatus] = useState(meeting.status)
   const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
+  const [myFamilyMember, setMyFamilyMember] = useState('')
+  const [myMessage, setMyMessage] = useState('')
+  const [acceptorFamilyMember, setAcceptorFamilyMember] = useState(meeting.acceptor_family_member ?? '')
+  const [acceptorMessage, setAcceptorMessage] = useState(meeting.acceptor_message ?? '')
 
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${meeting.room_id}`
 
@@ -42,7 +48,12 @@ export default function MeetingCard({ meeting }: Props) {
 
   async function handleAccept() {
     setLoading('accept')
-    try { await acceptMeeting(meeting.id); setStatus('accepted') }
+    try {
+      await acceptMeeting(meeting.id, myFamilyMember, myMessage)
+      setStatus('accepted')
+      setAcceptorFamilyMember(myFamilyMember)
+      setAcceptorMessage(myMessage)
+    }
     finally { setLoading(null) }
   }
 
@@ -88,15 +99,27 @@ export default function MeetingCard({ meeting }: Props) {
 
       {/* Actions */}
       {status === 'pending' && !meeting.i_requested && (
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
-          <button onClick={handleAccept} disabled={!!loading}
-            style={{ flex: 1, padding: '0.6rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
-            {loading === 'accept' ? 'Accepting…' : '✓ Accept'}
-          </button>
-          <button onClick={handleDecline} disabled={!!loading}
-            style={{ flex: 1, padding: '0.6rem', background: 'transparent', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
-            {loading === 'decline' ? 'Declining…' : '✕ Decline'}
-          </button>
+        <div style={{ marginTop: '0.75rem' }}>
+          <div style={{ marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.3rem' }}>My Family Member Joining (optional)</label>
+            <input type="text" value={myFamilyMember} onChange={e => setMyFamilyMember(e.target.value)} placeholder="e.g. My Mom, My Dad, My Sister"
+              style={{ width: '100%', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', boxSizing: 'border-box' }} />
+          </div>
+          <div style={{ marginBottom: '0.5rem' }}>
+            <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.3rem' }}>Message (optional)</label>
+            <textarea value={myMessage} onChange={e => setMyMessage(e.target.value)} placeholder="A note for them…" rows={2}
+              style={{ width: '100%', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', fontStyle: 'italic', borderRadius: '4px', outline: 'none', resize: 'none', boxSizing: 'border-box' }} />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={handleAccept} disabled={!!loading}
+              style={{ flex: 1, padding: '0.6rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+              {loading === 'accept' ? 'Accepting…' : '✓ Accept'}
+            </button>
+            <button onClick={handleDecline} disabled={!!loading}
+              style={{ flex: 1, padding: '0.6rem', background: 'transparent', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+              {loading === 'decline' ? 'Declining…' : '✕ Decline'}
+            </button>
+          </div>
         </div>
       )}
 
@@ -104,6 +127,21 @@ export default function MeetingCard({ meeting }: Props) {
         <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.5rem 0 0', textAlign: 'center' }}>
           Awaiting response from {firstNameOnly(meeting.other_name)}…
         </p>
+      )}
+
+      {status === 'accepted' && (acceptorFamilyMember || acceptorMessage) && (
+        <div style={{ marginTop: '0.75rem', padding: '0.6rem 0.75rem', background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}`, borderRadius: '6px' }}>
+          {acceptorFamilyMember && (
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.ivoryDim, margin: '0 0 0.15rem', letterSpacing: '0.04em' }}>
+              👥 {meeting.i_requested ? `${firstNameOnly(meeting.other_name)} is bringing` : 'You added'}: {acceptorFamilyMember}
+            </p>
+          )}
+          {acceptorMessage && (
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: 0 }}>
+              &ldquo;{acceptorMessage}&rdquo;
+            </p>
+          )}
+        </div>
       )}
 
       {status === 'accepted' && (

@@ -96,10 +96,14 @@ export async function sendMeetingAcceptedWhatsApp(
   dateStr: string,
   time: string,
   roomId: string,
+  acceptorFamilyMember: string = '',
+  acceptorMessage: string = '',
 ) {
   await twilioSend(toPhone, [
     `✅ *Arrange Marriage* — Hi ${requesterFirstName},`,
     `Your video meeting with *${acceptorName}* is confirmed for *${dateStr}* at *${time}*.`,
+    ...(acceptorFamilyMember ? [`👥 Joining: *${acceptorFamilyMember}*`] : []),
+    ...(acceptorMessage ? [`💬 "${acceptorMessage}"`] : []),
     `🎥 Join at the scheduled time: https://meet.jit.si/ArrangeMarriage-${roomId}`,
     ``,
     `💡 *Arrange Marriage Safety Advice:*`,

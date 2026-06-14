@@ -147,7 +147,9 @@ export async function sendMeetingAcceptedEmail(
   acceptorName: string,
   dateStr: string,
   time: string,
-  roomId: string
+  roomId: string,
+  acceptorFamilyMember: string = '',
+  acceptorMessage: string = '',
 ) {
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
   const subject = `✅ Your video meeting with ${acceptorName} is confirmed`
@@ -164,6 +166,8 @@ export async function sendMeetingAcceptedEmail(
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#16a34a;margin:0 0 8px;">Confirmed Meeting</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 4px;">📅 ${dateStr}</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">🕐 ${time}</p>
+      ${acceptorFamilyMember ? `<p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:8px 0 0;">👥 ${acceptorName} will be joined by: ${acceptorFamilyMember}</p>` : ''}
+      ${acceptorMessage ? `<p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;font-style:italic;margin:8px 0 0;">"${acceptorMessage}"</p>` : ''}
     </div>
     <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 20px;">
       At the scheduled time, click the button below to join your private video call.

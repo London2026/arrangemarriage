@@ -98,7 +98,7 @@ export async function requestVideoMeeting(
   return { meetingId: meeting.id }
 }
 
-export async function acceptMeeting(meetingId: string): Promise<{ roomId: string }> {
+export async function acceptMeeting(meetingId: string, familyMember: string = '', message: string = ''): Promise<{ roomId: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
@@ -111,17 +111,24 @@ export async function acceptMeeting(meetingId: string): Promise<{ roomId: string
 
   if (!meeting) throw new Error('Meeting not found')
 
-  await supabase.from('video_meetings').update({ status: 'accepted' }).eq('id', meetingId)
+  await supabase.from('video_meetings').update({
+    status: 'accepted',
+    acceptor_family_member: familyMember || null,
+    acceptor_message: message || null,
+  }).eq('id', meetingId)
 
   const { data: me } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
   const dateStr = new Date(meeting.preferred_date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+
+  const familyMemberNote = familyMember ? ` ${me?.full_name ?? 'Someone'} will be joined by ${familyMember}.` : ''
+  const messageNote = message ? ` They said: "${message}"` : ''
 
   // Notify requester
   await supabase.from('notifications').insert({
     recipient_id: meeting.requester_id,
     sender_id: user.id,
     type: 'meeting_accepted',
-    message: `${me?.full_name ?? 'Someone'} accepted your video meeting request for ${dateStr} at ${meeting.preferred_time}. Join via the meeting link in your profile.`,
+    message: `${me?.full_name ?? 'Someone'} accepted your video meeting request for ${dateStr} at ${meeting.preferred_time}.${familyMemberNote}${messageNote} Join via the meeting link in your profile.`,
     meeting_id: meetingId,
   })
 
@@ -142,10 +149,10 @@ export async function acceptMeeting(meetingId: string): Promise<{ roomId: string
   await Promise.all([
     // Notify requester (Person A)
     requesterEmail
-      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
+      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message)
       : Promise.resolve(),
     requesterProfile?.phone
-      ? sendMeetingAcceptedWhatsApp(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
+      ? sendMeetingAcceptedWhatsApp(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message)
       : Promise.resolve(),
     // Notify acceptor (Person B) with their own copy of the meeting link
     acceptorEmail
