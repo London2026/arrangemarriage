@@ -1,0 +1,56 @@
+<!--
+  Supabase Auth → Authentication → Email Templates → "Magic Link"
+
+  This is the OTP sign-in email sent by signInWithOtp() (used on /login and /signup).
+  Paste this whole file into the "Message body" field for the Magic Link template
+  in the Supabase Dashboard, then click Save.
+
+  {{ .Token }} is replaced by Supabase with the 8-digit sign-in code.
+  Subject line suggestion: Your Arrange Marriage sign-in code
+-->
+<div style="margin:0;padding:0;background:#f4f1eb;font-family:Georgia,serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1eb;padding:32px 16px;">
+    <tr><td align="center">
+      <table width="100%" style="max-width:480px;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(13,31,60,0.10);">
+
+        <!-- Header -->
+        <tr><td style="background:#0d1f3c;padding:28px 32px;text-align:center;">
+          <p style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:#c9a84c;margin:0;letter-spacing:0.04em;">Arrange Marriage</p>
+          <p style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin:4px 0 0;">✦ Your Perfect Match Awaits ✦</p>
+        </td></tr>
+
+        <!-- Body -->
+        <tr><td style="padding:36px 32px;text-align:center;">
+          <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 6px;">Your Sign-In Code</h2>
+          <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 20px;">आपका साइन-इन कोड</p>
+          <div style="height:2px;background:linear-gradient(to right,transparent,#c9a84c,transparent);margin:0 0 24px;"></div>
+
+          <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 20px;">
+            Enter this code to sign in to <strong style="color:#0d1f3c;">Arrange Marriage</strong>:
+          </p>
+
+          <div style="display:inline-block;background:#f4f1eb;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:18px 32px;margin-bottom:24px;">
+            <span style="font-family:'Courier New',monospace;font-size:32px;font-weight:700;color:#0d1f3c;letter-spacing:8px;">{{ .Token }}</span>
+          </div>
+
+          <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;line-height:1.7;margin:0 0 4px;">
+            This code expires in 10 minutes and can only be used once.
+          </p>
+          <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;line-height:1.7;margin:0;font-style:italic;">
+            If you didn't request this, please ignore this email.
+          </p>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="padding:20px 32px 28px;border-top:1px solid rgba(13,31,60,0.08);text-align:center;">
+          <p style="font-family:Arial,sans-serif;font-size:11px;color:#9aabb8;margin:0;">
+            © 2026 Arrange Marriage · Privacy-first matrimony platform<br>
+            <a href="https://arrangemarriage.live/privacy" style="color:#9aabb8;">Privacy Policy</a> &nbsp;·&nbsp;
+            <a href="https://arrangemarriage.live/terms" style="color:#9aabb8;">Terms of Service</a>
+          </p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</div>
