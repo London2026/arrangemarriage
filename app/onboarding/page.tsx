@@ -477,7 +477,7 @@ function OnboardingPage() {
         .ob-logo { width: auto; height: 110px; max-width: 320px; mix-blend-mode: multiply; }
         .ob-progress { width: 100%; max-width: 720px; margin-bottom: 1rem; }
         .ob-topnav { width: 100%; max-width: 720px; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
-        .ob-topnav a, .ob-topnav button { font-family: Raleway, sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.5rem 0.85rem; min-height: 36px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(13,31,60,0.18); background: transparent; color: #2c4a6e; }
+        .ob-topnav a, .ob-topnav button { font-family: Raleway, sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.5rem 0.85rem; min-height: 36px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(13,31,60,0.35); background: transparent; color: #2c4a6e; }
         .ob-topnav button { color: #9e2a2b; }
         .ob-card { width: 100%; max-width: 720px; background: #fff; border-radius: 10px; box-shadow: 0 16px 60px rgba(13,31,60,0.12); border: 1px solid rgba(13,31,60,0.08); overflow: hidden; }
         .ob-card-inner { padding: 2.5rem 2.5rem 1.5rem; }
