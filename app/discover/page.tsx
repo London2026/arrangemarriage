@@ -3,7 +3,7 @@ import Navigation from '@/components/Navigation'
 import BottomNav from '@/components/BottomNav'
 import { createClient } from '@/lib/supabase/server'
 import ProfileCard, { type ProfileData } from './ProfileCard'
-import NotificationBanner from './NotificationBanner'
+import Inbox from './Inbox'
 import DiscoverClient from './DiscoverClient'
 
 export default async function DiscoverPage() {
@@ -168,14 +168,63 @@ export default async function DiscoverPage() {
     return base
   })
 
-  // Fetch unread notifications for the current user
+  // Fetch notifications for the current user's Inbox (all, newest first)
   const { data: notifications } = await supabase
     .from('notifications')
-    .select('id, message, read, created_at')
+    .select('id, message, type, read, created_at, meeting_id')
     .eq('recipient_id', user.id)
-    .eq('read', false)
     .order('created_at', { ascending: false })
-    .limit(5)
+    .limit(20)
+
+  // For notifications tied to a video meeting, fetch the meeting + other party's name
+  const meetingIds = Array.from(new Set(
+    (notifications ?? []).map(n => n.meeting_id).filter((id): id is string => !!id)
+  ))
+
+  const meetingMap: Record<string, {
+    id: string; room_id: string; status: string
+    preferred_date: string | null; preferred_time: string | null
+    message: string | null; family_member: string | null
+    other_name: string
+  }> = {}
+
+  if (meetingIds.length > 0) {
+    const { data: meetingRowsForInbox } = await supabase
+      .from('video_meetings')
+      .select('id, room_id, status, preferred_date, preferred_time, message, family_member, requester_id, recipient_id')
+      .in('id', meetingIds)
+
+    const otherIds = Array.from(new Set(
+      (meetingRowsForInbox ?? []).map(m => (m.requester_id === user.id ? m.recipient_id : m.requester_id))
+    ))
+
+    const { data: otherProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .in('id', otherIds)
+
+    const nameById: Record<string, string> = {}
+    for (const p of otherProfiles ?? []) nameById[p.id] = p.full_name ?? 'Someone'
+
+    for (const m of meetingRowsForInbox ?? []) {
+      const otherId = m.requester_id === user.id ? m.recipient_id : m.requester_id
+      meetingMap[m.id] = {
+        id: m.id, room_id: m.room_id, status: m.status,
+        preferred_date: m.preferred_date, preferred_time: m.preferred_time,
+        message: m.message, family_member: m.family_member,
+        other_name: nameById[otherId] ?? 'Someone',
+      }
+    }
+  }
+
+  const inboxItems = (notifications ?? []).map(n => ({
+    id: n.id,
+    message: n.message,
+    type: n.type,
+    read: n.read,
+    created_at: n.created_at,
+    meeting: n.meeting_id ? (meetingMap[n.meeting_id] ?? null) : null,
+  }))
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#07111f' }}>
@@ -198,14 +247,14 @@ export default async function DiscoverPage() {
 
         {/* Heading */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <h1 className="disc-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: '#f5f0e6', margin: '0 0 0.5rem' }}>
-            Discover
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+            <h1 className="disc-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: '#f5f0e6', margin: 0 }}>
+              Discover
+            </h1>
+            <Inbox items={inboxItems} />
+          </div>
           <div style={{ height: '1px', background: 'linear-gradient(to right, #c9a84c, transparent)' }} />
         </div>
-
-        {/* Notifications */}
-        <NotificationBanner notifications={notifications ?? []} />
 
         {/* Grid client — search, AI, cards */}
         {profiles.length === 0 ? (

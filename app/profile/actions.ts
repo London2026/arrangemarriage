@@ -73,6 +73,7 @@ export async function requestVideoMeeting(
     sender_id: user.id,
     type: 'video_meeting_request',
     message: `${name} has requested a video meeting on ${dateStr} at ${preferredTime}. Message: "${message}"${familyMemberNote}`,
+    meeting_id: meeting.id,
   })
 
   // Email + WhatsApp the recipient
@@ -121,6 +122,7 @@ export async function acceptMeeting(meetingId: string): Promise<{ roomId: string
     sender_id: user.id,
     type: 'meeting_accepted',
     message: `${me?.full_name ?? 'Someone'} accepted your video meeting request for ${dateStr} at ${meeting.preferred_time}. Join via the meeting link in your profile.`,
+    meeting_id: meetingId,
   })
 
   // Email + WhatsApp the requester
