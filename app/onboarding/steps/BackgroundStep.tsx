@@ -4,8 +4,8 @@ const c = { navy: '#0d1f3c', gold: '#8b6914', sepia: '#5a6e82', textMid: '#2c4a6
 const label = { display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600 as const, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: c.textMid, marginBottom: '0.45rem' }
 const inp = { width: '100%', padding: '0.85rem 0.9rem', minHeight: '48px', border: '1px solid rgba(13,31,60,0.18)', background: 'rgba(244,241,235,0.4)', color: c.navy, fontSize: '1rem', fontFamily: '"Cormorant Garamond", Georgia, serif', outline: 'none', borderRadius: '4px', boxSizing: 'border-box' as const, transition: 'border-color 0.2s', appearance: 'auto' as const }
 const field = { marginBottom: '1.1rem' }
-const focus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.target.style.borderColor = '#1b3a6b')
-const blur  = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')
+const focus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => (e.target.style.borderColor = '#1b3a6b')
+const blur  = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')
 
 const RELIGIONS      = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Jain', 'Buddhist', 'Jewish', 'Zoroastrian', 'Other', 'Prefer not to say']
 const EDUCATIONS     = ["High School", "Diploma", "Bachelor's Degree", "Master's Degree", "Doctorate (PhD)", "Other"]
@@ -79,22 +79,23 @@ export default function BackgroundStep({ data, onChange }: Props) {
         </div>
       </Row>
 
-      {/* Subject + Other qualifications */}
-      <Row>
-        <div>
-          <label style={label}>Subject / Specialization</label>
-          <input type="text" value={data.educationSubject} onChange={e => onChange('educationSubject', e.target.value)}
-            placeholder="e.g. Computer Science, MBA…" style={inp} onFocus={focus} onBlur={blur} />
-        </div>
-        <div>
-          <label style={label}>Other Qualifications</label>
-          <input type="text" value={data.otherQualifications} onChange={e => onChange('otherQualifications', e.target.value)}
-            placeholder="e.g. PhD, CFA, AWS Certified, IELTS…" style={inp} onFocus={focus} onBlur={blur} />
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.sepia, margin: '0.2rem 0 0' }}>
-            PhD, professional certificates, courses — anything relevant
-          </p>
-        </div>
-      </Row>
+      {/* Subject / Specialization */}
+      <div style={field}>
+        <label style={label}>Subject / Specialization</label>
+        <input type="text" value={data.educationSubject} onChange={e => onChange('educationSubject', e.target.value)}
+          placeholder="e.g. Computer Science, MBA…" style={inp} onFocus={focus} onBlur={blur} />
+      </div>
+
+      {/* Other qualifications — big text box */}
+      <div style={field}>
+        <label style={label}>Other Qualifications</label>
+        <textarea value={data.otherQualifications} onChange={e => onChange('otherQualifications', e.target.value)}
+          placeholder="e.g. Foreign university degree (MS from USA, UK, Australia…), PhD, professional certifications (CFA, PMP, AWS), IELTS/TOEFL score…"
+          rows={4} style={{ ...inp, minHeight: '120px', resize: 'vertical' as const }} onFocus={focus} onBlur={blur} />
+        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.sepia, margin: '0.2rem 0 0' }}>
+          Foreign degrees, PhD, professional certifications, courses — anything relevant
+        </p>
+      </div>
 
       {/* Occupation + City of occupation */}
       <Row>
