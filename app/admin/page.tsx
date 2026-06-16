@@ -13,7 +13,7 @@ export default async function AdminPage() {
 
   const admin = createAdminClient()
 
-  const [membersRes, meetingsRes, revealsRes] = await Promise.all([
+  const [membersRes, meetingsRes, revealsRes, ratingsRes] = await Promise.all([
     admin.from('profiles')
       .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country')
       .order('created_at', { ascending: false }),
@@ -25,11 +25,16 @@ export default async function AdminPage() {
       .select('id, viewer_id, viewed_id, revealed_at')
       .order('revealed_at', { ascending: false })
       .limit(200),
+    admin.from('meeting_ratings')
+      .select('id, meeting_id, rater_id, rating, created_at')
+      .order('created_at', { ascending: false })
+      .limit(200),
   ])
 
   const members   = membersRes.data   ?? []
   const meetings  = meetingsRes.data  ?? []
   const reveals   = revealsRes.data   ?? []
+  const ratings   = ratingsRes.data   ?? []
 
   // Build name lookup from members
   const nameById: Record<string, string> = {}
@@ -89,6 +94,17 @@ export default async function AdminPage() {
     recipient_name: nameById[m.recipient_id] ?? m.recipient_id.slice(0, 8),
   }))
 
+  const ratingsWithNames = ratings.map(r => {
+    const mtg = meetings.find(m => m.id === r.meeting_id)
+    return {
+      ...r,
+      rater_name: nameById[r.rater_id] ?? r.rater_id.slice(0, 8),
+      meeting_date: mtg?.preferred_date ?? null,
+      meeting_requester: mtg ? (nameById[mtg.requester_id] ?? '—') : '—',
+      meeting_recipient: mtg ? (nameById[mtg.recipient_id] ?? '—') : '—',
+    }
+  })
+
   const revealsWithNames = reveals.map(r => ({
     ...r,
     viewer_name: nameById[r.viewer_id] ?? r.viewer_id.slice(0, 8),
@@ -119,6 +135,7 @@ export default async function AdminPage() {
       members={members}
       meetings={meetingsWithNames}
       reveals={revealsWithNames}
+      ratings={ratingsWithNames}
       planCounts={planCounts}
       idVerifications={idVerifications}
       earnings={earnings}

@@ -29,8 +29,11 @@ export default async function DiscoverPage() {
   monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
 
   const [{ count: meetingsSent }, { count: extraPurchased }] = await Promise.all([
+    // Only count active (pending/accepted) meetings — cancelled/declined ones return the slot
     supabase.from('video_meetings').select('*', { count: 'exact', head: true })
-      .eq('requester_id', user.id).gte('created_at', monthStart.toISOString()),
+      .eq('requester_id', user.id)
+      .gte('created_at', monthStart.toISOString())
+      .in('status', ['pending', 'accepted']),
     supabase.from('extra_meeting_purchases').select('*', { count: 'exact', head: true })
       .eq('user_id', user.id).gte('created_at', monthStart.toISOString()),
   ])
@@ -189,14 +192,21 @@ export default async function DiscoverPage() {
     id: string; room_id: string; status: string
     preferred_date: string | null; preferred_time: string | null
     message: string | null; family_member: string | null
-    other_name: string
+    other_name: string; already_rated: boolean
   }> = {}
 
   if (meetingIds.length > 0) {
-    const { data: meetingRowsForInbox } = await supabase
-      .from('video_meetings')
-      .select('id, room_id, status, preferred_date, preferred_time, message, family_member, requester_id, recipient_id')
-      .in('id', meetingIds)
+    const [{ data: meetingRowsForInbox }, { data: myRatings }] = await Promise.all([
+      supabase.from('video_meetings')
+        .select('id, room_id, status, preferred_date, preferred_time, message, family_member, requester_id, recipient_id')
+        .in('id', meetingIds),
+      supabase.from('meeting_ratings')
+        .select('meeting_id')
+        .eq('rater_id', user.id)
+        .in('meeting_id', meetingIds),
+    ])
+
+    const ratedSet = new Set((myRatings ?? []).map(r => r.meeting_id as string))
 
     const otherIds = Array.from(new Set(
       (meetingRowsForInbox ?? []).map(m => (m.requester_id === user.id ? m.recipient_id : m.requester_id))
@@ -217,6 +227,7 @@ export default async function DiscoverPage() {
         preferred_date: m.preferred_date, preferred_time: m.preferred_time,
         message: m.message, family_member: m.family_member,
         other_name: nameById[otherId] ?? 'Someone',
+        already_rated: ratedSet.has(m.id),
       }
     }
   }

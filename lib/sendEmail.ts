@@ -255,6 +255,35 @@ export async function sendMeetingConfirmedAcceptorEmail(
   await send(to, subject, html)
 }
 
+export async function sendMeetingCancelledEmail(
+  to: string,
+  recipientFirstName: string,
+  cancellerName: string,
+  dateStr: string,
+  time: string,
+) {
+  const subject = `Your video meeting with ${cancellerName} has been cancelled`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 12px;">Meeting Cancelled</h2>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:20px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 16px;">
+      Hi <strong>${recipientFirstName}</strong>,
+    </p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.7;margin:0 0 16px;">
+      We are writing to let you know that <strong style="color:#0d1f3c;">${cancellerName}</strong> has had to cancel the video meeting that was scheduled for <strong>${dateStr}${time ? ' at ' + time : ''}</strong>.
+    </p>
+    <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 24px;">
+      We understand this may be disappointing. Please don't be discouraged — your meeting slot has been returned in full and you are welcome to send a new request at a time that works best for both of you.
+    </p>
+    <div style="text-align:center;margin-bottom:8px;">
+      <a href="https://arrangemarriage.live/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+        Return to Discover →
+      </a>
+    </div>
+  `)
+  await send(to, subject, html)
+}
+
 // ── Welcome email (sent on first sign-up) ────────────────────────────────────
 export async function sendWelcomeEmail(to: string, firstName: string) {
   const subject = `Welcome to Arrange Marriage — Your Journey Begins Here 💘`

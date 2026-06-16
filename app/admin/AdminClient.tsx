@@ -31,6 +31,7 @@ interface Props {
   members: Record<string, unknown>[]
   meetings: Record<string, unknown>[]
   reveals: Record<string, unknown>[]
+  ratings: Record<string, unknown>[]
   planCounts: Record<string, number>
   idVerifications: IdVerification[]
   earnings: { daily: number; weekly: number; monthly: number; yearly: number }
@@ -76,9 +77,10 @@ function planBadge(plan: string) {
 
 function statusBadge(status: string) {
   const map: Record<string, { bg: string; color: string }> = {
-    pending:  { bg: 'rgba(201,122,46,0.2)',  color: '#fbbf24' },
-    accepted: { bg: 'rgba(46,125,82,0.2)',   color: '#4ade80' },
-    declined: { bg: 'rgba(158,42,43,0.2)',   color: '#f87171' },
+    pending:   { bg: 'rgba(201,122,46,0.2)',  color: '#fbbf24' },
+    accepted:  { bg: 'rgba(46,125,82,0.2)',   color: '#4ade80' },
+    declined:  { bg: 'rgba(158,42,43,0.2)',   color: '#f87171' },
+    cancelled: { bg: 'rgba(120,120,120,0.15)', color: '#9ca3af' },
   }
   const s = map[status] ?? map.pending
   return (
@@ -135,7 +137,7 @@ const td: React.CSSProperties = {
   borderBottom: `1px solid ${c.border2}`, whiteSpace: 'nowrap',
 }
 
-export default function AdminClient({ stats, members, meetings, reveals, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, defaultTab }: Props) {
+export default function AdminClient({ stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, defaultTab }: Props) {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
   const [idDocs, setIdDocs] = useState<IdVerification[]>(idVerifications)
@@ -315,7 +317,7 @@ export default function AdminClient({ stats, members, meetings, reveals, planCou
         {tab === 'meetings' && (
           <div>
             {sectionTitle('Video Meetings', meetings.length)}
-            <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
+            <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6, marginBottom: '2.5rem' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>{['Requester','Recipient','Status','Date','Time','Requested'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
@@ -337,6 +339,45 @@ export default function AdminClient({ stats, members, meetings, reveals, planCou
                 </tbody>
               </table>
             </div>
+
+            {/* Meeting ratings — visible to admin only */}
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 0.5rem' }}>
+              Member Ratings
+            </h3>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.text3, margin: '0 0 1rem', lineHeight: 1.6 }}>
+              Submitted privately by members after their meeting concluded. Not visible to other members.
+            </p>
+            {ratings.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', background: c.card, border: `1px solid ${c.border2}`, borderRadius: 6 }}>
+                <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text3, margin: 0 }}>No ratings submitted yet</p>
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr>{['Rated by','Meeting','Meeting Date','Rating','Submitted'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {(ratings as any[]).map(r => (
+                      <tr key={r.id} className="admin-row">
+                        <td style={{ ...td, color: c.text }}>{r.rater_name}</td>
+                        <td style={td}>{r.meeting_requester} ↔ {r.meeting_recipient}</td>
+                        <td style={td}>{r.meeting_date ? fmt(r.meeting_date) : '—'}</td>
+                        <td style={td}>
+                          <span style={{ color: c.gold, fontSize: '1rem', letterSpacing: '0.05em' }}>
+                            {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                          </span>
+                          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.text3, marginLeft: '0.4rem' }}>
+                            ({r.rating}/5)
+                          </span>
+                        </td>
+                        <td style={td}>{fmt(r.created_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

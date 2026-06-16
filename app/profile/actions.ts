@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail } from '@/lib/sendEmail'
+import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail } from '@/lib/sendEmail'
 import { sendMeetingRequestWhatsApp, sendMeetingAcceptedWhatsApp, sendMeetingDeclinedWhatsApp, sendMeetingConfirmedAcceptorWhatsApp } from '@/lib/sendWhatsApp'
 import { firstNameOnly } from '@/lib/maskName'
 
@@ -172,6 +172,73 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
   ])
 
   return { roomId: meeting.room_id }
+}
+
+export async function cancelMeeting(meetingId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const { data: meeting } = await supabase
+    .from('video_meetings')
+    .select('requester_id, recipient_id, preferred_date, preferred_time, status')
+    .eq('id', meetingId)
+    .single()
+
+  if (!meeting) throw new Error('Meeting not found')
+  if (meeting.requester_id !== user.id && meeting.recipient_id !== user.id) throw new Error('Not authorised')
+  if (meeting.status === 'cancelled') return
+
+  await supabase.from('video_meetings').update({ status: 'cancelled' }).eq('id', meetingId)
+
+  const otherId = meeting.requester_id === user.id ? meeting.recipient_id : meeting.requester_id
+  const { data: me } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
+  const dateStr = meeting.preferred_date
+    ? new Date(meeting.preferred_date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+    : 'your meeting date'
+
+  await supabase.from('notifications').insert({
+    recipient_id: otherId,
+    sender_id: user.id,
+    type: 'meeting_cancelled',
+    message: `${me?.full_name ?? 'Someone'} has cancelled the video meeting scheduled for ${dateStr}. Your meeting slot has been returned and you may request a new time.`,
+    meeting_id: meetingId,
+  })
+
+  const admin = createAdminClient()
+  const { data: otherAuth } = await admin.auth.admin.getUserById(otherId)
+  const otherEmail = otherAuth?.user?.email
+  const { data: otherProfile } = await supabase.from('profiles').select('full_name').eq('id', otherId).single()
+  if (otherEmail) {
+    await sendMeetingCancelledEmail(
+      otherEmail,
+      firstNameOnly(otherProfile?.full_name ?? ''),
+      me?.full_name ?? 'Your match',
+      dateStr,
+      meeting.preferred_time ?? '',
+    )
+  }
+}
+
+export async function rateMeeting(meetingId: string, rating: number): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (rating < 1 || rating > 5) throw new Error('Invalid rating')
+
+  const { data: meeting } = await supabase
+    .from('video_meetings')
+    .select('requester_id, recipient_id')
+    .eq('id', meetingId)
+    .single()
+
+  if (!meeting) throw new Error('Meeting not found')
+  if (meeting.requester_id !== user.id && meeting.recipient_id !== user.id) throw new Error('Not authorised')
+
+  await supabase.from('meeting_ratings').upsert(
+    { meeting_id: meetingId, rater_id: user.id, rating },
+    { onConflict: 'meeting_id,rater_id' }
+  )
 }
 
 export async function declineMeeting(meetingId: string): Promise<void> {

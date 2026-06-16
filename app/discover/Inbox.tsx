@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { markNotificationRead } from './actions'
-import { acceptMeeting, declineMeeting } from '@/app/profile/actions'
+import { acceptMeeting, declineMeeting, cancelMeeting, rateMeeting } from '@/app/profile/actions'
 import { maskName } from '@/lib/maskName'
 
 interface MeetingInfo {
@@ -14,6 +14,7 @@ interface MeetingInfo {
   message: string | null
   family_member: string | null
   other_name: string
+  already_rated: boolean
 }
 
 export interface InboxItem {
@@ -85,6 +86,96 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
   )
 }
 
+function StarRating({ meetingId, alreadyRated }: { meetingId: string; alreadyRated: boolean }) {
+  const [rated, setRated] = useState(alreadyRated)
+  const [saved, setSaved] = useState(0)
+  const [hovered, setHovered] = useState(0)
+  const [saving, setSaving] = useState(false)
+
+  if (rated) {
+    return (
+      <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: c.ivoryDim, margin: '0.75rem 0 0', textAlign: 'center' }}>
+        {'★'.repeat(saved || 5)} Thank you for your feedback.
+      </p>
+    )
+  }
+
+  async function handleRate(stars: number) {
+    setSaving(true)
+    try {
+      await rateMeeting(meetingId, stars)
+      setSaved(stars)
+      setRated(true)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+      <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, margin: '0 0 0.5rem' }}>
+        How did the meeting go?
+      </p>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem' }}>
+        {[1, 2, 3, 4, 5].map(star => (
+          <button
+            key={star}
+            onClick={() => !saving && handleRate(star)}
+            onMouseEnter={() => setHovered(star)}
+            onMouseLeave={() => setHovered(0)}
+            disabled={saving}
+            style={{ background: 'none', border: 'none', cursor: saving ? 'default' : 'pointer', padding: '0.1rem', fontSize: '1.6rem', lineHeight: 1, color: star <= (hovered || saved) ? c.goldLight : 'rgba(201,168,76,0.25)', transition: 'color 0.1s' }}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CancelButton({ meetingId, onCancelled }: { meetingId: string; onCancelled: () => void }) {
+  const [confirm, setConfirm] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
+
+  if (confirm) {
+    return (
+      <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(248,113,113,0.05)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '6px', textAlign: 'center' }}>
+        <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.ivory, margin: '0 0 0.6rem' }}>
+          Are you sure you want to cancel this meeting?
+        </p>
+        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+          <button
+            onClick={async () => {
+              setCancelling(true)
+              try { await cancelMeeting(meetingId); onCancelled() }
+              finally { setCancelling(false) }
+            }}
+            disabled={cancelling}
+            style={{ padding: '0.5rem 1.25rem', background: 'rgba(248,113,113,0.15)', border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: '4px', cursor: cancelling ? 'default' : 'pointer', opacity: cancelling ? 0.7 : 1 }}>
+            {cancelling ? 'Cancelling…' : 'Yes, cancel'}
+          </button>
+          <button
+            onClick={() => setConfirm(false)}
+            style={{ padding: '0.5rem 1.25rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivoryDim, fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: '4px', cursor: 'pointer' }}>
+            Keep
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ marginTop: '0.6rem', textAlign: 'center' }}>
+      <button
+        onClick={() => setConfirm(true)}
+        style={{ background: 'none', border: 'none', padding: '0.25rem 0', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(248,113,113,0.55)', cursor: 'pointer', textDecoration: 'underline' }}>
+        Cancel this meeting
+      </button>
+    </div>
+  )
+}
+
 function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string) => void }) {
   const [meeting, setMeeting] = useState(item.meeting)
   const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
@@ -111,7 +202,6 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
 
   const meetingUrl = meeting ? `https://meet.jit.si/ArrangeMarriage-${meeting.room_id}` : ''
 
-  // A meeting is concluded the day after the scheduled date
   const isConcluded = (() => {
     if (!meeting?.preferred_date) return false
     const end = new Date(meeting.preferred_date)
@@ -180,22 +270,34 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
 
           {meeting.status === 'accepted' && (
             isConcluded ? (
-              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: '0.75rem 0 0', textAlign: 'center' }}>
-                This meeting has concluded. Thank you for connecting.
-              </p>
-            ) : (
-              <div style={{ marginTop: '1rem' }}>
-                <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
-                  🎥 Join Video Meeting
-                </a>
-                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
-                  You may share this link with family members who would like to join the call:
-                  <br />
-                  <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+              <>
+                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: '0.75rem 0 0', textAlign: 'center' }}>
+                  This meeting has concluded.
                 </p>
-              </div>
+                <StarRating meetingId={meeting.id} alreadyRated={meeting.already_rated} />
+              </>
+            ) : (
+              <>
+                <div style={{ marginTop: '1rem' }}>
+                  <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
+                    🎥 Join Video Meeting
+                  </a>
+                  <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
+                    You may share this link with family members who would like to join the call:
+                    <br />
+                    <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+                  </p>
+                </div>
+                <CancelButton meetingId={meeting.id} onCancelled={() => setMeeting({ ...meeting!, status: 'cancelled' })} />
+              </>
             )
+          )}
+
+          {meeting.status === 'cancelled' && (
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: '0.6rem 0 0' }}>
+              This meeting was cancelled. Your meeting slot has been returned.
+            </p>
           )}
 
           {meeting.status === 'declined' && (
@@ -211,22 +313,33 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
           </p>
           {meeting.status === 'accepted' && (
             isConcluded ? (
-              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: 0, textAlign: 'center' }}>
-                This meeting has concluded. Thank you for connecting.
-              </p>
-            ) : (
-              <div>
-                <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
-                  🎥 Join Video Meeting
-                </a>
-                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
-                  You may share this link with family members who would like to join the call:
-                  <br />
-                  <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+              <>
+                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: 0, textAlign: 'center' }}>
+                  This meeting has concluded.
                 </p>
-              </div>
+                <StarRating meetingId={meeting.id} alreadyRated={meeting.already_rated} />
+              </>
+            ) : (
+              <>
+                <div>
+                  <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
+                    🎥 Join Video Meeting
+                  </a>
+                  <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
+                    You may share this link with family members who would like to join the call:
+                    <br />
+                    <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+                  </p>
+                </div>
+                <CancelButton meetingId={meeting.id} onCancelled={() => setMeeting({ ...meeting!, status: 'cancelled' })} />
+              </>
             )
+          )}
+          {meeting.status === 'cancelled' && (
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: 0 }}>
+              This meeting was cancelled. Your meeting slot has been returned.
+            </p>
           )}
         </div>
       ) : (
