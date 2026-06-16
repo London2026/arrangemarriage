@@ -12,6 +12,10 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
+  // Enforce paid plan server-side
+  const { data: me } = await supabase.from('profiles').select('plan').eq('id', user.id).single()
+  if (!me?.plan || me.plan === 'free') throw new Error('Upgrade required to reveal photos')
+
   // Only insert reveal + notification once
   const { data: existing } = await supabase
     .from('photo_reveals')

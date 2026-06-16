@@ -1,3 +1,7 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 
@@ -7,7 +11,26 @@ const c = {
   border: 'rgba(201,168,76,0.18)',
 }
 
+const REDIRECT_SECS = 5
+
 export default function PaymentSuccessPage() {
+  const router = useRouter()
+  const [secs, setSecs] = useState(REDIRECT_SECS)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecs(s => {
+        if (s <= 1) {
+          clearInterval(interval)
+          router.push('/discover')
+          return 0
+        }
+        return s - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [router])
+
   return (
     <div style={{ minHeight: '100vh', background: c.navy }}>
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 65%)' }} />
@@ -44,13 +67,16 @@ export default function PaymentSuccessPage() {
           ))}
         </div>
 
-        {/* CTA */}
+        {/* CTA + countdown */}
         <Link href="/discover"
           style={{ display: 'inline-block', padding: '1rem 3rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', borderRadius: '6px', textDecoration: 'none', boxShadow: '0 4px 20px rgba(201,168,76,0.3)' }}>
           Start Discovering →
         </Link>
 
-        <p style={{ marginTop: '1.25rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', color: 'rgba(189,181,166,0.4)', letterSpacing: '0.08em' }}>
+        <p style={{ marginTop: '1rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', color: 'rgba(189,181,166,0.5)', letterSpacing: '0.06em' }}>
+          Redirecting in {secs}s…
+        </p>
+        <p style={{ marginTop: '0.25rem', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', color: 'rgba(189,181,166,0.4)', letterSpacing: '0.08em' }}>
           Monthly subscription · Cancel anytime before next billing date
         </p>
       </main>
