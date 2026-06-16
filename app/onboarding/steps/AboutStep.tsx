@@ -24,7 +24,7 @@ interface Props {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
     height: string; weight: string; rashi: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
-    housing: string; disability: string; foodHabits: string; smoking: string; alcohol: string; hobby: string
+    housing: string; ownFarmLand: string; disability: string; foodHabits: string; smoking: string; alcohol: string; hobby: string
   }
   onChange: (key: string, value: string) => void
 }
@@ -139,17 +139,22 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Mother's Occupation" k="motherOccupation" val={data.motherOccupation} ph="e.g. Homemaker" onChange={onChange} />
       </Row>
 
-      {/* Housing + Disability */}
+      {/* Housing + Own Farm Land */}
       <Row>
         <Sel lbl="Housing" k="housing" val={data.housing} opts={HOUSING} ph="Select housing" onChange={onChange} />
-        <Sel lbl="Disability" k="disability" val={data.disability} opts={YES_NO} ph="Select" onChange={onChange} />
+        <Sel lbl="Own Farm Land" k="ownFarmLand" val={data.ownFarmLand} opts={YES_NO} ph="Select" onChange={onChange} />
       </Row>
 
-      {/* Food + Hobby */}
+      {/* Disability + Food Habits */}
       <Row>
+        <Sel lbl="Disability" k="disability" val={data.disability} opts={YES_NO} ph="Select" onChange={onChange} />
         <Sel lbl="Food Habits" k="foodHabits" val={data.foodHabits} opts={FOOD} ph="Select" onChange={onChange} />
-        <Inp lbl="Hobby / Interests" k="hobby" val={data.hobby} ph="e.g. Cricket, Reading…" onChange={onChange} />
       </Row>
+
+      {/* Hobby */}
+      <div style={field}>
+        <Inp lbl="Hobby / Interests" k="hobby" val={data.hobby} ph="e.g. Cricket, Reading…" onChange={onChange} />
+      </div>
 
       {/* Smoking + Alcohol */}
       <Row>
