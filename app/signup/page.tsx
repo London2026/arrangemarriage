@@ -89,7 +89,9 @@ export default function SignupPage() {
     return (
       <div className="auth-page">
         <style>{STYLE}</style>
-        <div className="auth-logo-wrap"><img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="auth-logo" /></div>
+        <div style={{ background:'#fff', borderRadius:14, padding:'18px 32px', display:'inline-block', boxShadow:'0 2px 18px rgba(13,31,60,0.09)', marginBottom:'1.25rem' }}>
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width:'auto', height:175, maxWidth:380, objectFit:'contain', display:'block' }} />
+        </div>
         <div className="auth-card">
           <div className="auth-card-head">
             <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>📬</div>
@@ -137,7 +139,9 @@ export default function SignupPage() {
   return (
     <div className="auth-page">
       <style>{STYLE}</style>
-      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="auth-logo" />
+      <div style={{ background:'#fff', borderRadius:14, padding:'18px 32px', display:'inline-block', boxShadow:'0 2px 18px rgba(13,31,60,0.09)', marginBottom:'1.25rem' }}>
+        <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width:'auto', height:175, maxWidth:380, objectFit:'contain', display:'block' }} />
+      </div>
       <div className="auth-card">
         <div className="auth-card-head">
           <h2 style={{ fontFamily: 'var(--font-playfair,"Playfair Display",serif)', fontSize: '1.6rem', fontWeight: 600, color: c.navy, margin: '0 0 0.2rem' }}>Begin Your Journey</h2>
