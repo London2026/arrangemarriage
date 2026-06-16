@@ -40,9 +40,10 @@ function isPositiveReason(r: string): boolean {
 }
 
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, ownProfile,
+  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile,
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
+  meetingsTotal: number; meetingsUsed: number
   ownProfile?: ProfileData | null
 }) {
   const [search, setSearch] = useState('')
@@ -300,6 +301,25 @@ export default function DiscoverClient({
           </div>
         )}
       </div>
+
+      {/* Meeting usage counter — visible only for paid members */}
+      {canMeet && meetingsTotal > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px' }}>
+            <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim }}>
+              Meeting requests this month
+            </span>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              {Array.from({ length: meetingsTotal }).map((_, i) => (
+                <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: i < meetingsUsed ? c.gold : 'rgba(201,168,76,0.2)', border: `1px solid ${i < meetingsUsed ? c.gold : 'rgba(201,168,76,0.3)'}` }} />
+              ))}
+            </div>
+            <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.9rem', fontWeight: 700, color: meetingsLeft === 0 ? '#f87171' : '#4ade80' }}>
+              {meetingsLeft} remaining
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Find My Match button */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.75rem' }}>

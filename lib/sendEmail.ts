@@ -172,10 +172,20 @@ export async function sendMeetingAcceptedEmail(
     <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 20px;">
       At the scheduled time, click the button below to join your private video call.
     </p>
-    <div style="text-align:center;margin-bottom:24px;">
+    <div style="text-align:center;margin-bottom:16px;">
       <a href="${meetingUrl}" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         🎥 Join Meeting →
       </a>
+    </div>
+    <div style="background:#f8f5ef;border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">Your Meeting Link</p>
+      <p style="font-family:'Courier New',monospace;font-size:12px;color:#0d1f3c;word-break:break-all;margin:0 0 10px;background:#fff;border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:8px 10px;">${meetingUrl}</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.75;margin:0 0 6px;">
+        You are welcome to share this link with family members or close friends who would like to join the call — they can open it in any browser, no account needed.
+      </p>
+      <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;font-style:italic;margin:0;">
+        This link is valid for the scheduled meeting date only and will no longer be active after the meeting concludes.
+      </p>
     </div>
     <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;">
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">💡 Arrange Marriage Safety Advice</p>
@@ -217,10 +227,20 @@ export async function sendMeetingConfirmedAcceptorEmail(
     <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.7;margin:0 0 20px;">
       At the scheduled time, click the button below to join your private video call.
     </p>
-    <div style="text-align:center;margin-bottom:24px;">
+    <div style="text-align:center;margin-bottom:16px;">
       <a href="${meetingUrl}" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         🎥 Join Meeting →
       </a>
+    </div>
+    <div style="background:#f8f5ef;border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">Your Meeting Link</p>
+      <p style="font-family:'Courier New',monospace;font-size:12px;color:#0d1f3c;word-break:break-all;margin:0 0 10px;background:#fff;border:1px solid rgba(201,168,76,0.3);border-radius:4px;padding:8px 10px;">${meetingUrl}</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.75;margin:0 0 6px;">
+        You are welcome to share this link with family members or close friends who would like to join the call — they can open it in any browser, no account needed.
+      </p>
+      <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;font-style:italic;margin:0;">
+        This link is valid for the scheduled meeting date only and will no longer be active after the meeting concludes.
+      </p>
     </div>
     <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;">
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">💡 Arrange Marriage Safety Advice</p>

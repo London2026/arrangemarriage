@@ -111,6 +111,14 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
 
   const meetingUrl = meeting ? `https://meet.jit.si/ArrangeMarriage-${meeting.room_id}` : ''
 
+  // A meeting is concluded the day after the scheduled date
+  const isConcluded = (() => {
+    if (!meeting?.preferred_date) return false
+    const end = new Date(meeting.preferred_date)
+    end.setHours(23, 59, 59, 999)
+    return end < new Date()
+  })()
+
   const inputStyle: React.CSSProperties = { width: '100%', padding: '0.6rem 0.7rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', borderRadius: '4px', outline: 'none', boxSizing: 'border-box' }
   const labelStyle: React.CSSProperties = { display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.35rem' }
 
@@ -171,10 +179,23 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
           )}
 
           {meeting.status === 'accepted' && (
-            <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
-              🎥 Join Video Meeting
-            </a>
+            isConcluded ? (
+              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: '0.75rem 0 0', textAlign: 'center' }}>
+                This meeting has concluded. Thank you for connecting.
+              </p>
+            ) : (
+              <div style={{ marginTop: '1rem' }}>
+                <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
+                  🎥 Join Video Meeting
+                </a>
+                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
+                  You may share this link with family members who would like to join the call:
+                  <br />
+                  <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+                </p>
+              </div>
+            )
           )}
 
           {meeting.status === 'declined' && (
@@ -189,10 +210,23 @@ function InboxRow({ item, onDismiss }: { item: InboxItem; onDismiss: (id: string
             {item.message}
           </p>
           {meeting.status === 'accepted' && (
-            <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
-              🎥 Join Video Meeting
-            </a>
+            isConcluded ? (
+              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.05rem', color: c.ivoryDim, margin: 0, textAlign: 'center' }}>
+                This meeting has concluded. Thank you for connecting.
+              </p>
+            ) : (
+              <div>
+                <a href={meetingUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: '4px' }}>
+                  🎥 Join Video Meeting
+                </a>
+                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.ivoryDim, margin: '0.6rem 0 0', lineHeight: 1.6, textAlign: 'center' }}>
+                  You may share this link with family members who would like to join the call:
+                  <br />
+                  <span style={{ fontFamily: 'monospace', fontSize: '0.78rem', color: c.goldLight, wordBreak: 'break-all', fontStyle: 'normal' }}>{meetingUrl}</span>
+                </p>
+              </div>
+            )
           )}
         </div>
       ) : (

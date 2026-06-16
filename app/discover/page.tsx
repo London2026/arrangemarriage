@@ -34,8 +34,10 @@ export default async function DiscoverPage() {
     supabase.from('extra_meeting_purchases').select('*', { count: 'exact', head: true })
       .eq('user_id', user.id).gte('created_at', monthStart.toISOString()),
   ])
-  const planLimit    = PLAN_LIMITS[userPlan] ?? 0
-  const meetingsLeft = Math.max(0, planLimit + (extraPurchased ?? 0) - (meetingsSent ?? 0))
+  const planLimit      = PLAN_LIMITS[userPlan] ?? 0
+  const meetingsTotal  = planLimit + (extraPurchased ?? 0)
+  const meetingsUsed   = Math.min(meetingsSent ?? 0, meetingsTotal)
+  const meetingsLeft   = Math.max(0, meetingsTotal - meetingsUsed)
 
   const PROFILE_SELECT = `
     id, full_name, age, gender, city, country, plan,
@@ -262,7 +264,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} ownProfile={ownProfile} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} />
         )}
       </main>
     </div>
