@@ -62,6 +62,7 @@ export interface ProfileData {
   pref_height?: string | null
   pref_cooking?: string | null
   pref_other?: string | null
+  plan?: string | null
 }
 
 const c = {
@@ -471,6 +472,16 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
           <a href="/pricing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', padding: '0.75rem', borderRadius: '6px', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim, border: '1px solid rgba(90,110,130,0.2)', textDecoration: 'none', background: 'rgba(90,110,130,0.05)', boxSizing: 'border-box' }}>
             🔒 Upgrade to request video meetings
           </a>
+        ) : canMeet && (!profile.plan || profile.plan === 'free') && !roomId ? (
+          <div style={{ padding: '1.1rem 1.25rem', background: 'rgba(201,168,76,0.04)', border: `1px solid rgba(201,168,76,0.15)`, borderRadius: '8px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>🕊️</div>
+            <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem', lineHeight: 1.5 }}>
+              Video meetings are not available for this profile
+            </p>
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.ivoryDim, margin: 0, lineHeight: 1.7 }}>
+              {firstName} is currently on our free membership. Video meeting requests will become available once they upgrade to a paid plan. We appreciate your patience and kindly ask you to check back soon.
+            </p>
+          </div>
         ) : canMeet && meetingsLeft === 0 && !roomId && !meetPending && !meetSent ? (
           <div style={{ textAlign: 'center', padding: '1rem 1.25rem', background: 'rgba(201,168,76,0.04)', border: `1px solid rgba(201,168,76,0.2)`, borderRadius: '8px' }}>
             <div style={{ fontSize: '1.4rem', marginBottom: '0.4rem' }}>📅</div>

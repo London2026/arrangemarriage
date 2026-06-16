@@ -17,9 +17,13 @@ export async function requestVideoMeeting(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  // Enforce paid plan server-side
+  // Enforce paid plan for requester
   const { data: myProfile } = await supabase.from('profiles').select('plan').eq('id', user.id).single()
   if (!myProfile?.plan || myProfile.plan === 'free') throw new Error('Upgrade required to request meetings')
+
+  // Enforce paid plan for recipient — free-plan members cannot receive meeting requests
+  const { data: recipientPlan } = await supabase.from('profiles').select('plan').eq('id', recipientId).single()
+  if (!recipientPlan?.plan || recipientPlan.plan === 'free') throw new Error('This member is on a free plan and cannot receive meeting requests at this time')
 
   // Check if a pending/accepted meeting already exists
   const { data: existing } = await supabase

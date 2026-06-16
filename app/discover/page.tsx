@@ -38,7 +38,7 @@ export default async function DiscoverPage() {
   const meetingsLeft = Math.max(0, planLimit + (extraPurchased ?? 0) - (meetingsSent ?? 0))
 
   const PROFILE_SELECT = `
-    id, full_name, age, gender, city, country,
+    id, full_name, age, gender, city, country, plan,
     religion, caste, mother_tongue, education, university_name, education_subject, other_qualifications,
     occupation, occupation_city, annual_salary, marital_status, has_kids, id_verified,
     height, weight, rashi, brothers, sisters, father_occupation, mother_occupation,
@@ -155,6 +155,7 @@ export default async function DiscoverPage() {
       pref_height: p.pref_height ?? null,
       pref_cooking: p.pref_cooking ?? null,
       pref_other: p.pref_other ?? null,
+      plan: p.plan ?? null,
     }
   }
 
