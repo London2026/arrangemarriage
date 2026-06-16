@@ -33,9 +33,14 @@ export async function POST(request: Request) {
       const userId = sub.notes?.userId
       const planKey = sub.notes?.planKey
       if (userId && planKey) {
+        // current_end is Unix timestamp (seconds) of when this billing period ends = next charge date
+        const nextBillingDate = sub.current_end
+          ? new Date(sub.current_end * 1000).toISOString()
+          : null
         await supabase.from('profiles').update({
           plan: planKey,
           stripe_customer_id: sub.id,
+          next_billing_date: nextBillingDate,
           updated_at: new Date().toISOString(),
         }).eq('id', userId)
       }

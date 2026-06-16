@@ -1,10 +1,51 @@
 'use server'
 
+import { redirect } from 'next/navigation'
+import Razorpay from 'razorpay'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail } from '@/lib/sendEmail'
 import { sendMeetingRequestWhatsApp, sendMeetingAcceptedWhatsApp, sendMeetingDeclinedWhatsApp, sendMeetingConfirmedAcceptorWhatsApp } from '@/lib/sendWhatsApp'
 import { firstNameOnly } from '@/lib/maskName'
+
+export async function deleteProfile(): Promise<never> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+
+  // Cancel Razorpay subscription immediately so no future charge occurs
+  if (profile?.stripe_customer_id && profile?.plan && profile.plan !== 'free') {
+    const keyId     = process.env.RAZORPAY_KEY_ID
+    const keySecret = process.env.RAZORPAY_KEY_SECRET
+    if (keyId && keySecret) {
+      try {
+        const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret })
+        await razorpay.subscriptions.cancel(profile.stripe_customer_id, false)
+      } catch (_) { /* already cancelled or not found — safe to ignore */ }
+    }
+  }
+
+  // Remove all uploaded files from storage
+  const storagePaths = [
+    profile?.back_photo_1_path, profile?.back_photo_2_path,
+    profile?.voice_path, profile?.voice_en_path,
+    profile?.front_photo_path, profile?.id_document_path,
+  ].filter((p): p is string => !!p)
+  if (storagePaths.length) {
+    await supabase.storage.from('profile-media').remove(storagePaths)
+  }
+
+  // Delete profile row (FK cascades will clean up related rows)
+  await supabase.from('profiles').delete().eq('id', user.id)
+
+  // Delete the auth account so they cannot log in again
+  const admin = createAdminClient()
+  await admin.auth.admin.deleteUser(user.id)
+
+  redirect('/')
+}
 
 export async function requestVideoMeeting(
   recipientId: string,

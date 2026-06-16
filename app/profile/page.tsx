@@ -5,6 +5,7 @@ import BottomNav from '@/components/BottomNav'
 import { createClient } from '@/lib/supabase/server'
 import RevealedByCard, { type Viewer } from './RevealedByCard'
 import MeetingCard from './MeetingCard'
+import ProfileActions from './ProfileActions'
 
 const c = {
   bg: '#07111f', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -402,6 +403,12 @@ export default async function ProfilePage() {
             <div>{meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}</div>
           )}
         </div>
+
+        {/* ── Account Settings (cancel subscription / delete profile) ── */}
+        <ProfileActions
+          plan={profile.plan ?? null}
+          hasSubscription={!!profile.stripe_customer_id}
+        />
 
       </main>
       <BottomNav />

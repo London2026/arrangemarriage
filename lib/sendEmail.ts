@@ -290,6 +290,59 @@ export async function sendMeetingConfirmedAcceptorEmail(
   await send(to, subject, html)
 }
 
+export async function sendBillingReminderEmail(
+  to: string,
+  firstName: string,
+  plan: string,
+  billingDate: string,
+  amount: string,
+) {
+  const planLabel = plan === 'standard' ? 'Standard' : 'Starter'
+  const subject   = `Your Arrange Marriage subscription renews on ${billingDate}`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Upcoming Subscription Renewal</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपकी सदस्यता नवीनीकरण</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">
+      Dear <strong>${firstName}</strong>,
+    </p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 16px;">
+      We hope you are enjoying your journey on Arrange Marriage. We are writing to let you know that your <strong>${planLabel} Plan</strong> subscription will automatically renew in <strong>3 days</strong>.
+    </p>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:24px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">Renewal Details</p>
+      <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;margin:0 0 6px;">📅 <strong>Renewal Date:</strong> ${billingDate}</p>
+      <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;margin:0 0 6px;">💳 <strong>Plan:</strong> ${planLabel}</p>
+      ${amount ? `<p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;margin:0;">💰 <strong>Amount:</strong> ${amount} per month</p>` : ''}
+    </div>
+    <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.8;margin:0 0 8px;">
+      No action is needed — your subscription will renew automatically and you will continue to have full access to all features included in your plan.
+    </p>
+    <p style="font-family:Georgia,serif;font-size:15px;color:#5a6e82;line-height:1.8;margin:0 0 24px;">
+      If you have found your match or wish to make any changes to your subscription, you may manage it from your Profile page at any time before the renewal date.
+    </p>
+
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+
+    <p style="font-family:Georgia,serif;font-size:14px;color:#0d1f3c;line-height:1.9;margin:0 0 8px;">
+      प्रिय <strong>${firstName}</strong>, हम आपको सूचित करना चाहते हैं कि आपकी <strong>${planLabel} योजना</strong> की सदस्यता <strong>3 दिनों में</strong> स्वचालित रूप से नवीनीकृत होगी — <strong>${billingDate}</strong> को।
+    </p>
+    <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">
+      यदि आप सदस्यता में कोई बदलाव करना चाहते हैं, तो कृपया नवीनीकरण तिथि से पहले अपने प्रोफ़ाइल पेज पर जाएं।
+    </p>
+
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://arrangemarriage.live/profile" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+        Manage My Subscription →
+      </a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:12px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">
+      Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team
+    </p>
+  `)
+  await send(to, subject, html)
+}
+
 export async function sendMeetingCancelledEmail(
   to: string,
   recipientFirstName: string,
