@@ -13,7 +13,8 @@ const c = {
 
 const STYLE = `
   .auth-page { min-height:100dvh; background:#f4f1eb; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1rem; box-sizing:border-box; }
-  .auth-logo { width:auto; height:140px; max-width:340px; object-fit:contain; display:block; margin:0 auto 0.5rem; mix-blend-mode:multiply; }
+  .auth-logo-wrap { background:#fff; border-radius:14px; padding:18px 32px; display:inline-block; box-shadow:0 2px 18px rgba(13,31,60,0.09); margin-bottom:1.25rem; }
+  .auth-logo { width:auto; height:175px; max-width:380px; object-fit:contain; display:block; }
   .auth-card { width:100%; max-width:420px; background:#fff; border-radius:10px; box-shadow:0 16px 60px rgba(13,31,60,0.12); border:1px solid rgba(13,31,60,0.15); overflow:hidden; }
   .auth-card-head { padding:1.8rem 2rem 1.4rem; border-bottom:1px solid rgba(13,31,60,0.15); text-align:center; background:#f4f1eb; }
   .auth-card-body { padding:1.75rem 2rem; }
@@ -28,7 +29,8 @@ const STYLE = `
   .auth-sub-btn { font-family:Raleway,sans-serif; font-size:0.65rem; letter-spacing:0.08em; background:none; border:none; cursor:pointer; text-decoration:underline; padding:0.25rem 0; }
   @media (max-width:600px) {
     .auth-page { justify-content:flex-start; padding-top:1.25rem; padding-bottom:1.5rem; }
-    .auth-logo { width:auto !important; height:110px !important; margin-bottom:0.5rem; mix-blend-mode:multiply; }
+    .auth-logo-wrap { padding:14px 22px !important; margin-bottom:1rem !important; }
+    .auth-logo { width:auto !important; height:130px !important; }
     .auth-card-head { padding:1.25rem 1rem 1rem !important; }
     .auth-card-body { padding:1.25rem 1rem !important; }
     .auth-card-head h2 { font-size:1.4rem !important; }
@@ -87,7 +89,7 @@ export default function SignupPage() {
     return (
       <div className="auth-page">
         <style>{STYLE}</style>
-        <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="auth-logo" />
+        <div className="auth-logo-wrap"><img src="/arrangemarriage-logo.png" alt="Arrange Marriage" className="auth-logo" /></div>
         <div className="auth-card">
           <div className="auth-card-head">
             <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>📬</div>
