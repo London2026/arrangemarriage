@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { createHmac } from 'crypto'
 
 const FROM = 'Arrange Marriage <noreply@arrangemarriage.live>'
 
@@ -51,6 +52,34 @@ function wrap(body: string) {
   </table>
 </body>
 </html>`
+}
+
+// ── Meeting rating helpers ───────────────────────────────────────────────────
+function ratingToken(meetingId: string, raterId: string): string {
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+  return createHmac('sha256', secret)
+    .update(`rating:${meetingId}:${raterId}`)
+    .digest('hex')
+    .slice(0, 32)
+}
+
+function ratingStarsHtml(meetingId: string, raterId: string): string {
+  const token = ratingToken(meetingId, raterId)
+  const base  = `https://arrangemarriage.live/api/rate-meeting`
+  const cells = [1, 2, 3, 4, 5].map(r => {
+    const url = `${base}?m=${meetingId}&u=${raterId}&r=${r}&t=${token}`
+    return `<td style="padding:0 8px;text-align:center;">
+      <a href="${url}" style="display:block;font-size:38px;color:#c9a84c;text-decoration:none;line-height:1;">★</a>
+      <a href="${url}" style="display:block;font-family:Arial,sans-serif;font-size:10px;color:#8b6914;text-decoration:none;margin-top:3px;letter-spacing:0.05em;">${r} star${r > 1 ? 's' : ''}</a>
+    </td>`
+  }).join('')
+  return `
+    <div style="background:#f8f5ef;border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:18px 20px;margin-top:20px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">How Was Your Meeting?</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;margin:0 0 14px;line-height:1.6;">After your call, please click a star to rate your experience — no login needed:</p>
+      <table style="margin:0 auto;border-collapse:collapse;"><tr>${cells}</tr></table>
+      <p style="font-family:Georgia,serif;font-size:11px;color:#9aabb8;margin:12px 0 0;font-style:italic;">Your rating is private and visible only to the Arrange Marriage team.</p>
+    </div>`
 }
 
 // ── Email templates ──────────────────────────────────────────────────────────
@@ -150,6 +179,8 @@ export async function sendMeetingAcceptedEmail(
   roomId: string,
   acceptorFamilyMember: string = '',
   acceptorMessage: string = '',
+  meetingId: string = '',
+  raterId: string = '',
 ) {
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
   const subject = `✅ Your video meeting with ${acceptorName} is confirmed`
@@ -187,7 +218,8 @@ export async function sendMeetingAcceptedEmail(
         This link is valid for the scheduled meeting date only and will no longer be active after the meeting concludes.
       </p>
     </div>
-    <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;">
+    ${meetingId && raterId ? ratingStarsHtml(meetingId, raterId) : ''}
+    <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;margin-top:16px;">
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">💡 Arrange Marriage Safety Advice</p>
       <p style="font-family:Georgia,serif;font-size:14px;color:#2c4a6e;line-height:1.75;margin:0 0 8px;">
         🪪 <strong>Please keep your ID ready</strong> to show to the other person at the start of the meeting, and <strong>ask to see their ID</strong> before the conversation begins. This helps confirm you are both speaking to verified members.
@@ -206,7 +238,9 @@ export async function sendMeetingConfirmedAcceptorEmail(
   requesterName: string,
   dateStr: string,
   time: string,
-  roomId: string
+  roomId: string,
+  meetingId: string = '',
+  raterId: string = '',
 ) {
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
   const subject = `✅ Your video meeting with ${requesterName} is confirmed`
@@ -242,7 +276,8 @@ export async function sendMeetingConfirmedAcceptorEmail(
         This link is valid for the scheduled meeting date only and will no longer be active after the meeting concludes.
       </p>
     </div>
-    <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;">
+    ${meetingId && raterId ? ratingStarsHtml(meetingId, raterId) : ''}
+    <div style="background:#fff8ec;border:1px solid rgba(201,168,76,0.35);border-radius:8px;padding:16px 20px;margin-top:16px;">
       <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">💡 Arrange Marriage Safety Advice</p>
       <p style="font-family:Georgia,serif;font-size:14px;color:#2c4a6e;line-height:1.75;margin:0 0 8px;">
         🪪 <strong>Please keep your ID ready</strong> to show to the other person at the start of the meeting, and <strong>ask to see their ID</strong> before the conversation begins. This helps confirm you are both speaking to verified members.

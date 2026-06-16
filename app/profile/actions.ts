@@ -157,14 +157,14 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
   await Promise.all([
     // Notify requester (Person A)
     requesterEmail
-      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message)
+      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message, meetingId, meeting.requester_id)
       : Promise.resolve(),
     requesterProfile?.phone
       ? sendMeetingAcceptedWhatsApp(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message)
       : Promise.resolve(),
     // Notify acceptor (Person B) with their own copy of the meeting link
     acceptorEmail
-      ? sendMeetingConfirmedAcceptorEmail(acceptorEmail, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
+      ? sendMeetingConfirmedAcceptorEmail(acceptorEmail, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id, meetingId, user.id)
       : Promise.resolve(),
     acceptorProfile?.phone
       ? sendMeetingConfirmedAcceptorWhatsApp(acceptorProfile.phone, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
