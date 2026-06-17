@@ -54,7 +54,7 @@ export async function sendPhotoRevealWhatsApp(
     `आपको इस प्रोफ़ाइल से एक वीडियो कॉल अनुरोध प्राप्त हो सकता है।`,
     `क्या आप उनकी प्रोफ़ाइल देखना चाहेंगे?`,
     ``,
-    `🔍 https://arrangemarriage.org/discover`,
+    `🔍 https://arrangemarriage.co.in/discover`,
   ].join('\n'))
 }
 
@@ -71,7 +71,7 @@ export async function sendMeetingRequestWhatsApp(
     `*${requesterName}* has requested a video meeting with you on *${dateStr}* at *${time}*.`,
     ...(familyMember ? [`👥 Joining: *${familyMember}*`] : []),
     `Log in to accept or decline:`,
-    `https://arrangemarriage.org/profile`,
+    `https://arrangemarriage.co.in/profile`,
   ].join('\n'))
 }
 
@@ -85,7 +85,7 @@ export async function sendMeetingDeclinedWhatsApp(
     `💔 *Arrange Marriage* — Hi ${requesterFirstName},`,
     `*${declinerName}* is unavailable for *${dateStr}*.`,
     `You can send a new request with a different date:`,
-    `https://arrangemarriage.org/discover`,
+    `https://arrangemarriage.co.in/discover`,
   ].join('\n'))
 }
 

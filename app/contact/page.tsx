@@ -139,7 +139,7 @@ export default function ContactPage() {
 
       <p style={{ marginTop: '1.5rem', fontFamily: 'Raleway,sans-serif', fontSize: '0.62rem', letterSpacing: '0.1em', color: c.sepia, textAlign: 'center' }}>
         Or email us directly at{' '}
-        <a href="mailto:hello@arrangemarriage.org" style={{ color: c.teal }}>hello@arrangemarriage.org</a>
+        <a href="mailto:hello@arrangemarriage.co.in" style={{ color: c.teal }}>hello@arrangemarriage.co.in</a>
       </p>
     </div>
   )

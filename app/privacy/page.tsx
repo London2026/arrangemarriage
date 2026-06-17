@@ -33,7 +33,7 @@ export default function PrivacyPage() {
         <h2 style={h2}>1. Who We Are</h2>
         <p style={p}>
           Arrange Marriage is a privacy-first matrimony platform based in the India. For any privacy-related enquiries, please contact us at{' '}
-          <a href="mailto:support@arrangemarriage.org" style={{ color: c.gold }}>support@arrangemarriage.org</a>.
+          <a href="mailto:support@arrangemarriage.co.in" style={{ color: c.gold }}>support@arrangemarriage.co.in</a>.
         </p>
 
         <h2 style={h2}>2. Data We Collect</h2>
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
         </ul>
         <p style={p}>
           To exercise any of these rights, please email us at{' '}
-          <a href="mailto:support@arrangemarriage.org" style={{ color: c.gold }}>support@arrangemarriage.org</a>.
+          <a href="mailto:support@arrangemarriage.co.in" style={{ color: c.gold }}>support@arrangemarriage.co.in</a>.
           We will respond within 30 days.
         </p>
 

@@ -67,8 +67,8 @@ export async function POST(request: Request) {
 
   try {
     await resend.emails.send({
-      from: 'Arrange Marriage <noreply@arrangemarriage.org>',
-      to: 'hello@arrangemarriage.org',
+      from: 'Arrange Marriage <noreply@arrangemarriage.co.in>',
+      to: 'hello@arrangemarriage.co.in',
       replyTo: email,
       subject: `Contact: ${subject || 'New message'} — from ${name}`,
       html,

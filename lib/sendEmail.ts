@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import { createHmac } from 'crypto'
 
-const FROM = 'Arrange Marriage <noreply@arrangemarriage.org>'
+const FROM = 'Arrange Marriage <noreply@arrangemarriage.co.in>'
 
 function resend() {
   if (!process.env.RESEND_API_KEY) return null
@@ -42,8 +42,8 @@ function wrap(body: string) {
         <tr><td style="padding:20px 32px 28px;border-top:1px solid rgba(13,31,60,0.08);text-align:center;">
           <p style="font-family:Arial,sans-serif;font-size:11px;color:#9aabb8;margin:0;">
             © 2026 Arrange Marriage · Privacy-first matrimony platform<br>
-            <a href="https://arrangemarriage.org/privacy" style="color:#9aabb8;">Privacy Policy</a> &nbsp;·&nbsp;
-            <a href="https://arrangemarriage.org/terms" style="color:#9aabb8;">Terms of Service</a>
+            <a href="https://arrangemarriage.co.in/privacy" style="color:#9aabb8;">Privacy Policy</a> &nbsp;·&nbsp;
+            <a href="https://arrangemarriage.co.in/terms" style="color:#9aabb8;">Terms of Service</a>
           </p>
         </td></tr>
 
@@ -65,7 +65,7 @@ function ratingToken(meetingId: string, raterId: string): string {
 
 function ratingStarsHtml(meetingId: string, raterId: string): string {
   const token = ratingToken(meetingId, raterId)
-  const base  = `https://arrangemarriage.org/api/rate-meeting`
+  const base  = `https://arrangemarriage.co.in/api/rate-meeting`
   const cells = [1, 2, 3, 4, 5].map(r => {
     const url = `${base}?m=${meetingId}&u=${raterId}&r=${r}&t=${token}`
     return `<td style="padding:0 8px;text-align:center;">
@@ -124,7 +124,7 @@ export async function sendPhotoRevealedEmail(
     </p>
 
     <div style="text-align:center;margin-bottom:8px;">
-      <a href="https://arrangemarriage.org/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         View Their Profile → / प्रोफ़ाइल देखें →
       </a>
     </div>
@@ -162,7 +162,7 @@ export async function sendMeetingRequestEmail(
       Log in to accept or decline this request from your profile page.
     </p>
     <div style="text-align:center;margin-bottom:8px;">
-      <a href="https://arrangemarriage.org/profile" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+      <a href="https://arrangemarriage.co.in/profile" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         Respond →
       </a>
     </div>
@@ -332,7 +332,7 @@ export async function sendBillingReminderEmail(
     </p>
 
     <div style="text-align:center;margin:20px 0 8px;">
-      <a href="https://arrangemarriage.org/profile" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+      <a href="https://arrangemarriage.co.in/profile" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         Manage My Subscription →
       </a>
     </div>
@@ -364,7 +364,7 @@ export async function sendMeetingCancelledEmail(
       We understand this may be disappointing. Please don't be discouraged — your meeting slot has been returned in full and you are welcome to send a new request at a time that works best for both of you.
     </p>
     <div style="text-align:center;margin-bottom:8px;">
-      <a href="https://arrangemarriage.org/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
         Return to Discover →
       </a>
     </div>
@@ -393,7 +393,7 @@ export async function sendWelcomeEmail(to: string, firstName: string) {
     <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;"><strong>Arrange Marriage</strong> में आपका हार्दिक स्वागत है — यह भारत का सबसे विश्वसनीय मंच है जहाँ आप गरिमा, देखभाल और सम्मान के साथ अपना जीवनसाथी खोज सकते हैं।</p>
     <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">📝 <strong>चरण 1</strong> — प्रोफ़ाइल बनाएं&nbsp;&nbsp;📸 <strong>चरण 2</strong> — फ़ोटो अपलोड करें&nbsp;&nbsp;🎙 <strong>चरण 3</strong> — आवाज़ रिकॉर्ड करें&nbsp;&nbsp;🔍 <strong>चरण 4</strong> — प्रोफ़ाइल खोजें&nbsp;&nbsp;🎥 <strong>चरण 5</strong> — वीडियो मीटिंग करें</p>
     <div style="text-align:center;margin:20px 0 8px;">
-      <a href="https://arrangemarriage.org/onboarding" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Create My Profile →</a>
+      <a href="https://arrangemarriage.co.in/onboarding" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Create My Profile →</a>
     </div>
     <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Your privacy is our priority — your face photo stays blurred until you choose to reveal it.</p>
   `)
@@ -421,7 +421,7 @@ export async function sendProfileCompleteEmail(to: string, firstName: string) {
     <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">बधाई हो! 🎉 Arrange Marriage पर आपकी प्रोफ़ाइल अब पूर्ण हो गई है और अन्य सदस्यों को दिखाई देने लगी है।</p>
     <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">🔍 प्रोफ़ाइल खोजें &nbsp;✨ AI से जोड़ी खोजें &nbsp;📸 चेहरे की फ़ोटो देखें (पेड प्लान) &nbsp;🎥 वीडियो मीटिंग करें (पेड प्लान) &nbsp;✏️ प्रोफ़ाइल कभी भी अपडेट करें</p>
     <div style="text-align:center;margin:20px 0 8px;">
-      <a href="https://arrangemarriage.org/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Start Discovering →</a>
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Start Discovering →</a>
     </div>
     <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
   `)
