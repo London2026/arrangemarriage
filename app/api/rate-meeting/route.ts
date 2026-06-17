@@ -82,7 +82,7 @@ function thankYouPage(rating: number) {
       Your ${rating}-star rating has been received. Your feedback helps us ensure
       every member has a meaningful experience on Arrange Marriage.
     </p>
-    <a href="https://arrangemarriage.live/discover" class="btn">Return to Arrange Marriage →</a>
+    <a href="https://arrangemarriage.org/discover" class="btn">Return to Arrange Marriage →</a>
   `)
 }
 
@@ -91,6 +91,6 @@ function page(title: string, message: string) {
     <p class="brand">Arrange Marriage</p>
     <h1 style="font-family:Georgia,serif;font-size:1.35rem;color:#f5f0e6;margin:0 0 0.75rem;font-weight:400;">${title}</h1>
     <p style="font-family:Georgia,serif;font-size:1rem;color:rgba(245,240,230,0.6);margin:0;line-height:1.75;">${message}</p>
-    <a href="https://arrangemarriage.live/discover" class="btn">Go to Arrange Marriage →</a>
+    <a href="https://arrangemarriage.org/discover" class="btn">Go to Arrange Marriage →</a>
   `)
 }
