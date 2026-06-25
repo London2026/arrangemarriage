@@ -288,7 +288,7 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Name','Age','Gender','Location','Religion','Plan','WhatsApp','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Name','Age','Gender','Location','Religion','Plan','Phone','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {members.filter((m: any) => m.onboarding_complete).map((m: any) => (
@@ -495,7 +495,7 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Name','Location','Plan','WhatsApp','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Name','Location','Plan','Phone','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {members.filter((m: any) => m.onboarding_complete).sort((a: any, b: any) => {

@@ -1,6 +1,6 @@
 async function msg91Send(mobile: string, templateId: string, variables: Record<string, string>) {
   const authKey  = process.env.MSG91_AUTH_KEY
-  const senderId = process.env.MSG91_SENDER_ID ?? 'ARRMRG'
+  const senderId = process.env.MSG91_SENDER_ID ?? 'AARMRG'
 
   if (!authKey || !templateId) {
     console.warn('MSG91 env vars not set — SMS skipped')
@@ -102,6 +102,21 @@ export async function sendMeetingCancelledSMS(
     var1: recipientFirstName,
     var2: cancellerName,
     var3: dateStr,
+  })
+}
+
+export async function sendPhotoRevealSMS(
+  toPhone: string,
+  ownerFirstName: string,
+  viewerProfileId: string,
+  dateStr: string,
+  timeStr: string,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_PHOTO_REVEAL ?? '', {
+    var1: ownerFirstName,
+    var2: viewerProfileId,
+    var3: dateStr,
+    var4: timeStr,
   })
 }
 

@@ -5,7 +5,6 @@ import Razorpay from 'razorpay'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail } from '@/lib/sendEmail'
-import { sendMeetingRequestWhatsApp, sendMeetingAcceptedWhatsApp, sendMeetingDeclinedWhatsApp, sendMeetingConfirmedAcceptorWhatsApp } from '@/lib/sendWhatsApp'
 import { sendMeetingRequestSMS, sendMeetingAcceptedSMS, sendMeetingDeclinedSMS, sendMeetingCancelledSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 
@@ -126,7 +125,7 @@ export async function requestVideoMeeting(
     meeting_id: meeting.id,
   })
 
-  // Email + WhatsApp the recipient
+  // Email + SMS the recipient
   const admin = createAdminClient()
   const { data: recipientAuth } = await admin.auth.admin.getUserById(recipientId)
   const recipientEmail = recipientAuth?.user?.email
@@ -139,9 +138,6 @@ export async function requestVideoMeeting(
   await Promise.all([
     recipientEmail
       ? sendMeetingRequestEmail(recipientEmail, recipientFirstName, name, safeDateStr, safeTime, message, familyMember)
-      : Promise.resolve(),
-    recipientProfile?.phone
-      ? sendMeetingRequestWhatsApp(recipientProfile.phone, recipientFirstName, name, safeDateStr, safeTime, familyMember)
       : Promise.resolve(),
     recipientProfile?.phone
       ? sendMeetingRequestSMS(recipientProfile.phone, recipientFirstName, name, safeDateStr, safeTime)
@@ -185,7 +181,7 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
     meeting_id: meetingId,
   })
 
-  // Email + WhatsApp the requester
+  // Email + SMS the requester
   const admin = createAdminClient()
   const { data: requesterAuth } = await admin.auth.admin.getUserById(meeting.requester_id)
   const requesterEmail = requesterAuth?.user?.email
@@ -205,17 +201,11 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
       ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message, meetingId, meeting.requester_id)
       : Promise.resolve(),
     requesterProfile?.phone
-      ? sendMeetingAcceptedWhatsApp(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message)
-      : Promise.resolve(),
-    requesterProfile?.phone
       ? sendMeetingAcceptedSMS(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
       : Promise.resolve(),
     // Notify acceptor (Person B) with their own copy of the meeting link
     acceptorEmail
       ? sendMeetingConfirmedAcceptorEmail(acceptorEmail, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id, meetingId, user.id)
-      : Promise.resolve(),
-    acceptorProfile?.phone
-      ? sendMeetingConfirmedAcceptorWhatsApp(acceptorProfile.phone, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
       : Promise.resolve(),
     acceptorProfile?.phone
       ? sendMeetingAcceptedSMS(acceptorProfile.phone, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
@@ -314,9 +304,6 @@ export async function declineMeeting(meetingId: string): Promise<void> {
 
   const { data: requesterProfile } = await supabase.from('profiles').select('full_name, phone').eq('id', meeting.requester_id).single()
   await Promise.all([
-    requesterProfile?.phone
-      ? sendMeetingDeclinedWhatsApp(requesterProfile.phone, firstNameOnly(requesterProfile.full_name ?? ''), me?.full_name ?? 'Your match', dateStr)
-      : Promise.resolve(),
     requesterProfile?.phone
       ? sendMeetingDeclinedSMS(requesterProfile.phone, firstNameOnly(requesterProfile.full_name ?? ''), me?.full_name ?? 'Your match', dateStr)
       : Promise.resolve(),

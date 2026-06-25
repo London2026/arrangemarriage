@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendPhotoRevealedEmail } from '@/lib/sendEmail'
-import { sendPhotoRevealWhatsApp } from '@/lib/sendWhatsApp'
+import { sendPhotoRevealSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 
 
@@ -48,7 +48,7 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
       message: `Today on ${dateStr} at ${timeStr} IST, your profile was viewed by Profile #${viewerProfileId}. You may receive a video call request — would you like to see their profile? Log in to Discover and search for #${viewerProfileId}.`,
     })
 
-    // Email + WhatsApp the photo owner
+    // Email + SMS the photo owner
     const admin = createAdminClient()
     const { data: ownerAuth } = await admin.auth.admin.getUserById(viewedUserId)
     const ownerEmail = ownerAuth?.user?.email
@@ -57,7 +57,7 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
         ? sendPhotoRevealedEmail(ownerEmail, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
         : Promise.resolve(),
       ownerPhone
-        ? sendPhotoRevealWhatsApp(ownerPhone, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
+        ? sendPhotoRevealSMS(ownerPhone, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
         : Promise.resolve(),
     ])
   }

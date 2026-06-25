@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { sendBillingReminderEmail } from '@/lib/sendEmail'
+import { sendBillingReminderSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -45,7 +46,6 @@ export async function GET(req: NextRequest) {
   for (const profile of profiles ?? []) {
     const { data: authUser } = await admin.auth.admin.getUserById(profile.id)
     const email = authUser?.user?.email
-    if (!email) continue
 
     const firstName   = firstNameOnly(profile.full_name ?? '')
     const billingDate = new Date(profile.next_billing_date).toLocaleDateString('en-GB', {
@@ -54,7 +54,15 @@ export async function GET(req: NextRequest) {
     const PLAN_PRICES: Record<string, string> = { starter: '₹350', standard: '₹550' }
     const amount = PLAN_PRICES[profile.plan] ?? ''
 
-    await sendBillingReminderEmail(email, firstName, profile.plan, billingDate, amount)
+    const { data: profileData } = await admin.from('profiles').select('phone').eq('id', profile.id).single()
+    await Promise.all([
+      email
+        ? sendBillingReminderEmail(email, firstName, profile.plan, billingDate, amount)
+        : Promise.resolve(),
+      profileData?.phone
+        ? sendBillingReminderSMS(profileData.phone, firstName, profile.plan, billingDate)
+        : Promise.resolve(),
+    ])
     sent++
   }
 
