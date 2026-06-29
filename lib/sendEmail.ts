@@ -400,6 +400,27 @@ export async function sendWelcomeEmail(to: string, firstName: string) {
   await send(to, subject, html)
 }
 
+// ── Admin alert (plain info email to london.anup@gmail.com) ─────────────────
+const ADMIN_EMAIL = 'london.anup@gmail.com'
+
+export async function sendAdminAlert(subject: string, rows: Record<string, string>) {
+  const rowsHtml = Object.entries(rows)
+    .map(([k, v]) => `<tr>
+      <td style="font-family:Arial,sans-serif;font-size:12px;color:#8b6914;padding:5px 14px 5px 0;white-space:nowrap;vertical-align:top;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">${k}</td>
+      <td style="font-family:Georgia,serif;font-size:14px;color:#0d1f3c;padding:5px 0;line-height:1.5;">${v}</td>
+    </tr>`)
+    .join('')
+  const html = `<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#f4f1eb;">
+    <div style="max-width:480px;background:#fff;border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:24px 28px;border-left:4px solid #c9a84c;">
+      <p style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">Arrange Marriage · Admin Alert</p>
+      <h2 style="font-family:Georgia,serif;font-size:19px;color:#0d1f3c;margin:0 0 18px;">${subject}</h2>
+      <table style="border-collapse:collapse;width:100%;">${rowsHtml}</table>
+      <p style="font-family:Arial,sans-serif;font-size:11px;color:#9aabb8;margin:18px 0 0;border-top:1px solid #f0e8d5;padding-top:12px;">${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })} IST · <a href="https://arrangemarriage.co.in/admin" style="color:#c9a84c;">Open Admin Panel</a></p>
+    </div>
+  </body></html>`
+  await send(ADMIN_EMAIL, `[AM] ${subject}`, html)
+}
+
 // ── Profile complete email (sent after onboarding finishes) ───────────────────
 export async function sendProfileCompleteEmail(to: string, firstName: string) {
   const subject = `Your Arrange Marriage profile is live — here is what to do next 🎉`

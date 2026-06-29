@@ -45,7 +45,7 @@ export default function ContactPage() {
   }
 
   const inp = {
-    width: '100%', padding: '0.85rem 1rem',
+    width: '100%', padding: '0.85rem 1rem', minHeight: '44px',
     border: `1px solid ${c.border}`, borderRadius: '6px',
     background: 'rgba(255,249,242,0.6)', color: c.navy,
     fontSize: '1rem', fontFamily: '"Cormorant Garamond", Georgia, serif',
@@ -95,7 +95,8 @@ export default function ContactPage() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} style={{ padding: '2rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <style>{`.contact-name-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}@media(max-width:480px){.contact-name-row{grid-template-columns:1fr}}`}</style>
+          <div className="contact-name-row">
             <div>
               <label style={lbl}>Your Name *</label>
               <input value={form.name} onChange={e => set('name', e.target.value)} placeholder="Arjun Sharma" required style={inp}

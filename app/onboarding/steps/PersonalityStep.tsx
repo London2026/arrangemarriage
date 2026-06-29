@@ -121,12 +121,12 @@ function ChipField({ icon, label, placeholder, value, onChange }: {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addChip() } }}
             placeholder={chips.length === 0 ? placeholder : 'Add another (optional)…'}
-            style={{ flex: 1, padding: '0.65rem 0.9rem', border: `1px solid ${isEmpty ? 'rgba(158,42,43,0.3)' : c.border}`, background: 'rgba(244,241,235,0.5)', color: c.navy, fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', fontStyle: 'italic', borderRadius: '5px', outline: 'none' }}
+            style={{ flex: 1, padding: '0.65rem 0.9rem', minHeight: '44px', border: `1px solid ${isEmpty ? 'rgba(158,42,43,0.3)' : c.border}`, background: 'rgba(244,241,235,0.5)', color: c.navy, fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', fontStyle: 'italic', borderRadius: '5px', outline: 'none' }}
             onFocus={e => (e.target.style.borderColor = c.teal)}
             onBlur={e => (e.target.style.borderColor = isEmpty ? 'rgba(158,42,43,0.3)' : c.border)}
           />
           <button type="button" onClick={addChip} disabled={!input.trim()}
-            style={{ width: '38px', height: '38px', marginTop: '2px', background: input.trim() ? c.teal : 'rgba(29,82,82,0.2)', color: '#fff', border: 'none', borderRadius: '5px', cursor: input.trim() ? 'pointer' : 'default', fontSize: '1.1rem', fontWeight: 700, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            style={{ width: '44px', height: '44px', background: input.trim() ? c.teal : 'rgba(29,82,82,0.2)', color: '#fff', border: 'none', borderRadius: '5px', cursor: input.trim() ? 'pointer' : 'default', fontSize: '1.1rem', fontWeight: 700, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             +
           </button>
         </div>

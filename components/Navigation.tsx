@@ -122,7 +122,7 @@ export default function Navigation() {
             {/* User dropdown */}
             <div ref={dropRef} style={{ position: 'relative' }}>
               <button onClick={() => setOpen(o => !o)}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, borderRadius: '24px', padding: '0.3rem 0.75rem 0.3rem 0.3rem', cursor: 'pointer', transition: 'background 0.2s' }}>
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, borderRadius: '24px', padding: '0.3rem 0.75rem 0.3rem 0.3rem', cursor: 'pointer', transition: 'background 0.2s', minHeight: '44px' }}>
                 {/* Avatar */}
                 <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: 'linear-gradient(135deg, #1e3358, #253f6a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Playfair Display", serif', fontSize: '0.7rem', fontWeight: 700, color: c.gold, flexShrink: 0 }}>
                   {initials}

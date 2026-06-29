@@ -1836,30 +1836,70 @@
     display: none;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(13,31,60,0.97);
+    background: rgba(7,17,31,0.98);
     z-index: 1050;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2.5rem;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
   }
   .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    font-style: italic;
-    color: var(--cream);
-    text-decoration: none;
-    letter-spacing: 0.02em;
-    transition: color 0.2s;
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid rgba(201,168,76,0.18);
+    flex-shrink: 0;
   }
-  .mobile-menu a:hover { color: var(--light-gold); }
+  .mobile-menu-header img { height: 34px; object-fit: contain; }
+  .mobile-menu a {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(245,240,230,0.82);
+    text-decoration: none;
+    padding: 0.95rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: color 0.2s, background 0.2s;
+    display: block;
+  }
+  .mobile-menu a:hover { color: var(--light-gold); background: rgba(201,168,76,0.05); }
+  .mobile-menu-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-top: auto;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    flex-shrink: 0;
+  }
+  .mobile-menu-actions .mm-signin {
+    flex: 1; padding: 0.75rem 1rem; min-height: 44px;
+    background: transparent; border: 1px solid rgba(201,168,76,0.35);
+    color: var(--light-gold); font-family: 'Raleway', sans-serif;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; text-decoration: none;
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .mobile-menu-actions .mm-begin {
+    flex: 1.6; padding: 0.75rem 1rem; min-height: 44px;
+    background: linear-gradient(135deg,#e8c876,#c9a84c); border: none;
+    color: var(--navy); font-family: 'Raleway', sans-serif;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
   .mobile-menu-close {
-    position: absolute;
-    top: 1.5rem; right: 1.5rem;
     background: none; border: none;
-    color: var(--cream); font-size: 2rem;
+    color: rgba(245,240,230,0.6); font-size: 1.5rem;
     cursor: pointer; line-height: 1;
+    min-width: 44px; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
   }
 
   /* ── TABLET (≤900px) ── */
@@ -2132,7 +2172,10 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-menu-close" onclick="toggleMenu()">×</button>
+  <div class="mobile-menu-header">
+    <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" />
+    <button class="mobile-menu-close" onclick="toggleMenu()">×</button>
+  </div>
   <a href="#demo" onclick="toggleMenu()">Browse Profiles</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#meeting" onclick="toggleMenu()">Meetings</a>
@@ -2141,7 +2184,10 @@
   <a href="#safety" onclick="toggleMenu()">Safety</a>
   <a href="#bloodtest" onclick="toggleMenu()">Blood Tests</a>
   <a href="/contact" onclick="toggleMenu()">Contact</a>
-  <button class="btn-primary" onclick="toggleMenu(); openModal();" style="margin-top:1rem; max-width:220px;">Begin Journey</button>
+  <div class="mobile-menu-actions">
+    <a href="/login" class="mm-signin" onclick="toggleMenu()">Sign In</a>
+    <button class="mm-begin" onclick="toggleMenu(); openModal();">Begin Journey</button>
+  </div>
 </div>
 
 <!-- HERO -->

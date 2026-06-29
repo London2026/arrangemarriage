@@ -45,7 +45,7 @@ function Row({ label, value }: { label: string; value: string | null | undefined
   if (!value && value !== 0) return null
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.8rem' }}>
-      <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.85rem', fontWeight: 600, color: c.ivoryDim, minWidth: '185px', flexShrink: 0 }}>{label}</span>
+      <span className="prof-row-label" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.85rem', fontWeight: 600, color: c.ivoryDim, minWidth: '185px', flexShrink: 0 }}>{label}</span>
       <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.15rem', color: c.ivory, lineHeight: 1.5 }}>{value}</span>
     </div>
   )
@@ -170,6 +170,7 @@ export default async function ProfilePage() {
         @media (max-width: 400px) {
           .prof-revealed-grid { grid-template-columns: 1fr; }
           .prof-main { padding: 4.5rem 0.5rem 7rem; }
+          .prof-row-label { min-width: 130px !important; }
         }
       `}</style>
 

@@ -150,7 +150,7 @@ function PlanCard({ plan, onSelect, pending, stripeLoading }: {
         <button
           onClick={() => onSelect(plan.key)}
           disabled={pending}
-          style={{ display: 'block', width: '100%', padding: '0.85rem', textAlign: 'center', borderRadius: '6px', fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: pending ? 'default' : 'pointer', transition: 'all 0.2s', border: 'none', opacity: pending ? 0.7 : 1, ...(plan.highlighted ? { background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, boxShadow: '0 4px 16px rgba(201,168,76,0.25)' } : plan.key === 'free' ? { background: 'transparent', border: `1px solid rgba(201,168,76,0.25)`, color: c.ivoryDim } : { border: `1px solid rgba(201,168,76,0.35)`, color: c.goldLight, background: 'transparent' }) }}>
+          style={{ display: 'block', width: '100%', padding: '0.85rem', minHeight: '44px', textAlign: 'center', borderRadius: '6px', fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: pending ? 'default' : 'pointer', transition: 'all 0.2s', border: 'none', opacity: pending ? 0.7 : 1, ...(plan.highlighted ? { background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, boxShadow: '0 4px 16px rgba(201,168,76,0.25)' } : plan.key === 'free' ? { background: 'transparent', border: `1px solid rgba(201,168,76,0.25)`, color: c.ivoryDim } : { border: `1px solid rgba(201,168,76,0.35)`, color: c.goldLight, background: 'transparent' }) }}>
           {pending ? 'Please wait…' : stripeLoading && plan.key !== 'free' ? 'Redirecting…' : plan.cta}
         </button>
       </div>

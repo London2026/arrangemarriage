@@ -47,6 +47,7 @@ export default function PhotosStep({ back1, back2, front, onPhotosChange, existi
           .photo-example-grid{grid-template-columns:1fr;gap:0.4rem}
           .photo-example-grid>div{display:flex;align-items:center;gap:0.75rem;text-align:left;padding:0.5rem 0.75rem}
           .photo-example-grid>div .ex-icon{margin-bottom:0;font-size:1.5rem}
+          .photo-back-grid{grid-template-columns:1fr}
         }
       `}</style>
       <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.25rem' }}>
@@ -93,7 +94,7 @@ export default function PhotosStep({ back1, back2, front, onPhotosChange, existi
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        <div className="photo-back-grid">
           <PhotoBox label="Photo 1" preview={p1} existingUrl={existingBack1Url} inputRef={r1} onChange={pick1} blurred={false} required />
           <PhotoBox label="Photo 2" preview={p2} existingUrl={existingBack2Url} inputRef={r2} onChange={pick2} blurred={false} required />
         </div>

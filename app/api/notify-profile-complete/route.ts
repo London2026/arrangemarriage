@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { sendProfileCompleteEmail } from '@/lib/sendEmail'
+import { sendProfileCompleteEmail, sendAdminAlert } from '@/lib/sendEmail'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST() {
@@ -11,7 +11,7 @@ export async function POST() {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('full_name')
+      .select('full_name, age, gender, city, country, religion, plan, phone, id_document_path')
       .eq('id', user.id)
       .single()
 
@@ -21,9 +21,20 @@ export async function POST() {
     const { data: authUser } = await admin.auth.admin.getUserById(user.id)
     const email = authUser?.user?.email ?? user.email
 
-    if (email) {
-      await sendProfileCompleteEmail(email, firstName)
-    }
+    await Promise.all([
+      email ? sendProfileCompleteEmail(email, firstName) : Promise.resolve(),
+      sendAdminAlert('New member joined', {
+        Name:     profile?.full_name ?? '—',
+        Email:    email ?? '—',
+        Age:      profile?.age ? String(profile.age) : '—',
+        Gender:   profile?.gender ?? '—',
+        Location: [profile?.city, profile?.country].filter(Boolean).join(', ') || '—',
+        Religion: profile?.religion ?? '—',
+        Plan:     profile?.plan ?? 'free',
+        Phone:    profile?.phone ?? '—',
+        ID:       profile?.id_document_path ? 'Uploaded' : 'Not uploaded',
+      }),
+    ])
 
     return NextResponse.json({ ok: true })
   } catch (err) {
