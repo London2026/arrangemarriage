@@ -422,14 +422,25 @@ export async function sendAdminAlert(subject: string, rows: Record<string, strin
 }
 
 // ── Profile complete email (sent after onboarding finishes) ───────────────────
-export async function sendProfileCompleteEmail(to: string, firstName: string) {
+export async function sendProfileCompleteEmail(to: string, firstName: string, profileId: string) {
+  const displayId = `#${profileId.slice(0, 8).toUpperCase()}`
   const subject = `Your Arrange Marriage profile is live — here is what to do next 🎉`
   const html = wrap(`
     <h2 style="font-family:Georgia,serif;font-size:24px;color:#0d1f3c;margin:0 0 4px;">Your profile is live!</h2>
     <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपकी प्रोफ़ाइल लाइव हो गई!</p>
     <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
     <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
-    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">Congratulations! 🎉 Your profile on Arrange Marriage is now complete and visible to other members. You have taken a wonderful and courageous step towards finding your life partner.</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 16px;">Congratulations! 🎉 Your profile on Arrange Marriage is now complete and visible to other members. You have taken a wonderful and courageous step towards finding your life partner.</p>
+
+    <!-- Unique Profile ID card -->
+    <div style="background:#0d1f3c;border-radius:10px;padding:22px 24px;margin-bottom:24px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 10px;">Your Unique Profile ID</p>
+      <p style="font-family:'Courier New',monospace;font-size:32px;font-weight:900;color:#c9a84c;letter-spacing:0.18em;margin:0 0 12px;">${displayId}</p>
+      <div style="height:1px;background:rgba(201,168,76,0.2);margin-bottom:12px;"></div>
+      <p style="font-family:Georgia,serif;font-size:14px;color:rgba(245,240,230,0.75);line-height:1.7;margin:0;">
+        This is your permanent, unique identity on Arrange Marriage. Please keep it safe — other members use this ID to find your profile, and our support team will ask for it if you ever need assistance.
+      </p>
+    </div>
     <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
       <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">What You Can Do Now</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🔍 <strong>Discover profiles</strong> — Browse members using filters for religion, caste, location, education, and more.</p>

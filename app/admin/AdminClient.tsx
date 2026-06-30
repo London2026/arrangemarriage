@@ -262,11 +262,12 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
               <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
-                    <tr>{['Name','Age','Location','Plan','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                    <tr>{['Profile ID','Name','Age','Location','Plan','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                   </thead>
                   <tbody>
                     {members.filter(m => m.onboarding_complete).slice(0, 10).map((m: any) => (
                       <tr key={m.id} className="admin-row">
+                        <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
                         <td style={td}>{m.full_name ?? '—'}</td>
                         <td style={td}>{m.age ?? '—'}</td>
                         <td style={td}>{[m.city, m.country].filter(Boolean).join(', ') || '—'}</td>
@@ -288,11 +289,12 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Name','Age','Gender','Location','Religion','Plan','Phone','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Profile ID','Name','Age','Gender','Location','Religion','Plan','Phone','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
                   {members.filter((m: any) => m.onboarding_complete).map((m: any) => (
                     <tr key={m.id} className="admin-row">
+                      <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
                       <td style={{ ...td, color: c.text, fontWeight: 500 }}>{m.full_name ?? '—'}</td>
                       <td style={td}>{m.age ?? '—'}</td>
                       <td style={td}>{m.gender ?? '—'}</td>

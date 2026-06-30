@@ -22,7 +22,7 @@ export async function POST() {
     const email = authUser?.user?.email ?? user.email
 
     await Promise.all([
-      email ? sendProfileCompleteEmail(email, firstName) : Promise.resolve(),
+      email ? sendProfileCompleteEmail(email, firstName, user.id) : Promise.resolve(),
       sendAdminAlert('New member joined', {
         Name:     profile?.full_name ?? '—',
         Email:    email ?? '—',
