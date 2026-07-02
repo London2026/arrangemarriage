@@ -144,50 +144,26 @@ export default function ContactPage() {
       </p>
 
       {/* Social media */}
-      <div style={{ width: '100%', maxWidth: '540px', marginTop: '2rem' }}>
-        <p style={{ fontFamily: 'Raleway,sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.sepia, textAlign: 'center', marginBottom: '1rem' }}>
+      <div style={{ width: '100%', maxWidth: '540px', marginTop: '1.75rem' }}>
+        <p style={{ fontFamily: 'Raleway,sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.sepia, textAlign: 'center', marginBottom: '0.75rem' }}>
           Follow Us
         </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {[
-            {
-              icon: '▶',
-              name: 'YouTube',
-              handle: '@ArrangeMarriage-co-in',
-              href: 'https://www.youtube.com/@ArrangeMarriage-co-in',
-              bg: 'rgba(255,0,0,0.07)',
-              border: 'rgba(255,0,0,0.2)',
-              color: '#cc0000',
-            },
-            {
-              icon: '◈',
-              name: 'Instagram',
-              handle: '@arrange_marriage.co.in',
-              href: 'https://www.instagram.com/arrange_marriage.co.in?igsh=bDJrNzJheTI1Z3F4&utm_source=qr',
-              bg: 'rgba(193,53,132,0.07)',
-              border: 'rgba(193,53,132,0.2)',
-              color: '#c13584',
-            },
-            {
-              icon: 'f',
-              name: 'Facebook',
-              handle: 'Arrange Marriage',
-              href: 'https://www.facebook.com/share/1BbJWLsPok/?mibextid=wwXIfr',
-              bg: 'rgba(24,119,242,0.07)',
-              border: 'rgba(24,119,242,0.2)',
-              color: '#1877f2',
-            },
+            { name: 'YouTube',   handle: '@ArrangeMarriage-co-in',      href: 'https://www.youtube.com/@ArrangeMarriage-co-in' },
+            { name: 'Instagram', handle: '@arrange_marriage.co.in',      href: 'https://www.instagram.com/arrange_marriage.co.in?igsh=bDJrNzJheTI1Z3F4&utm_source=qr' },
+            { name: 'Facebook',  handle: 'Arrange Marriage',             href: 'https://www.facebook.com/share/1BbJWLsPok/?mibextid=wwXIfr' },
           ].map(s => (
             <a key={s.name} href={s.href} target="_blank" rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.25rem', background: s.bg, border: `1px solid ${s.border}`, borderRadius: '10px', textDecoration: 'none', transition: 'opacity 0.2s' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <span style={{ fontFamily: s.name === 'Facebook' ? 'Georgia,serif' : 'Arial,sans-serif', fontSize: s.name === 'Facebook' ? '1.4rem' : '1.1rem', fontWeight: 900, color: '#fff', lineHeight: 1 }}>{s.icon}</span>
+              style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1rem', background: 'rgba(29,82,82,0.05)', border: `1px solid ${c.border}`, borderRadius: '8px', textDecoration: 'none' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: c.teal, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontFamily: 'Arial,sans-serif', fontSize: '0.7rem', fontWeight: 900, color: '#fff', letterSpacing: '0.04em' }}>{s.name.slice(0, 2).toUpperCase()}</span>
               </div>
               <div>
-                <p style={{ fontFamily: 'Raleway,sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: s.color, margin: '0 0 0.2rem' }}>{s.name}</p>
-                <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '1rem', color: c.navy, margin: 0 }}>{s.handle}</p>
+                <p style={{ fontFamily: 'Raleway,sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: c.teal, margin: '0 0 0.1rem' }}>{s.name}</p>
+                <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '0.9rem', color: c.sepia, margin: 0 }}>{s.handle}</p>
               </div>
-              <span style={{ marginLeft: 'auto', color: s.color, fontSize: '1.1rem', opacity: 0.6 }}>→</span>
+              <span style={{ marginLeft: 'auto', color: c.teal, fontSize: '0.9rem', opacity: 0.5 }}>→</span>
             </a>
           ))}
         </div>
