@@ -1,5 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'Read the Terms of Service for Arrange Marriage — India\'s privacy-first matrimony platform.',
+  alternates: { canonical: 'https://www.arrangemarriage.co.in/terms' },
+}
 
 const c = {
   bg: '#07111f', navy: '#0d1f3c', gold: '#c9a84c',

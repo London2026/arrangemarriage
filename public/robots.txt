@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /discover
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /api/
+Disallow: /auth/
+
+Sitemap: https://www.arrangemarriage.co.in/sitemap.xml

@@ -1,5 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'Learn how Arrange Marriage protects your personal data, photos, and privacy on our matrimony platform.',
+  alternates: { canonical: 'https://www.arrangemarriage.co.in/privacy' },
+}
 
 const c = {
   bg: '#07111f', navy: '#0d1f3c', gold: '#c9a84c',
