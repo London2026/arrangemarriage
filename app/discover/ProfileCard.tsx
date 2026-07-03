@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { revealPhoto } from './actions'
+import { revealPhoto, reportProfile } from './actions'
 import { requestVideoMeeting } from '@/app/profile/actions'
 import { maskName, firstNameOnly } from '@/lib/maskName'
+
+const REPORT_REASONS = ['Fake profile', 'Inappropriate content', 'Harassment or abuse', 'Spam', 'Other']
 
 export interface ProfileData {
   id: string
@@ -133,6 +135,24 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   const [meetSent, setMeetSent] = useState(false)
   const [meetError, setMeetError] = useState('')
   const [buyingExtra, setBuyingExtra] = useState(false)
+  const [showReport, setShowReport] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDetails, setReportDetails] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
+  const [reportDone, setReportDone] = useState(false)
+  const [reportError, setReportError] = useState('')
+
+  async function handleReport(e: React.FormEvent) {
+    e.preventDefault()
+    if (!reportReason) return
+    setReportSubmitting(true); setReportError('')
+    try {
+      await reportProfile(profile.id, reportReason, reportDetails)
+      setReportDone(true); setShowReport(false)
+    } catch (err) {
+      setReportError(err instanceof Error ? err.message : 'Something went wrong.')
+    } finally { setReportSubmitting(false) }
+  }
 
   const initials = profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase()
   const firstName = firstNameOnly(profile.full_name)
@@ -225,15 +245,69 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               {profile.age} yrs · {profile.gender} · {profile.city}, {profile.country}
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
             {[profile.religion, profile.caste].filter(Boolean).map(tag => (
               <span key={tag} className="pc-tag" style={{ fontFamily: 'Raleway, sans-serif', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', background: 'rgba(201,168,76,0.12)', border: `1px solid ${c.border}`, color: c.goldLight, borderRadius: '20px' }}>
                 {tag}
               </span>
             ))}
+            {!isOwnProfile && (
+              reportDone ? (
+                <span title="Reported" style={{ fontSize: '0.7rem', color: '#9ca3af', fontFamily: 'Raleway, sans-serif', padding: '0.3rem 0', letterSpacing: '0.05em' }}>Reported</span>
+              ) : (
+                <button
+                  onClick={() => setShowReport(v => !v)}
+                  title="Report this profile"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s' }}
+                >
+                  ⚑
+                </button>
+              )
+            )}
           </div>
         </div>
       </div>
+
+      {/* ── Report panel ── */}
+      {showReport && !isOwnProfile && (
+        <div style={{ background: 'rgba(158,42,43,0.06)', border: '1px solid rgba(158,42,43,0.2)', borderTop: 'none', padding: '1rem 1.25rem' }}>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f87171', margin: '0 0 0.75rem' }}>
+            Report Profile
+          </p>
+          <form onSubmit={handleReport}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
+              {REPORT_REASONS.map(r => (
+                <button key={r} type="button" onClick={() => setReportReason(r)}
+                  style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.05em', padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid', cursor: 'pointer',
+                    background: reportReason === r ? 'rgba(248,113,113,0.15)' : 'transparent',
+                    borderColor: reportReason === r ? '#f87171' : 'rgba(248,113,113,0.25)',
+                    color: reportReason === r ? '#f87171' : '#9ca3af',
+                  }}>
+                  {r}
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={reportDetails}
+              onChange={e => setReportDetails(e.target.value)}
+              placeholder="Additional details (optional)"
+              rows={2}
+              style={{ width: '100%', background: 'rgba(14,26,53,0.6)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '6px', color: '#e8e3d8', fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', padding: '0.5rem 0.75rem', resize: 'none', outline: 'none', boxSizing: 'border-box', marginBottom: '0.65rem' }}
+            />
+            {reportError && <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: '#f87171', margin: '0 0 0.5rem' }}>{reportError}</p>}
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button type="submit" disabled={!reportReason || reportSubmitting}
+                style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.45rem 1rem', borderRadius: '4px', border: 'none', cursor: !reportReason || reportSubmitting ? 'default' : 'pointer', background: !reportReason || reportSubmitting ? 'rgba(248,113,113,0.2)' : '#9e2a2b', color: '#fecaca' }}>
+                {reportSubmitting ? 'Submitting…' : 'Submit Report'}
+              </button>
+              <button type="button" onClick={() => setShowReport(false)}
+                style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.45rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#9ca3af' }}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* ── Back Photos ── */}
       {profile.back_photo_1_url || profile.back_photo_2_url ? (

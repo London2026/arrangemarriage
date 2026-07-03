@@ -50,3 +50,15 @@ export async function saveTicketNote(id: string, admin_notes: string): Promise<v
   const admin = createAdminClient()
   await admin.from('contact_submissions').update({ admin_notes }).eq('id', id)
 }
+
+export async function updateReportStatus(id: string, status: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('profile_reports').update({ status }).eq('id', id)
+}
+
+export async function saveReportNote(id: string, admin_notes: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('profile_reports').update({ admin_notes }).eq('id', id)
+}

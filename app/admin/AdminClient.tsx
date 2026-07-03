@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote } from './actions'
+import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote, updateReportStatus, saveReportNote } from './actions'
 
 const c = {
   navy: '#0d1f3c', navy2: '#122d52', navy3: '#1a3a6b',
@@ -14,7 +14,7 @@ const c = {
   green: '#2e7d52', amber: '#c97a2e', rose: '#9e2a2b',
 }
 
-type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification' | 'analytics' | 'crm' | 'tickets'
+type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification' | 'analytics' | 'crm' | 'tickets' | 'reports'
 
 interface IdVerification {
   id: string
@@ -28,7 +28,7 @@ interface CountItem { label: string; count: number }
 
 interface Props {
   adminRole: 'owner' | 'support'
-  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number; openTickets: number }
+  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number; openTickets: number; openReports: number }
   members: Record<string, unknown>[]
   meetings: Record<string, unknown>[]
   reveals: Record<string, unknown>[]
@@ -40,6 +40,7 @@ interface Props {
   casteCounts: CountItem[]
   religionCounts: CountItem[]
   tickets: Record<string, unknown>[]
+  reports: Record<string, unknown>[]
   defaultTab?: Tab
 }
 
@@ -53,6 +54,7 @@ const TABS: { id: Tab; icon: string; label: string }[] = [
   { id: 'subscriptions',   icon: '💳', label: 'Subscriptions' },
   { id: 'analytics',       icon: '📊', label: 'Analytics' },
   { id: 'id_verification', icon: '🪪', label: 'ID Verify' },
+  { id: 'reports',         icon: '⚑',  label: 'Reports' },
 ]
 
 function rupees(n: number) {
@@ -141,9 +143,9 @@ const td: React.CSSProperties = {
   borderBottom: `1px solid ${c.border2}`, whiteSpace: 'nowrap',
 }
 
-const SUPPORT_TABS: Tab[] = ['dashboard', 'members', 'crm', 'tickets', 'id_verification']
+const SUPPORT_TABS: Tab[] = ['dashboard', 'members', 'crm', 'tickets', 'reports', 'id_verification']
 
-export default function AdminClient({ adminRole, stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, tickets: ticketsProp, defaultTab }: Props) {
+export default function AdminClient({ adminRole, stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, tickets: ticketsProp, reports: reportsProp, defaultTab }: Props) {
   const router = useRouter()
   const visibleTabs = adminRole === 'owner' ? TABS : TABS.filter(t => SUPPORT_TABS.includes(t.id))
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
@@ -173,6 +175,18 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
     }
     return init
   })
+  const [reportFilter, setReportFilter] = useState<string>('open')
+  const [reportUi, setReportUi] = useState<Record<string, { status: string; notes: string; open: boolean }>>(() => {
+    const init: Record<string, { status: string; notes: string; open: boolean }> = {}
+    for (const r of reportsProp) {
+      init[r.id as string] = {
+        status: (r.status as string) ?? 'open',
+        notes:  (r.admin_notes as string) ?? '',
+        open: false,
+      }
+    }
+    return init
+  })
 
   async function handleCrmStatus(id: string, status: string) {
     setCrm(d => ({ ...d, [id]: { ...d[id], status } }))
@@ -190,6 +204,15 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
 
   async function handleTicketNoteBlur(id: string, notes: string) {
     await saveTicketNote(id, notes)
+  }
+
+  async function handleReportStatus(id: string, status: string) {
+    setReportUi(d => ({ ...d, [id]: { ...d[id], status } }))
+    await updateReportStatus(id, status)
+  }
+
+  async function handleReportNoteBlur(id: string, notes: string) {
+    await saveReportNote(id, notes)
   }
 
   async function handleLogout() {
@@ -277,6 +300,11 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
               {t.id === 'tickets' && stats.openTickets > 0 && (
                 <span className="nav-label" style={{ minWidth: 20, height: 20, borderRadius: '50%', background: '#3b82f6', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700, flexShrink: 0 }}>
                   {stats.openTickets}
+                </span>
+              )}
+              {t.id === 'reports' && stats.openReports > 0 && (
+                <span className="nav-label" style={{ minWidth: 20, height: 20, borderRadius: '50%', background: '#ef4444', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700, flexShrink: 0 }}>
+                  {stats.openReports}
                 </span>
               )}
             </button>
@@ -666,6 +694,104 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                       {ticketFilter === 'open' ? 'No open tickets' : 'Nothing here'}
                     </p>
                     <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text3, margin: 0 }}>Contact form submissions will appear here.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* ── REPORTS ── */}
+        {tab === 'reports' && (() => {
+          const filteredReports = reportFilter === 'all'
+            ? reportsProp
+            : reportsProp.filter(r => (reportUi[r.id as string]?.status ?? 'open') === reportFilter)
+          const openCount       = reportsProp.filter(r => (reportUi[r.id as string]?.status ?? 'open') === 'open').length
+          const reviewingCount  = reportsProp.filter(r => (reportUi[r.id as string]?.status ?? 'open') === 'reviewing').length
+          const resolvedCount   = reportsProp.filter(r => (reportUi[r.id as string]?.status ?? 'open') === 'resolved').length
+          return (
+            <div>
+              {sectionTitle('Profile Reports', reportsProp.length)}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                {[
+                  { label: 'Open',      count: openCount,      color: '#ef4444' },
+                  { label: 'Reviewing', count: reviewingCount, color: '#f59e0b' },
+                  { label: 'Resolved',  count: resolvedCount,  color: '#4ade80' },
+                ].map(s => (
+                  <div key={s.label} style={{ background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8, padding: '1rem', textAlign: 'center' }}>
+                    <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: s.color }}>{s.count}</div>
+                    <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.text3, marginTop: '0.25rem' }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                {['open', 'reviewing', 'resolved', 'all'].map(f => (
+                  <button key={f} onClick={() => setReportFilter(f)}
+                    style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 20, border: `1px solid ${reportFilter === f ? c.gold : c.border2}`, background: reportFilter === f ? 'rgba(201,168,76,0.12)' : 'transparent', color: reportFilter === f ? c.gold : c.text3, cursor: 'pointer' }}>
+                    {f === 'all' ? `All (${reportsProp.length})` : f.charAt(0).toUpperCase() + f.slice(1)}
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {filteredReports.map((r: any) => {
+                  const ui = reportUi[r.id] ?? { status: r.status ?? 'open', notes: r.admin_notes ?? '', open: false }
+                  return (
+                    <div key={r.id} style={{ background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8, overflow: 'hidden' }}>
+                      <div style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', flexWrap: 'wrap', cursor: 'pointer' }}
+                        onClick={() => setReportUi(d => ({ ...d, [r.id]: { ...d[r.id], open: !d[r.id]?.open } }))}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.3rem' }}>
+                            <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.25)', padding: '0.15rem 0.5rem', borderRadius: 4 }}>
+                              {r.reason}
+                            </span>
+                            <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', color: c.text3 }}>{fmt(r.created_at)}</span>
+                          </div>
+                          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.text2, margin: 0 }}>
+                            <strong style={{ color: c.text }}>{r.reporter_name}</strong> reported <strong style={{ color: c.text }}>{r.reported_name}</strong>
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                          <select value={ui.status} onClick={e => e.stopPropagation()} onChange={e => handleReportStatus(r.id, e.target.value)}
+                            style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em', background: c.card2, border: `1px solid ${c.border}`, color: c.gold, borderRadius: 4, padding: '0.3rem 0.5rem', cursor: 'pointer' }}>
+                            <option value="open">Open</option>
+                            <option value="reviewing">Reviewing</option>
+                            <option value="resolved">Resolved</option>
+                          </select>
+                          <span style={{ color: c.text3, fontSize: '0.75rem' }}>{ui.open ? '▲' : '▼'}</span>
+                        </div>
+                      </div>
+                      {ui.open && (
+                        <div style={{ borderTop: `1px solid ${c.border2}`, padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {r.details && (
+                            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.text2, margin: 0, fontStyle: 'italic', lineHeight: 1.7 }}>
+                              &ldquo;{r.details}&rdquo;
+                            </p>
+                          )}
+                          <div>
+                            <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.text3, marginBottom: '0.35rem' }}>Admin Notes</label>
+                            <textarea defaultValue={ui.notes} rows={2}
+                              onBlur={e => handleReportNoteBlur(r.id, e.target.value)}
+                              placeholder="Add internal notes…"
+                              style={{ width: '100%', background: c.card2, border: `1px solid ${c.border}`, borderRadius: 6, color: c.text, fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', padding: '0.5rem 0.75rem', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }} />
+                          </div>
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <a href={`/admin?tab=members`} target="_blank" rel="noopener noreferrer"
+                              style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: `1px solid ${c.border}`, color: c.text3, textDecoration: 'none', background: 'transparent' }}>
+                              View in Members
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+                {filteredReports.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '4rem 2rem', background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8 }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🏳️</div>
+                    <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 0.4rem' }}>
+                      {reportFilter === 'open' ? 'No open reports' : 'Nothing here'}
+                    </p>
+                    <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text3, margin: 0 }}>Member profile reports will appear here.</p>
                   </div>
                 )}
               </div>

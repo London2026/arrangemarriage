@@ -21,7 +21,7 @@ export default async function AdminPage() {
   }
   if (!adminRole) redirect('/discover')
 
-  const [membersRes, meetingsRes, revealsRes, ratingsRes, ticketsRes] = await Promise.all([
+  const [membersRes, meetingsRes, revealsRes, ratingsRes, ticketsRes, reportsRes] = await Promise.all([
     admin.from('profiles')
       .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country, crm_status, crm_notes')
       .order('created_at', { ascending: false }),
@@ -40,6 +40,9 @@ export default async function AdminPage() {
     admin.from('contact_submissions')
       .select('id, name, email, subject, message, status, admin_notes, created_at')
       .order('created_at', { ascending: false }),
+    admin.from('profile_reports')
+      .select('id, reporter_id, reported_id, reason, details, status, admin_notes, created_at')
+      .order('created_at', { ascending: false }),
   ])
 
   const members   = membersRes.data   ?? []
@@ -47,6 +50,7 @@ export default async function AdminPage() {
   const reveals   = revealsRes.data   ?? []
   const ratings   = ratingsRes.data   ?? []
   const tickets   = ticketsRes.data   ?? []
+  const rawReports = reportsRes.data  ?? []
 
   // Build name lookup from members
   const nameById: Record<string, string> = {}
@@ -64,6 +68,7 @@ export default async function AdminPage() {
     revealsToday:       reveals.filter(r => new Date(r.revealed_at) >= today).length,
     pendingMeetings:    meetings.filter(m => m.status === 'pending').length,
     openTickets:        tickets.filter(t => t.status === 'open').length,
+    openReports:        rawReports.filter(r => r.status === 'open').length,
   }
 
   const planCounts = members.filter(m => m.onboarding_complete).reduce((acc, m) => {
@@ -100,6 +105,12 @@ export default async function AdminPage() {
   const locationCounts = countBy('city')
   const casteCounts    = countBy('caste')
   const religionCounts = countBy('religion')
+
+  const reports = rawReports.map(r => ({
+    ...r,
+    reporter_name: nameById[r.reporter_id] ?? r.reporter_id.slice(0, 8),
+    reported_name: nameById[r.reported_id] ?? r.reported_id.slice(0, 8),
+  }))
 
   const meetingsWithNames = meetings.map(m => ({
     ...m,
@@ -157,6 +168,7 @@ export default async function AdminPage() {
       casteCounts={casteCounts}
       religionCounts={religionCounts}
       tickets={tickets}
+      reports={reports}
     />
   )
 }

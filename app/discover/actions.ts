@@ -80,6 +80,18 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
   return { signedUrl: urlData.signedUrl }
 }
 
+export async function reportProfile(reportedId: string, reason: string, details: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (user.id === reportedId) throw new Error('Cannot report yourself')
+  const { error } = await supabase.from('profile_reports').upsert(
+    { reporter_id: user.id, reported_id: reportedId, reason, details, status: 'open' },
+    { onConflict: 'reporter_id,reported_id', ignoreDuplicates: false }
+  )
+  if (error) throw new Error(error.message)
+}
+
 export async function markNotificationRead(notificationId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
