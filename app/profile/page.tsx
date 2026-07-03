@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import RevealedByCard, { type Viewer } from './RevealedByCard'
 import MeetingCard from './MeetingCard'
 import ProfileActions from './ProfileActions'
+import ReferralSection from './ReferralSection'
 
 const c = {
   bg: '#07111f', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -404,6 +405,14 @@ export default async function ProfilePage() {
             <div>{meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}</div>
           )}
         </div>
+
+        {/* ── Refer a Friend ── */}
+        <ReferralSection
+          referralCode={profile.referral_code as string | null}
+          referralCount={(profile.referral_count as number) ?? 0}
+          planBonusUntil={profile.plan_bonus_until as string | null}
+          userId={user.id}
+        />
 
         {/* ── Account Settings (cancel subscription / delete profile) ── */}
         <ProfileActions

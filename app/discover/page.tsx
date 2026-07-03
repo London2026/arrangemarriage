@@ -14,15 +14,16 @@ export default async function DiscoverPage() {
   // Guard: onboarding must be complete + get plan
   const { data: me } = await supabase
     .from('profiles')
-    .select('onboarding_complete, plan')
+    .select('onboarding_complete, plan, plan_bonus_until')
     .eq('id', user.id)
     .maybeSingle()
 
   if (!me?.onboarding_complete) redirect('/onboarding')
 
+  const bonusActive = me?.plan_bonus_until ? new Date(me.plan_bonus_until) > new Date() : false
   const userPlan  = me?.plan ?? 'free'
-  const canReveal = userPlan !== 'free'
-  const canMeet   = userPlan !== 'free'
+  const canReveal = userPlan !== 'free' || bonusActive
+  const canMeet   = userPlan !== 'free' || bonusActive
 
   const PLAN_LIMITS: Record<string, number> = { free: 0, starter: 2, standard: 4 }
   const monthStart = new Date()
@@ -37,7 +38,7 @@ export default async function DiscoverPage() {
     supabase.from('extra_meeting_purchases').select('*', { count: 'exact', head: true })
       .eq('user_id', user.id).gte('created_at', monthStart.toISOString()),
   ])
-  const planLimit      = PLAN_LIMITS[userPlan] ?? 0
+  const planLimit      = (bonusActive && userPlan === 'free') ? 2 : (PLAN_LIMITS[userPlan] ?? 0)
   const meetingsTotal  = planLimit + (extraPurchased ?? 0)
   const meetingsUsed   = Math.min(meetingsSent ?? 0, meetingsTotal)
   const meetingsLeft   = Math.max(0, meetingsTotal - meetingsUsed)

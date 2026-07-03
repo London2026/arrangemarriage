@@ -459,3 +459,32 @@ export async function sendProfileCompleteEmail(to: string, firstName: string, pr
   `)
   await send(to, subject, html)
 }
+
+// ── Referral reward email ─────────────────────────────────────────────────────
+export async function sendReferralRewardEmail(to: string, firstName: string, referralCount: number, bonusUntil: string) {
+  const bonusDate = new Date(bonusUntil).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' })
+  const subject = `🎉 You've earned a free month — thank you for referring a friend!`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:24px;color:#0d1f3c;margin:0 0 16px;">You earned a free month! 🎉</h2>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 20px;">
+      A friend you referred has just subscribed to Arrange Marriage. As a thank you, your subscription has been extended by <strong>one free month</strong>.
+    </p>
+    <div style="background:#0d1f3c;border-radius:10px;padding:22px 24px;margin-bottom:24px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 8px;">Your Plan Is Active Until</p>
+      <p style="font-family:Georgia,serif;font-size:26px;font-weight:700;color:#c9a84c;margin:0 0 8px;">${bonusDate}</p>
+      <p style="font-family:Arial,sans-serif;font-size:11px;color:rgba(245,240,230,0.6);margin:0;">Total successful referrals: ${referralCount}</p>
+    </div>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">Keep the rewards coming</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.8;margin:0;">
+        Every friend you refer who subscribes earns you another free month. Share your referral link from your Profile page to keep earning.
+      </p>
+    </div>
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://www.arrangemarriage.co.in/profile" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">View My Profile →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Thank you for spreading the word. — The Arrange Marriage Team</p>
+  `)
+  await send(to, subject, html)
+}

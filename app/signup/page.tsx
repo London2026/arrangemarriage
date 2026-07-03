@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -49,6 +49,11 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const router = useRouter()
 
+  useEffect(() => {
+    const ref = new URLSearchParams(window.location.search).get('ref')
+    if (ref && /^[A-Z0-9]{8}$/i.test(ref)) localStorage.setItem('am_referral', ref.toUpperCase())
+  }, [])
+
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
     if (!name.trim()) { setError('Please enter your name.'); return }
@@ -74,7 +79,9 @@ export default function SignupPage() {
     })
     if (error) { setLoading(false); setError('Invalid or expired code. Please check your email and try again.'); return }
     if (data.user) {
-      await supabase.auth.updateUser({ data: { full_name: name.trim() } })
+      const ref = localStorage.getItem('am_referral')
+      await supabase.auth.updateUser({ data: { full_name: name.trim(), ...(ref ? { am_referral: ref } : {}) } })
+      if (ref) localStorage.removeItem('am_referral')
       router.push('/auth/redirect')
     }
   }
