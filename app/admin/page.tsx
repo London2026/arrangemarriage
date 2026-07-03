@@ -13,7 +13,7 @@ export default async function AdminPage() {
 
   const admin = createAdminClient()
 
-  const [membersRes, meetingsRes, revealsRes, ratingsRes] = await Promise.all([
+  const [membersRes, meetingsRes, revealsRes, ratingsRes, ticketsRes] = await Promise.all([
     admin.from('profiles')
       .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country, crm_status, crm_notes')
       .order('created_at', { ascending: false }),
@@ -29,12 +29,16 @@ export default async function AdminPage() {
       .select('id, meeting_id, rater_id, rating, created_at')
       .order('created_at', { ascending: false })
       .limit(200),
+    admin.from('contact_submissions')
+      .select('id, name, email, subject, message, status, admin_notes, created_at')
+      .order('created_at', { ascending: false }),
   ])
 
   const members   = membersRes.data   ?? []
   const meetings  = meetingsRes.data  ?? []
   const reveals   = revealsRes.data   ?? []
   const ratings   = ratingsRes.data   ?? []
+  const tickets   = ticketsRes.data   ?? []
 
   // Build name lookup from members
   const nameById: Record<string, string> = {}
@@ -51,6 +55,7 @@ export default async function AdminPage() {
     activeSubscribers:  members.filter(m => m.plan && m.plan !== 'free').length,
     revealsToday:       reveals.filter(r => new Date(r.revealed_at) >= today).length,
     pendingMeetings:    meetings.filter(m => m.status === 'pending').length,
+    openTickets:        tickets.filter(t => t.status === 'open').length,
   }
 
   const planCounts = members.filter(m => m.onboarding_complete).reduce((acc, m) => {
@@ -142,6 +147,7 @@ export default async function AdminPage() {
       locationCounts={locationCounts}
       casteCounts={casteCounts}
       religionCounts={religionCounts}
+      tickets={tickets}
     />
   )
 }

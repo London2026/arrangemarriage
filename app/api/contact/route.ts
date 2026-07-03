@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST(request: Request) {
   const { name, email, subject, message } = await request.json()
@@ -65,17 +66,31 @@ export async function POST(request: Request) {
 </body>
 </html>`
 
-  try {
-    await resend.emails.send({
+  const admin = createAdminClient()
+
+  const [emailResult, dbResult] = await Promise.allSettled([
+    resend.emails.send({
       from: 'Arrange Marriage <noreply@arrangemarriage.co.in>',
       to: 'hello@arrangemarriage.co.in',
       replyTo: email,
       subject: `Contact: ${subject || 'New message'} — from ${name}`,
       html,
-    })
-    return NextResponse.json({ success: true })
-  } catch (err) {
-    console.error('Contact email error:', err)
+    }),
+    admin.from('contact_submissions').insert({
+      name: name.trim(),
+      email: email.trim(),
+      subject: subject?.trim() || null,
+      message: message.trim(),
+    }),
+  ])
+
+  if (emailResult.status === 'rejected') {
+    console.error('Contact email error:', emailResult.reason)
     return NextResponse.json({ error: 'Failed to send message.' }, { status: 500 })
   }
+  if (dbResult.status === 'rejected') {
+    console.error('Contact DB save error:', dbResult.reason)
+  }
+
+  return NextResponse.json({ success: true })
 }

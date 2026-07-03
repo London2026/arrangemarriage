@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote } from './actions'
+import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote } from './actions'
 
 const c = {
   navy: '#0d1f3c', navy2: '#122d52', navy3: '#1a3a6b',
@@ -14,7 +14,7 @@ const c = {
   green: '#2e7d52', amber: '#c97a2e', rose: '#9e2a2b',
 }
 
-type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification' | 'analytics'
+type Tab = 'dashboard' | 'members' | 'meetings' | 'reveals' | 'subscriptions' | 'id_verification' | 'analytics' | 'crm' | 'tickets'
 
 interface IdVerification {
   id: string
@@ -27,7 +27,7 @@ interface IdVerification {
 interface CountItem { label: string; count: number }
 
 interface Props {
-  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number }
+  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number; openTickets: number }
   members: Record<string, unknown>[]
   meetings: Record<string, unknown>[]
   reveals: Record<string, unknown>[]
@@ -38,12 +38,15 @@ interface Props {
   locationCounts: CountItem[]
   casteCounts: CountItem[]
   religionCounts: CountItem[]
+  tickets: Record<string, unknown>[]
   defaultTab?: Tab
 }
 
 const TABS: { id: Tab; icon: string; label: string }[] = [
   { id: 'dashboard',       icon: '◼',  label: 'Dashboard' },
   { id: 'members',         icon: '👤', label: 'Members' },
+  { id: 'crm',             icon: '🗂️', label: 'CRM' },
+  { id: 'tickets',         icon: '✉️', label: 'Tickets' },
   { id: 'meetings',        icon: '🎥', label: 'Meetings' },
   { id: 'reveals',         icon: '💘', label: 'Reveals' },
   { id: 'subscriptions',   icon: '💳', label: 'Subscriptions' },
@@ -137,17 +140,30 @@ const td: React.CSSProperties = {
   borderBottom: `1px solid ${c.border2}`, whiteSpace: 'nowrap',
 }
 
-export default function AdminClient({ stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, defaultTab }: Props) {
+export default function AdminClient({ stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, tickets: ticketsProp, defaultTab }: Props) {
   const router = useRouter()
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
   const [idDocs, setIdDocs] = useState<IdVerification[]>(idVerifications)
   const [idAction, setIdAction] = useState<Record<string, 'verifying' | 'rejecting' | 'done'>>({})
+  const [crmFilter, setCrmFilter] = useState<string>('all')
   const [crm, setCrm] = useState<Record<string, { status: string; notes: string; open: boolean }>>(() => {
     const init: Record<string, { status: string; notes: string; open: boolean }> = {}
     for (const m of members) {
       init[m.id as string] = {
         status: (m.crm_status as string) ?? 'new',
         notes:  (m.crm_notes  as string) ?? '',
+        open: false,
+      }
+    }
+    return init
+  })
+  const [ticketFilter, setTicketFilter] = useState<string>('open')
+  const [ticketUi, setTicketUi] = useState<Record<string, { status: string; notes: string; open: boolean }>>(() => {
+    const init: Record<string, { status: string; notes: string; open: boolean }> = {}
+    for (const t of ticketsProp) {
+      init[t.id as string] = {
+        status: (t.status as string) ?? 'open',
+        notes:  (t.admin_notes as string) ?? '',
         open: false,
       }
     }
@@ -161,6 +177,15 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
 
   async function handleCrmNoteBlur(id: string, notes: string) {
     await saveCrmNote(id, notes)
+  }
+
+  async function handleTicketStatus(id: string, status: string) {
+    setTicketUi(d => ({ ...d, [id]: { ...d[id], status } }))
+    await updateTicketStatus(id, status)
+  }
+
+  async function handleTicketNoteBlur(id: string, notes: string) {
+    await saveTicketNote(id, notes)
   }
 
   async function handleLogout() {
@@ -245,6 +270,11 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
                   {idDocs.length}
                 </span>
               )}
+              {t.id === 'tickets' && stats.openTickets > 0 && (
+                <span className="nav-label" style={{ minWidth: 20, height: 20, borderRadius: '50%', background: '#3b82f6', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 700, flexShrink: 0 }}>
+                  {stats.openTickets}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -273,6 +303,7 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
               <StatCard icon="💘" label="Reveals Today"       value={stats.revealsToday}      sub="face photos seen" />
               <StatCard icon="⏳" label="Pending Meetings"    value={stats.pendingMeetings}   sub="awaiting response" />
               <StatCard icon="🪪" label="ID Pending"          value={idDocs.length}           sub="awaiting verification" />
+              <StatCard icon="✉️" label="Open Tickets"       value={stats.openTickets}        sub="contact form messages" />
             </div>
 
             {/* Recent members */}
@@ -382,6 +413,261 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             </div>
           </div>
         )}
+
+        {/* ── CRM ── */}
+        {tab === 'crm' && (() => {
+          const crmStatuses = [
+            { key: 'all',       label: 'All',        color: c.text2 },
+            { key: 'follow_up', label: 'Follow Up',  color: '#fbbf24' },
+            { key: 'new',       label: 'New',        color: c.text3 },
+            { key: 'active',    label: 'Active',     color: '#4ade80' },
+            { key: 'matched',   label: 'Matched',    color: c.gold },
+            { key: 'inactive',  label: 'Inactive',   color: '#6b7280' },
+          ]
+          const statusColour: Record<string, string> = {
+            new: c.text3, active: '#4ade80', follow_up: '#fbbf24', matched: c.gold, inactive: '#6b7280',
+          }
+          const completedMembers = members.filter((m: any) => m.onboarding_complete)
+          const statusCounts: Record<string, number> = { new: 0, active: 0, follow_up: 0, matched: 0, inactive: 0 }
+          for (const m of completedMembers) {
+            const s = (crm[m.id as string]?.status) ?? 'new'
+            statusCounts[s] = (statusCounts[s] ?? 0) + 1
+          }
+          const filtered = crmFilter === 'all'
+            ? completedMembers
+            : completedMembers.filter((m: any) => (crm[m.id as string]?.status ?? 'new') === crmFilter)
+          const sorted = [...filtered].sort((a: any, b: any) => {
+            const order: Record<string, number> = { follow_up: 0, active: 1, new: 2, matched: 3, inactive: 4 }
+            return (order[crm[a.id as string]?.status ?? 'new'] ?? 2) - (order[crm[b.id as string]?.status ?? 'new'] ?? 2)
+          })
+          return (
+            <div>
+              {sectionTitle('CRM — Member Pipeline')}
+
+              {/* Status summary */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem', marginBottom: '1.75rem' }}>
+                {[
+                  { key: 'follow_up', label: 'Follow Up',  color: '#fbbf24', icon: '⚡' },
+                  { key: 'active',    label: 'Active',     color: '#4ade80', icon: '✅' },
+                  { key: 'new',       label: 'New',        color: c.text3,   icon: '🆕' },
+                  { key: 'matched',   label: 'Matched',    color: c.gold,    icon: '💍' },
+                  { key: 'inactive',  label: 'Inactive',   color: '#6b7280', icon: '💤' },
+                ].map(({ key, label, color, icon }) => (
+                  <div key={key} onClick={() => setCrmFilter(key === crmFilter ? 'all' : key)}
+                    style={{ background: crmFilter === key ? `${color}18` : c.card, border: `1px solid ${crmFilter === key ? color : c.border2}`, borderRadius: 8, padding: '0.9rem 1rem', cursor: 'pointer', transition: 'all 0.15s' }}>
+                    <div style={{ fontSize: '1.1rem', marginBottom: '0.3rem' }}>{icon}</div>
+                    <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.text3, marginBottom: '0.15rem' }}>{label}</div>
+                    <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color, lineHeight: 1 }}>{statusCounts[key] ?? 0}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Filter bar */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                {crmStatuses.map(s => (
+                  <button key={s.key} onClick={() => setCrmFilter(s.key)}
+                    style={{ padding: '0.35rem 0.9rem', borderRadius: 20, border: `1px solid ${crmFilter === s.key ? s.color : c.border2}`, background: crmFilter === s.key ? `${s.color}18` : 'transparent', color: crmFilter === s.key ? s.color : c.text3, fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.06em', transition: 'all 0.15s' }}>
+                    {s.label} {s.key !== 'all' && `(${statusCounts[s.key] ?? 0})`}
+                  </button>
+                ))}
+              </div>
+
+              {/* Member cards */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                {sorted.map((m: any) => {
+                  const row = crm[m.id as string] ?? { status: 'new', notes: '', open: false }
+                  const isFollowUp = row.status === 'follow_up'
+                  return (
+                    <div key={m.id} style={{ background: isFollowUp ? 'rgba(251,191,36,0.05)' : c.card, border: `1px solid ${isFollowUp ? 'rgba(251,191,36,0.3)' : c.border2}`, borderRadius: 6, overflow: 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', flexWrap: 'wrap' }}>
+                        <div style={{ fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.72rem', letterSpacing: '0.08em', flexShrink: 0 }}>
+                          #{(m.id as string).slice(0, 8).toUpperCase()}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 120 }}>
+                          <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.text, fontWeight: 600 }}>{m.full_name ?? '—'}</div>
+                          <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', color: c.text3, marginTop: '0.1rem' }}>
+                            {[m.age && `${m.age}y`, m.gender, m.city, m.religion].filter(Boolean).join(' · ')}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {m.phone && <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: '#4ade80' }}>📞 {m.phone}</span>}
+                          {planBadge(m.plan ?? 'free')}
+                          <select
+                            value={row.status}
+                            onChange={e => handleCrmStatus(m.id as string, e.target.value)}
+                            style={{ background: 'rgba(0,0,0,0.35)', border: `1px solid ${statusColour[row.status] ?? c.border}`, color: statusColour[row.status] ?? c.text2, borderRadius: 4, fontSize: '0.72rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, padding: '0.25rem 0.4rem', cursor: 'pointer', outline: 'none' }}>
+                            <option value="new">New</option>
+                            <option value="active">Active</option>
+                            <option value="follow_up">Follow Up</option>
+                            <option value="matched">Matched ✓</option>
+                            <option value="inactive">Inactive</option>
+                          </select>
+                          <button
+                            onClick={() => setCrm(d => ({ ...d, [m.id as string]: { ...d[m.id as string], open: !row.open } }))}
+                            style={{ background: row.notes ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${row.notes ? c.border : 'rgba(255,255,255,0.08)'}`, borderRadius: 4, color: row.notes ? c.gold : c.text3, cursor: 'pointer', fontSize: '0.75rem', padding: '0.25rem 0.55rem', fontFamily: 'Raleway, sans-serif' }}>
+                            {row.open ? '▲' : row.notes ? '📝' : '+ note'}
+                          </button>
+                        </div>
+                      </div>
+                      {row.open && (
+                        <div style={{ padding: '0.5rem 1rem 0.75rem', background: 'rgba(0,0,0,0.15)' }}>
+                          <textarea
+                            defaultValue={row.notes}
+                            onBlur={e => {
+                              setCrm(d => ({ ...d, [m.id as string]: { ...d[m.id as string], notes: e.target.value } }))
+                              handleCrmNoteBlur(m.id as string, e.target.value)
+                            }}
+                            placeholder="Follow-up reminders, conversation history, anything relevant…"
+                            rows={2}
+                            style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: `1px solid ${c.border}`, color: c.text, fontFamily: 'Raleway, sans-serif', fontSize: '0.82rem', lineHeight: 1.6, padding: '0.5rem 0.75rem', borderRadius: 4, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                          />
+                          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', color: c.text3, margin: '0.25rem 0 0' }}>Auto-saves when you click away</p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+                {sorted.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '3rem', background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8 }}>
+                    <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.85rem', color: c.text3, margin: 0 }}>No members in this category</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* ── TICKETS ── */}
+        {tab === 'tickets' && (() => {
+          const ticketStatuses = [
+            { key: 'open',        label: 'Open',        color: '#3b82f6' },
+            { key: 'in_progress', label: 'In Progress', color: '#fbbf24' },
+            { key: 'resolved',    label: 'Resolved',    color: '#4ade80' },
+          ]
+          const allTickets = ticketFilter === 'all'
+            ? ticketsProp
+            : ticketsProp.filter(t => (ticketUi[t.id as string]?.status ?? 'open') === ticketFilter)
+          const openCount     = ticketsProp.filter(t => (ticketUi[t.id as string]?.status ?? 'open') === 'open').length
+          const progressCount = ticketsProp.filter(t => (ticketUi[t.id as string]?.status ?? 'open') === 'in_progress').length
+          const resolvedCount = ticketsProp.filter(t => (ticketUi[t.id as string]?.status ?? 'open') === 'resolved').length
+
+          const ticketStatusColor: Record<string, string> = {
+            open: '#3b82f6', in_progress: '#fbbf24', resolved: '#4ade80',
+          }
+
+          return (
+            <div>
+              {sectionTitle('Support Tickets', ticketsProp.length)}
+
+              {/* Summary */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                {[
+                  { key: 'open',        label: 'Open',        count: openCount,     color: '#3b82f6', icon: '📬' },
+                  { key: 'in_progress', label: 'In Progress', count: progressCount, color: '#fbbf24', icon: '⏳' },
+                  { key: 'resolved',    label: 'Resolved',    count: resolvedCount, color: '#4ade80', icon: '✅' },
+                ].map(({ key, label, count, color, icon }) => (
+                  <div key={key} onClick={() => setTicketFilter(key === ticketFilter ? 'all' : key)}
+                    style={{ background: ticketFilter === key ? `${color}18` : c.card, border: `1px solid ${ticketFilter === key ? color : c.border2}`, borderRadius: 8, padding: '1rem', cursor: 'pointer', transition: 'all 0.15s' }}>
+                    <div style={{ fontSize: '1.2rem', marginBottom: '0.3rem' }}>{icon}</div>
+                    <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.text3 }}>{label}</div>
+                    <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '2rem', fontWeight: 700, color, lineHeight: 1.1 }}>{count}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Filter bar */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                <button onClick={() => setTicketFilter('all')}
+                  style={{ padding: '0.35rem 0.9rem', borderRadius: 20, border: `1px solid ${ticketFilter === 'all' ? c.text2 : c.border2}`, background: ticketFilter === 'all' ? 'rgba(232,227,216,0.08)' : 'transparent', color: ticketFilter === 'all' ? c.text2 : c.text3, fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.06em' }}>
+                  All ({ticketsProp.length})
+                </button>
+                {ticketStatuses.map(s => (
+                  <button key={s.key} onClick={() => setTicketFilter(s.key)}
+                    style={{ padding: '0.35rem 0.9rem', borderRadius: 20, border: `1px solid ${ticketFilter === s.key ? s.color : c.border2}`, background: ticketFilter === s.key ? `${s.color}18` : 'transparent', color: ticketFilter === s.key ? s.color : c.text3, fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.06em', transition: 'all 0.15s' }}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Ticket list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {allTickets.map((t: any) => {
+                  const ui = ticketUi[t.id as string] ?? { status: 'open', notes: '', open: false }
+                  const statusColor = ticketStatusColor[ui.status] ?? '#3b82f6'
+                  return (
+                    <div key={t.id} style={{ background: c.card, border: `1px solid ${ui.status === 'resolved' ? c.border2 : `${statusColor}30`}`, borderRadius: 8, overflow: 'hidden', opacity: ui.status === 'resolved' ? 0.65 : 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', padding: '0.9rem 1rem', cursor: 'pointer' }}
+                        onClick={() => setTicketUi(d => ({ ...d, [t.id as string]: { ...d[t.id as string], open: !ui.open } }))}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.text, fontWeight: 600 }}>{t.name}</span>
+                            <a href={`mailto:${t.email}`} onClick={e => e.stopPropagation()}
+                              style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: '#60a5fa', textDecoration: 'none' }}>{t.email}</a>
+                          </div>
+                          <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text2, fontWeight: 500, marginBottom: '0.25rem' }}>
+                            {t.subject || 'General Enquiry'}
+                          </div>
+                          <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.text3 }}>
+                            {new Date(t.created_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                          <select
+                            value={ui.status}
+                            onClick={e => e.stopPropagation()}
+                            onChange={e => { e.stopPropagation(); handleTicketStatus(t.id as string, e.target.value) }}
+                            style={{ background: 'rgba(0,0,0,0.4)', border: `1px solid ${statusColor}`, color: statusColor, borderRadius: 4, fontSize: '0.7rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, padding: '0.25rem 0.4rem', cursor: 'pointer', outline: 'none' }}>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                          </select>
+                          <span style={{ color: c.text3, fontSize: '0.75rem' }}>{ui.open ? '▲' : '▼'}</span>
+                        </div>
+                      </div>
+
+                      {ui.open && (
+                        <div style={{ borderTop: `1px solid ${c.border2}`, padding: '0.9rem 1rem' }}>
+                          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.82rem', color: c.text2, lineHeight: 1.8, whiteSpace: 'pre-wrap', margin: '0 0 1rem', background: 'rgba(0,0,0,0.15)', padding: '0.75rem', borderRadius: 4 }}>
+                            {t.message}
+                          </p>
+                          <div style={{ marginBottom: '0.25rem' }}>
+                            <label style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.text3 }}>Admin Notes</label>
+                          </div>
+                          <textarea
+                            defaultValue={ui.notes}
+                            onBlur={e => {
+                              setTicketUi(d => ({ ...d, [t.id as string]: { ...d[t.id as string], notes: e.target.value } }))
+                              handleTicketNoteBlur(t.id as string, e.target.value)
+                            }}
+                            placeholder="Internal notes — follow-up actions, resolution steps, context…"
+                            rows={2}
+                            style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: `1px solid ${c.border}`, color: c.text, fontFamily: 'Raleway, sans-serif', fontSize: '0.82rem', lineHeight: 1.6, padding: '0.5rem 0.75rem', borderRadius: 4, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                          />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem' }}>
+                            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', color: c.text3, margin: 0 }}>Auto-saves when you click away</p>
+                            <a href={`mailto:${t.email}?subject=Re: ${encodeURIComponent(t.subject || 'Your enquiry')}`}
+                              style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.gold, textDecoration: 'none', padding: '0.3rem 0.75rem', border: `1px solid ${c.border}`, borderRadius: 4 }}>
+                              Reply by email ↗
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+                {allTickets.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '4rem 2rem', background: c.card, border: `1px solid ${c.border2}`, borderRadius: 8 }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>📭</div>
+                    <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 0.4rem' }}>
+                      {ticketFilter === 'open' ? 'No open tickets' : 'Nothing here'}
+                    </p>
+                    <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', color: c.text3, margin: 0 }}>Contact form submissions will appear here.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* ── MEETINGS ── */}
         {tab === 'meetings' && (

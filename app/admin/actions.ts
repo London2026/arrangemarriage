@@ -34,3 +34,15 @@ export async function saveCrmNote(profileId: string, notes: string): Promise<voi
   const admin = createAdminClient()
   await admin.from('profiles').update({ crm_notes: notes }).eq('id', profileId)
 }
+
+export async function updateTicketStatus(id: string, status: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('contact_submissions').update({ status }).eq('id', id)
+}
+
+export async function saveTicketNote(id: string, admin_notes: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('contact_submissions').update({ admin_notes }).eq('id', id)
+}
