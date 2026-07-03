@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { verifyMember, rejectMemberId } from './actions'
+import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote } from './actions'
 
 const c = {
   navy: '#0d1f3c', navy2: '#122d52', navy3: '#1a3a6b',
@@ -142,6 +142,26 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
   const [idDocs, setIdDocs] = useState<IdVerification[]>(idVerifications)
   const [idAction, setIdAction] = useState<Record<string, 'verifying' | 'rejecting' | 'done'>>({})
+  const [crm, setCrm] = useState<Record<string, { status: string; notes: string; open: boolean }>>(() => {
+    const init: Record<string, { status: string; notes: string; open: boolean }> = {}
+    for (const m of members) {
+      init[m.id as string] = {
+        status: (m.crm_status as string) ?? 'new',
+        notes:  (m.crm_notes  as string) ?? '',
+        open: false,
+      }
+    }
+    return init
+  })
+
+  async function handleCrmStatus(id: string, status: string) {
+    setCrm(d => ({ ...d, [id]: { ...d[id], status } }))
+    await saveCrmStatus(id, status)
+  }
+
+  async function handleCrmNoteBlur(id: string, notes: string) {
+    await saveCrmNote(id, notes)
+  }
 
   async function handleLogout() {
     const supabase = createClient()
@@ -289,26 +309,74 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Profile ID','Name','Age','Gender','Location','Religion','Plan','Phone','Joined'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Profile ID','Name','Age','Gender','Location','Religion','Plan','Phone','Joined','Status','Notes'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
-                  {members.filter((m: any) => m.onboarding_complete).map((m: any) => (
-                    <tr key={m.id} className="admin-row">
-                      <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
-                      <td style={{ ...td, color: c.text, fontWeight: 500 }}>{m.full_name ?? '—'}</td>
-                      <td style={td}>{m.age ?? '—'}</td>
-                      <td style={td}>{m.gender ?? '—'}</td>
-                      <td style={td}>{[m.city, m.country].filter(Boolean).join(', ') || '—'}</td>
-                      <td style={td}>{m.religion ?? '—'}</td>
-                      <td style={td}>{planBadge(m.plan ?? 'free')}</td>
-                      <td style={td}>
-                        <span style={{ color: m.phone ? '#4ade80' : c.text3, fontSize: '0.75rem' }}>
-                          {m.phone ? '✓ ' + m.phone : '—'}
-                        </span>
-                      </td>
-                      <td style={td}>{fmt(m.created_at)}</td>
-                    </tr>
-                  ))}
+                  {members.filter((m: any) => m.onboarding_complete).map((m: any) => {
+                    const row = crm[m.id as string] ?? { status: 'new', notes: '', open: false }
+                    const statusColour: Record<string, string> = {
+                      new:       c.text3,
+                      active:    '#4ade80',
+                      follow_up: '#fbbf24',
+                      matched:   c.gold,
+                      inactive:  '#6b7280',
+                    }
+                    return (
+                      <>
+                        <tr key={m.id} className="admin-row">
+                          <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
+                          <td style={{ ...td, color: c.text, fontWeight: 500 }}>{m.full_name ?? '—'}</td>
+                          <td style={td}>{m.age ?? '—'}</td>
+                          <td style={td}>{m.gender ?? '—'}</td>
+                          <td style={td}>{[m.city, m.country].filter(Boolean).join(', ') || '—'}</td>
+                          <td style={td}>{m.religion ?? '—'}</td>
+                          <td style={td}>{planBadge(m.plan ?? 'free')}</td>
+                          <td style={td}>
+                            <span style={{ color: m.phone ? '#4ade80' : c.text3, fontSize: '0.75rem' }}>
+                              {m.phone ? '✓ ' + m.phone : '—'}
+                            </span>
+                          </td>
+                          <td style={td}>{fmt(m.created_at)}</td>
+                          <td style={td}>
+                            <select
+                              value={row.status}
+                              onChange={e => handleCrmStatus(m.id as string, e.target.value)}
+                              style={{ background: 'rgba(0,0,0,0.35)', border: `1px solid ${statusColour[row.status] ?? c.border}`, color: statusColour[row.status] ?? c.text2, borderRadius: 4, fontSize: '0.72rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, padding: '0.25rem 0.4rem', cursor: 'pointer', outline: 'none' }}>
+                              <option value="new">New</option>
+                              <option value="active">Active</option>
+                              <option value="follow_up">Follow Up</option>
+                              <option value="matched">Matched ✓</option>
+                              <option value="inactive">Inactive</option>
+                            </select>
+                          </td>
+                          <td style={td}>
+                            <button
+                              onClick={() => setCrm(d => ({ ...d, [m.id as string]: { ...d[m.id as string], open: !row.open } }))}
+                              style={{ background: row.notes ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${row.notes ? c.border : 'rgba(255,255,255,0.08)'}`, borderRadius: 4, color: row.notes ? c.gold : c.text3, cursor: 'pointer', fontSize: '0.78rem', padding: '0.25rem 0.55rem', fontFamily: 'Raleway, sans-serif' }}>
+                              {row.open ? '▲ hide' : row.notes ? '📝 note' : '+ note'}
+                            </button>
+                          </td>
+                        </tr>
+                        {row.open && (
+                          <tr key={`notes-${m.id}`} style={{ background: 'rgba(0,0,0,0.2)' }}>
+                            <td colSpan={11} style={{ padding: '0.6rem 1rem 0.75rem' }}>
+                              <textarea
+                                defaultValue={row.notes}
+                                onBlur={e => {
+                                  setCrm(d => ({ ...d, [m.id as string]: { ...d[m.id as string], notes: e.target.value } }))
+                                  handleCrmNoteBlur(m.id as string, e.target.value)
+                                }}
+                                placeholder="Add a note about this member — follow-up reminders, conversation history, anything relevant…"
+                                rows={2}
+                                style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: `1px solid ${c.border}`, color: c.text, fontFamily: 'Raleway, sans-serif', fontSize: '0.82rem', lineHeight: 1.6, padding: '0.5rem 0.75rem', borderRadius: 4, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+                              />
+                              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', color: c.text3, margin: '0.3rem 0 0' }}>Auto-saves when you click away</p>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
