@@ -303,7 +303,7 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
               <StatCard icon="👤" label="Total Members"      value={stats.totalMembers}      sub="completed onboarding" />
               <StatCard icon="✨" label="New This Week"       value={stats.newThisWeek}       sub="joined last 7 days" />
-              <StatCard icon="💳" label="Paid Subscribers"    value={stats.activeSubscribers} sub="starter + standard" />
+              {adminRole === 'owner' && <StatCard icon="💳" label="Paid Subscribers"    value={stats.activeSubscribers} sub="starter + standard" />}
               <StatCard icon="💘" label="Reveals Today"       value={stats.revealsToday}      sub="face photos seen" />
               <StatCard icon="⏳" label="Pending Meetings"    value={stats.pendingMeetings}   sub="awaiting response" />
               <StatCard icon="🪪" label="ID Pending"          value={idDocs.length}           sub="awaiting verification" />
