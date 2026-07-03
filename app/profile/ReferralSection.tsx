@@ -12,7 +12,7 @@ export default function ReferralSection({ referralCode, referralCount, planBonus
   planBonusUntil: string | null
   userId: string
 }) {
-  const code = referralCode ?? userId.slice(0, 8).toUpperCase()
+  const code = referralCode ?? userId.replace(/-/g, '').slice(0, 10).toUpperCase()
   const referralUrl = `https://www.arrangemarriage.co.in/signup?ref=${code}`
   const bonusActive = planBonusUntil && new Date(planBonusUntil) > new Date()
   const bonusDate = planBonusUntil

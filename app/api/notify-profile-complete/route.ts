@@ -22,7 +22,7 @@ export async function POST() {
     const email = authUser?.user?.email ?? user.email
 
     // Set referral_code and record referred_by from signup metadata
-    const referralCode = user.id.slice(0, 8).toUpperCase()
+    const referralCode = user.id.replace(/-/g, '').slice(0, 10).toUpperCase()
     const amReferral = authUser?.user?.user_metadata?.am_referral as string | undefined
     const profileUpdate: Record<string, unknown> = { referral_code: referralCode }
     if (amReferral && amReferral !== referralCode) profileUpdate.referred_by = amReferral

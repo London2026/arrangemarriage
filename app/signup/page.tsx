@@ -51,7 +51,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     const ref = new URLSearchParams(window.location.search).get('ref')
-    if (ref && /^[A-Z0-9]{8}$/i.test(ref)) localStorage.setItem('am_referral', ref.toUpperCase())
+    if (ref && /^[A-Z0-9]{10}$/i.test(ref)) localStorage.setItem('am_referral', ref.toUpperCase())
   }, [])
 
   async function sendCode(e: React.FormEvent) {
