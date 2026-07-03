@@ -27,6 +27,7 @@ interface IdVerification {
 interface CountItem { label: string; count: number }
 
 interface Props {
+  adminRole: 'owner' | 'support'
   stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number; openTickets: number }
   members: Record<string, unknown>[]
   meetings: Record<string, unknown>[]
@@ -140,8 +141,11 @@ const td: React.CSSProperties = {
   borderBottom: `1px solid ${c.border2}`, whiteSpace: 'nowrap',
 }
 
-export default function AdminClient({ stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, tickets: ticketsProp, defaultTab }: Props) {
+const SUPPORT_TABS: Tab[] = ['dashboard', 'members', 'crm', 'tickets', 'id_verification']
+
+export default function AdminClient({ adminRole, stats, members, meetings, reveals, ratings, planCounts, idVerifications, earnings, locationCounts, casteCounts, religionCounts, tickets: ticketsProp, defaultTab }: Props) {
   const router = useRouter()
+  const visibleTabs = adminRole === 'owner' ? TABS : TABS.filter(t => SUPPORT_TABS.includes(t.id))
   const [tab, setTab] = useState<Tab>(defaultTab ?? 'dashboard')
   const [idDocs, setIdDocs] = useState<IdVerification[]>(idVerifications)
   const [idAction, setIdAction] = useState<Record<string, 'verifying' | 'rejecting' | 'done'>>({})
@@ -254,7 +258,7 @@ export default function AdminClient({ stats, members, meetings, reveals, ratings
             letterSpacing: '0.3em', textTransform: 'uppercase', color: c.text3 }}>Admin Panel</span>
         </div>
         <nav style={{ flex: 1, padding: '0.75rem 0' }}>
-          {TABS.map(t => (
+          {visibleTabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
               style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', width: '100%',
                 padding: '0.7rem 1.25rem', border: 'none', cursor: 'pointer',

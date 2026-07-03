@@ -8,7 +8,11 @@ const ADMIN_EMAIL = 'london.anup@gmail.com'
 async function assertAdmin() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.email !== ADMIN_EMAIL) throw new Error('Not authorized')
+  if (!user) throw new Error('Not authorized')
+  if (user.email === ADMIN_EMAIL) return
+  const admin = createAdminClient()
+  const { data } = await admin.from('profiles').select('admin_role').eq('id', user.id).single()
+  if (data?.admin_role !== 'support') throw new Error('Not authorized')
 }
 
 export async function verifyMember(profileId: string): Promise<void> {

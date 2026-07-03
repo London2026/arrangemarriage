@@ -9,9 +9,17 @@ export default async function AdminPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
-  if (user.email !== ADMIN_EMAIL) redirect('/discover')
 
   const admin = createAdminClient()
+
+  let adminRole: 'owner' | 'support' | null = null
+  if (user.email === ADMIN_EMAIL) {
+    adminRole = 'owner'
+  } else {
+    const { data: profileData } = await admin.from('profiles').select('admin_role').eq('id', user.id).single()
+    if (profileData?.admin_role === 'support') adminRole = 'support'
+  }
+  if (!adminRole) redirect('/discover')
 
   const [membersRes, meetingsRes, revealsRes, ratingsRes, ticketsRes] = await Promise.all([
     admin.from('profiles')
@@ -136,6 +144,7 @@ export default async function AdminPage() {
 
   return (
     <AdminClient
+      adminRole={adminRole}
       stats={stats}
       members={members}
       meetings={meetingsWithNames}
