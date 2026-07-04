@@ -23,7 +23,7 @@ export default async function AdminPage() {
 
   const [membersRes, meetingsRes, revealsRes, ratingsRes, ticketsRes, reportsRes] = await Promise.all([
     admin.from('profiles')
-      .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country, crm_status, crm_notes')
+      .select('id, full_name, age, gender, city, country, religion, caste, plan, phone, onboarding_complete, created_at, id_verified, id_document_path, id_country, crm_status, crm_notes, suspended')
       .order('created_at', { ascending: false }),
     admin.from('video_meetings')
       .select('id, room_id, requester_id, recipient_id, status, preferred_date, preferred_time, created_at')
@@ -60,15 +60,20 @@ export default async function AdminPage() {
 
   const today = new Date(); today.setHours(0, 0, 0, 0)
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  const startOfMonth = new Date(); startOfMonth.setDate(1); startOfMonth.setHours(0, 0, 0, 0)
 
   const stats = {
     totalMembers:       members.filter(m => m.onboarding_complete).length,
     newThisWeek:        members.filter(m => new Date(m.created_at) > weekAgo && m.onboarding_complete).length,
     activeSubscribers:  members.filter(m => m.plan && m.plan !== 'free').length,
     revealsToday:       reveals.filter(r => new Date(r.revealed_at) >= today).length,
+    revealsThisMonth:   reveals.filter(r => new Date(r.revealed_at) >= startOfMonth).length,
     pendingMeetings:    meetings.filter(m => m.status === 'pending').length,
+    meetingsThisMonth:  meetings.filter(m => new Date(m.created_at) >= startOfMonth).length,
+    meetingsBooked:     meetings.filter(m => m.status === 'accepted').length,
     openTickets:        tickets.filter(t => t.status === 'open').length,
     openReports:        rawReports.filter(r => r.status === 'open').length,
+    suspendedMembers:   members.filter(m => (m as Record<string,unknown>).suspended === true).length,
   }
 
   const planCounts = members.filter(m => m.onboarding_complete).reduce((acc, m) => {

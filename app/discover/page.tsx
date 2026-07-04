@@ -11,14 +11,15 @@ export default async function DiscoverPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Guard: onboarding must be complete + get plan
+  // Guard: onboarding must be complete, not suspended
   const { data: me } = await supabase
     .from('profiles')
-    .select('onboarding_complete, plan, plan_bonus_until')
+    .select('onboarding_complete, plan, plan_bonus_until, suspended')
     .eq('id', user.id)
     .maybeSingle()
 
   if (!me?.onboarding_complete) redirect('/onboarding')
+  if ((me as Record<string, unknown> | null)?.suspended) redirect('/suspended')
 
   const bonusActive = me?.plan_bonus_until ? new Date(me.plan_bonus_until) > new Date() : false
   const userPlan  = me?.plan ?? 'free'

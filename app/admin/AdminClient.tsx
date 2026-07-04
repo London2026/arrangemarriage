@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote, updateReportStatus, saveReportNote } from './actions'
+import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote, updateReportStatus, saveReportNote, suspendMember, unsuspendMember } from './actions'
 
 const c = {
   navy: '#0d1f3c', navy2: '#122d52', navy3: '#1a3a6b',
@@ -28,7 +28,7 @@ interface CountItem { label: string; count: number }
 
 interface Props {
   adminRole: 'owner' | 'support'
-  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; pendingMeetings: number; openTickets: number; openReports: number }
+  stats: { totalMembers: number; newThisWeek: number; activeSubscribers: number; revealsToday: number; revealsThisMonth: number; pendingMeetings: number; meetingsThisMonth: number; meetingsBooked: number; openTickets: number; openReports: number; suspendedMembers: number }
   members: Record<string, unknown>[]
   meetings: Record<string, unknown>[]
   reveals: Record<string, unknown>[]
@@ -215,6 +215,20 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
     await saveReportNote(id, notes)
   }
 
+  const [suspendedIds, setSuspendedIds] = useState<Set<string>>(() =>
+    new Set((members as any[]).filter(m => m.suspended).map(m => m.id as string))
+  )
+
+  async function handleSuspend(profileId: string, suspend: boolean) {
+    setSuspendedIds(prev => {
+      const next = new Set(prev)
+      if (suspend) next.add(profileId); else next.delete(profileId)
+      return next
+    })
+    if (suspend) await suspendMember(profileId)
+    else await unsuspendMember(profileId)
+  }
+
   async function handleLogout() {
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -388,7 +402,10 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                       <>
                         <tr key={m.id} className="admin-row">
                           <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
-                          <td style={{ ...td, color: c.text, fontWeight: 500 }}>{m.full_name ?? '—'}</td>
+                          <td style={{ ...td, color: c.text, fontWeight: 500 }}>
+                            {m.full_name ?? '—'}
+                            {suspendedIds.has(m.id as string) && <span style={{ marginLeft: '0.4rem', fontSize: '0.62rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, color: '#f87171' }}>⛔ Suspended</span>}
+                          </td>
                           <td style={td}>{m.age ?? '—'}</td>
                           <td style={td}>{m.gender ?? '—'}</td>
                           <td style={td}>{[m.city, m.country].filter(Boolean).join(', ') || '—'}</td>
@@ -516,7 +533,10 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                           #{(m.id as string).slice(0, 8).toUpperCase()}
                         </div>
                         <div style={{ flex: 1, minWidth: 120 }}>
-                          <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.text, fontWeight: 600 }}>{m.full_name ?? '—'}</div>
+                          <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.text, fontWeight: 600 }}>
+                            {m.full_name ?? '—'}
+                            {suspendedIds.has(m.id as string) && <span style={{ marginLeft: '0.5rem', fontSize: '0.62rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, color: '#f87171' }}>⛔ Suspended</span>}
+                          </div>
                           <div style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', color: c.text3, marginTop: '0.1rem' }}>
                             {[m.age && `${m.age}y`, m.gender, m.city, m.religion].filter(Boolean).join(' · ')}
                           </div>
@@ -748,6 +768,7 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                           </div>
                           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.text2, margin: 0 }}>
                             <strong style={{ color: c.text }}>{r.reporter_name}</strong> reported <strong style={{ color: c.text }}>{r.reported_name}</strong>
+                            {suspendedIds.has(r.reported_id as string) && <span style={{ marginLeft: '0.5rem', fontSize: '0.62rem', fontWeight: 700, color: '#f87171' }}>⛔ Suspended</span>}
                           </p>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
@@ -774,11 +795,22 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                               placeholder="Add internal notes…"
                               style={{ width: '100%', background: c.card2, border: `1px solid ${c.border}`, borderRadius: 6, color: c.text, fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', padding: '0.5rem 0.75rem', resize: 'vertical', outline: 'none', boxSizing: 'border-box' }} />
                           </div>
-                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
                             <a href={`/admin?tab=members`} target="_blank" rel="noopener noreferrer"
                               style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: `1px solid ${c.border}`, color: c.text3, textDecoration: 'none', background: 'transparent' }}>
                               View in Members
                             </a>
+                            {suspendedIds.has(r.reported_id as string) ? (
+                              <button onClick={() => handleSuspend(r.reported_id as string, false)}
+                                style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: '1px solid rgba(74,222,128,0.4)', color: '#4ade80', background: 'rgba(74,222,128,0.08)', cursor: 'pointer' }}>
+                                ✓ Unsuspend Member
+                              </button>
+                            ) : (
+                              <button onClick={() => handleSuspend(r.reported_id as string, true)}
+                                style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: '1px solid rgba(248,113,113,0.4)', color: '#f87171', background: 'rgba(248,113,113,0.08)', cursor: 'pointer' }}>
+                                ⛔ Suspend Member
+                              </button>
+                            )}
                           </div>
                         </div>
                       )}
@@ -1010,6 +1042,21 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
         {tab === 'analytics' && (
           <div>
             {sectionTitle('Analytics')}
+
+            {/* Platform Metrics */}
+            <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
+              Platform Metrics — {new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })}
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
+              <StatCard icon="🔓" label="Free Members"       value={planCounts.free ?? 0}          sub="no subscription" />
+              <StatCard icon="⭐" label="Starter"             value={planCounts.starter ?? 0}       sub="₹350 / month" />
+              <StatCard icon="💎" label="Standard"            value={planCounts.standard ?? 0}      sub="₹550 / month" />
+              <StatCard icon="💘" label="Reveals This Month"  value={stats.revealsThisMonth}        sub="face photos seen" />
+              <StatCard icon="🎥" label="Meetings Requested"  value={stats.meetingsThisMonth}       sub="new this month" />
+              <StatCard icon="✅" label="Meetings Accepted"   value={stats.meetingsBooked}          sub="all-time booked" />
+              <StatCard icon="⚑"  label="Reports Pending"     value={stats.openReports}             sub="awaiting action" />
+              {stats.suspendedMembers > 0 && <StatCard icon="⛔" label="Suspended"         value={stats.suspendedMembers}        sub="access blocked" />}
+            </div>
 
             <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', color: c.text, margin: '0 0 1rem' }}>
               Estimated Recurring Revenue

@@ -62,3 +62,15 @@ export async function saveReportNote(id: string, admin_notes: string): Promise<v
   const admin = createAdminClient()
   await admin.from('profile_reports').update({ admin_notes }).eq('id', id)
 }
+
+export async function suspendMember(profileId: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('profiles').update({ suspended: true }).eq('id', profileId)
+}
+
+export async function unsuspendMember(profileId: string): Promise<void> {
+  await assertAdmin()
+  const admin = createAdminClient()
+  await admin.from('profiles').update({ suspended: false }).eq('id', profileId)
+}
