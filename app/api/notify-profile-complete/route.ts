@@ -29,7 +29,7 @@ export async function POST() {
     await admin.from('profiles').update(profileUpdate).eq('id', user.id)
 
     await Promise.all([
-      email ? sendProfileCompleteEmail(email, firstName, user.id) : Promise.resolve(),
+      email ? sendProfileCompleteEmail(email, firstName, user.id) : Promise.resolve(),  // userId = profileId, unsubUrl auto-included
       sendAdminAlert('New member joined', {
         Name:     profile?.full_name ?? '—',
         Email:    email ?? '—',
