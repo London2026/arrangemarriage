@@ -191,12 +191,21 @@ export default function DiscoverClient({
         /* Filter input placeholder text */
         .disc-filter-inp::placeholder { color: #8a9db5 !important; }
         .disc-filter-inp:focus { border-color: #c9a84c !important; }
+
+        .disc-toolbar { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .disc-toolbar-search { flex: 1; min-width: 160px; position: relative; }
+        .disc-icon-btn { padding: 0.75rem 1rem; white-space: nowrap; }
+        .disc-icon-btn .btn-label { display: inline; }
+        @media (max-width: 480px) {
+          .disc-icon-btn { padding: 0.75rem 0.8rem; }
+          .disc-icon-btn .btn-label { display: none; }
+        }
       `}</style>
 
       {/* Search bar + filter toggle */}
       <div style={{ marginBottom: '0.75rem' }}>
-        <div style={{ display: 'flex', gap: '0.6rem' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
+        <div className="disc-toolbar">
+          <div className="disc-toolbar-search">
             <span style={{ position: 'absolute', left: '0.9rem', top: '50%', transform: 'translateY(-50%)', color: c.sepia, fontSize: '0.9rem' }}>🔍</span>
             <input
               type="text" value={search} onChange={e => setSearch(e.target.value)}
@@ -207,14 +216,14 @@ export default function DiscoverClient({
             />
           </div>
           {/* Saved toggle */}
-          <button onClick={() => setShowSaved(s => !s)}
-            style={{ padding: '0.75rem 1.1rem', background: showSaved ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showSaved ? c.gold : c.border}`, color: showSaved ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
-            ★{showSaved ? ` Saved (${savedIds.size})` : ` Saved`}
+          <button onClick={() => setShowSaved(s => !s)} className="disc-icon-btn"
+            style={{ background: showSaved ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showSaved ? c.gold : c.border}`, color: showSaved ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+            ★<span className="btn-label">{showSaved ? ` Saved (${savedIds.size})` : ` Saved`}</span>
           </button>
           {/* Filter toggle button */}
-          <button onClick={() => setShowFilters(f => !f)}
-            style={{ padding: '0.75rem 1.1rem', background: showFilters ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${activeFilterCount > 0 ? c.gold : c.border}`, color: activeFilterCount > 0 ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
-            ⚙ Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
+          <button onClick={() => setShowFilters(f => !f)} className="disc-icon-btn"
+            style={{ background: showFilters ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${activeFilterCount > 0 ? c.gold : c.border}`, color: activeFilterCount > 0 ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+            ⚙<span className="btn-label"> Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}</span>
           </button>
         </div>
 

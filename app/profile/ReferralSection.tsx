@@ -20,7 +20,7 @@ export default function ReferralSection({ referralCode, referralCount, planBonus
     : null
 
   return (
-    <div style={{ padding: '1.4rem 1.75rem', borderTop: `1px solid ${c.borderSub}` }}>
+    <div style={{ padding: 'clamp(1rem, 4vw, 1.4rem) clamp(1rem, 5vw, 1.75rem)', borderTop: `1px solid ${c.borderSub}` }}>
       <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
         <span>🎁</span> Refer a Friend — Earn Free Months
       </p>

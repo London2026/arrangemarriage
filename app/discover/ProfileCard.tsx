@@ -272,7 +272,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                 <button
                   onClick={handleToggleSave}
                   title={saved ? 'Remove from saved' : 'Save profile'}
-                  style={{ background: 'none', border: 'none', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : 'rgba(201,168,76,0.28)' }}
+                  style={{ background: 'none', border: 'none', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : 'rgba(201,168,76,0.28)' }}
                 >
                   {saved ? '★' : '☆'}
                 </button>
@@ -282,7 +282,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                   <button
                     onClick={() => setShowReport(v => !v)}
                     title="Report this profile"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s' }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
                   >
                     ⚑
                   </button>
@@ -303,7 +303,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.75rem' }}>
               {REPORT_REASONS.map(r => (
                 <button key={r} type="button" onClick={() => setReportReason(r)}
-                  style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.05em', padding: '0.3rem 0.75rem', borderRadius: '20px', border: '1px solid', cursor: 'pointer',
+                  style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.05em', padding: '0.5rem 0.85rem', borderRadius: '20px', border: '1px solid', cursor: 'pointer', minHeight: '36px',
                     background: reportReason === r ? 'rgba(248,113,113,0.15)' : 'transparent',
                     borderColor: reportReason === r ? '#f87171' : 'rgba(248,113,113,0.25)',
                     color: reportReason === r ? '#f87171' : '#9ca3af',
