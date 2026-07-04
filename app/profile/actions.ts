@@ -137,7 +137,7 @@ export async function requestVideoMeeting(
   const safeTime = preferredTime || 'time to be confirmed'
   await Promise.all([
     recipientEmail
-      ? sendMeetingRequestEmail(recipientEmail, recipientFirstName, name, safeDateStr, safeTime, message, familyMember)
+      ? sendMeetingRequestEmail(recipientEmail, recipientFirstName, name, safeDateStr, safeTime, message, familyMember, recipientId)
       : Promise.resolve(),
     recipientProfile?.phone
       ? sendMeetingRequestSMS(recipientProfile.phone, recipientFirstName, name, safeDateStr, safeTime)
@@ -198,14 +198,14 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
   await Promise.all([
     // Notify requester (Person A)
     requesterEmail
-      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message, meetingId, meeting.requester_id)
+      ? sendMeetingAcceptedEmail(requesterEmail, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id, familyMember, message, meetingId, meeting.requester_id, meeting.requester_id)
       : Promise.resolve(),
     requesterProfile?.phone
       ? sendMeetingAcceptedSMS(requesterProfile.phone, requesterFirstName, acceptorName, safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
       : Promise.resolve(),
     // Notify acceptor (Person B) with their own copy of the meeting link
     acceptorEmail
-      ? sendMeetingConfirmedAcceptorEmail(acceptorEmail, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id, meetingId, user.id)
+      ? sendMeetingConfirmedAcceptorEmail(acceptorEmail, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id, meetingId, user.id, user.id)
       : Promise.resolve(),
     acceptorProfile?.phone
       ? sendMeetingAcceptedSMS(acceptorProfile.phone, acceptorFirstName, requesterProfile?.full_name ?? 'Your match', safeDateStr, meeting.preferred_time ?? '', meeting.room_id)
@@ -253,7 +253,7 @@ export async function cancelMeeting(meetingId: string): Promise<void> {
   const { data: otherProfileFull } = await supabase.from('profiles').select('full_name, phone').eq('id', otherId).single()
   await Promise.all([
     otherEmail
-      ? sendMeetingCancelledEmail(otherEmail, firstNameOnly(otherProfileFull?.full_name ?? ''), me?.full_name ?? 'Your match', dateStr, meeting.preferred_time ?? '')
+      ? sendMeetingCancelledEmail(otherEmail, firstNameOnly(otherProfileFull?.full_name ?? ''), me?.full_name ?? 'Your match', dateStr, meeting.preferred_time ?? '', otherId)
       : Promise.resolve(),
     otherProfileFull?.phone
       ? sendMeetingCancelledSMS(otherProfileFull.phone, firstNameOnly(otherProfileFull.full_name ?? ''), me?.full_name ?? 'Your match', dateStr)

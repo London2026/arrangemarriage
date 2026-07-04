@@ -58,11 +58,11 @@ export async function POST(request: Request) {
         if (event.event === 'subscription.activated' && profile?.referred_by) {
           const { data: referrer } = await supabase
             .from('profiles')
-            .select('id, plan_bonus_until, next_billing_date, referral_count, full_name')
+            .select('id, plan_bonus_until, next_billing_date, referral_count, full_name, email_unsubscribed')
             .eq('referral_code', profile.referred_by)
             .maybeSingle()
 
-          if (referrer && referrer.id !== userId) {
+          if (referrer && referrer.id !== userId && !referrer.email_unsubscribed) {
             const base = (() => {
               const now = new Date()
               const bonus   = referrer.plan_bonus_until   ? new Date(referrer.plan_bonus_until)   : null
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
             const refEmail = refAuth?.user?.email
             const refFirstName = (referrer.full_name ?? '').split(' ')[0] || 'there'
             if (refEmail) {
-              sendReferralRewardEmail(refEmail, refFirstName, newCount, newBonus.toISOString()).catch(() => {})
+              sendReferralRewardEmail(refEmail, refFirstName, newCount, newBonus.toISOString(), referrer.id).catch(() => {})
             }
           }
         }

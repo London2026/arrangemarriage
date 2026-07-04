@@ -20,7 +20,7 @@ async function send(to: string, subject: string, html: string) {
 }
 
 // ── Shared HTML wrapper ──────────────────────────────────────────────────────
-function wrap(body: string) {
+function wrap(body: string, unsubscribeLink?: string) {
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -44,6 +44,7 @@ function wrap(body: string) {
             © 2026 Arrange Marriage · Privacy-first matrimony platform<br>
             <a href="https://arrangemarriage.co.in/privacy" style="color:#9aabb8;">Privacy Policy</a> &nbsp;·&nbsp;
             <a href="https://arrangemarriage.co.in/terms" style="color:#9aabb8;">Terms of Service</a>
+            ${unsubscribeLink ? `&nbsp;·&nbsp;<a href="${unsubscribeLink}" style="color:#9aabb8;">Unsubscribe</a>` : ''}
           </p>
         </td></tr>
 
@@ -52,6 +53,16 @@ function wrap(body: string) {
   </table>
 </body>
 </html>`
+}
+
+// ── Unsubscribe helpers ──────────────────────────────────────────────────────
+function unsubToken(userId: string): string {
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'fallback'
+  return createHmac('sha256', secret).update(`unsub:${userId}`).digest('hex').slice(0, 32)
+}
+
+export function unsubUrl(userId: string): string {
+  return `https://www.arrangemarriage.co.in/api/unsubscribe?uid=${userId}&t=${unsubToken(userId)}`
 }
 
 // ── Meeting rating helpers ───────────────────────────────────────────────────
@@ -90,6 +101,7 @@ export async function sendPhotoRevealedEmail(
   viewerProfileId: string,
   dateStr: string,
   timeStr: string,
+  userId?: string,
 ) {
   const subject = `💘 Your Arrange Marriage profile was viewed — Profile #${viewerProfileId}`
   const html = wrap(`
@@ -128,7 +140,7 @@ export async function sendPhotoRevealedEmail(
         View Their Profile → / प्रोफ़ाइल देखें →
       </a>
     </div>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -139,7 +151,8 @@ export async function sendMeetingRequestEmail(
   dateStr: string,
   time: string,
   message: string,
-  familyMember: string = ''
+  familyMember: string = '',
+  userId?: string,
 ) {
   const subject = `📅 ${requesterName} wants to meet you on Arrange Marriage`
   const html = wrap(`
@@ -166,7 +179,7 @@ export async function sendMeetingRequestEmail(
         Respond →
       </a>
     </div>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -181,6 +194,7 @@ export async function sendMeetingAcceptedEmail(
   acceptorMessage: string = '',
   meetingId: string = '',
   raterId: string = '',
+  userId?: string,
 ) {
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
   const subject = `✅ Your video meeting with ${acceptorName} is confirmed`
@@ -228,7 +242,7 @@ export async function sendMeetingAcceptedEmail(
         📵 Arrange Marriage advises you <strong>not to share or ask for a mobile number</strong> during your first meeting, unless you feel completely comfortable doing so.
       </p>
     </div>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -241,6 +255,7 @@ export async function sendMeetingConfirmedAcceptorEmail(
   roomId: string,
   meetingId: string = '',
   raterId: string = '',
+  userId?: string,
 ) {
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
   const subject = `✅ Your video meeting with ${requesterName} is confirmed`
@@ -286,7 +301,7 @@ export async function sendMeetingConfirmedAcceptorEmail(
         📵 Arrange Marriage advises you <strong>not to share or ask for a mobile number</strong> during your first meeting, unless you feel completely comfortable doing so.
       </p>
     </div>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -296,6 +311,7 @@ export async function sendBillingReminderEmail(
   plan: string,
   billingDate: string,
   amount: string,
+  userId?: string,
 ) {
   const planLabel = plan === 'standard' ? 'Standard' : 'Starter'
   const subject   = `Your Arrange Marriage subscription renews on ${billingDate}`
@@ -339,7 +355,7 @@ export async function sendBillingReminderEmail(
     <p style="font-family:Georgia,serif;font-size:12px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">
       Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team
     </p>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -349,6 +365,7 @@ export async function sendMeetingCancelledEmail(
   cancellerName: string,
   dateStr: string,
   time: string,
+  userId?: string,
 ) {
   const subject = `Your video meeting with ${cancellerName} has been cancelled`
   const html = wrap(`
@@ -368,12 +385,12 @@ export async function sendMeetingCancelledEmail(
         Return to Discover →
       </a>
     </div>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
 // ── Welcome email (sent on first sign-up) ────────────────────────────────────
-export async function sendWelcomeEmail(to: string, firstName: string) {
+export async function sendWelcomeEmail(to: string, firstName: string, userId?: string) {
   const subject = `Welcome to Arrange Marriage — Your Journey Begins Here 💘`
   const html = wrap(`
     <h2 style="font-family:Georgia,serif;font-size:24px;color:#0d1f3c;margin:0 0 4px;">Welcome to Arrange Marriage</h2>
@@ -396,7 +413,7 @@ export async function sendWelcomeEmail(to: string, firstName: string) {
       <a href="https://arrangemarriage.co.in/onboarding" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Create My Profile →</a>
     </div>
     <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Your privacy is our priority — your face photo stays blurred until you choose to reveal it.</p>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
 
@@ -456,12 +473,12 @@ export async function sendProfileCompleteEmail(to: string, firstName: string, pr
       <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Start Discovering →</a>
     </div>
     <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
-  `)
+  `, unsubUrl(profileId))
   await send(to, subject, html)
 }
 
 // ── Referral reward email ─────────────────────────────────────────────────────
-export async function sendReferralRewardEmail(to: string, firstName: string, referralCount: number, bonusUntil: string) {
+export async function sendReferralRewardEmail(to: string, firstName: string, referralCount: number, bonusUntil: string, userId?: string) {
   const bonusDate = new Date(bonusUntil).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'long', year: 'numeric' })
   const subject = `🎉 You've earned a free month — thank you for referring a friend!`
   const html = wrap(`
@@ -485,6 +502,6 @@ export async function sendReferralRewardEmail(to: string, firstName: string, ref
       <a href="https://www.arrangemarriage.co.in/profile" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">View My Profile →</a>
     </div>
     <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Thank you for spreading the word. — The Arrange Marriage Team</p>
-  `)
+  `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }

@@ -54,7 +54,7 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
     const ownerEmail = ownerAuth?.user?.email
     await Promise.all([
       ownerEmail
-        ? sendPhotoRevealedEmail(ownerEmail, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)
+        ? sendPhotoRevealedEmail(ownerEmail, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr, viewedUserId)
         : Promise.resolve(),
       ownerPhone
         ? sendPhotoRevealSMS(ownerPhone, firstNameOnly(ownerName), viewerProfileId, dateStr, timeStr)

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   // Brand new user (no profile row yet) — send welcome email (fire and forget)
   if (!profile && user.email) {
     const firstName = (user.user_metadata?.full_name ?? user.email).split(' ')[0]
-    sendWelcomeEmail(user.email, firstName).catch(() => {})
+    sendWelcomeEmail(user.email, firstName, user.id).catch(() => {})
   }
 
   return NextResponse.redirect(`${origin}/pricing`)

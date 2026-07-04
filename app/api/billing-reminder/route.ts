@@ -26,11 +26,12 @@ export async function GET(req: NextRequest) {
 
   const { data: profiles, error } = await admin
     .from('profiles')
-    .select('id, full_name, plan, next_billing_date')
+    .select('id, full_name, plan, next_billing_date, email_unsubscribed')
     .neq('plan', 'free')
     .not('next_billing_date', 'is', null)
     .gte('next_billing_date', `${dateStr}T00:00:00.000Z`)
     .lt('next_billing_date',  `${dateStr}T23:59:59.999Z`)
+    .neq('email_unsubscribed', true)
 
   if (error) {
     console.error('billing-reminder: query error', error)
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
     const { data: profileData } = await admin.from('profiles').select('phone').eq('id', profile.id).single()
     await Promise.all([
       email
-        ? sendBillingReminderEmail(email, firstName, profile.plan, billingDate, amount)
+        ? sendBillingReminderEmail(email, firstName, profile.plan, billingDate, amount, profile.id)
         : Promise.resolve(),
       profileData?.phone
         ? sendBillingReminderSMS(profileData.phone, firstName, profile.plan, billingDate)
