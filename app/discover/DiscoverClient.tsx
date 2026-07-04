@@ -40,11 +40,12 @@ function isPositiveReason(r: string): boolean {
 }
 
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile,
+  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [],
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
   meetingsTotal: number; meetingsUsed: number
   ownProfile?: ProfileData | null
+  initialSavedIds?: string[]
 }) {
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -62,6 +63,16 @@ export default function DiscoverClient({
   const [aiLoading, setAiLoading] = useState(false)
   const [aiMatches, setAiMatches] = useState<AIMatch[] | null>(null)
   const [aiError, setAiError] = useState('')
+  const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set(initialSavedIds))
+  const [showSaved, setShowSaved] = useState(false)
+
+  function handleToggleSave(profileId: string, nowSaved: boolean) {
+    setSavedIds(prev => {
+      const next = new Set(prev)
+      if (nowSaved) next.add(profileId); else next.delete(profileId)
+      return next
+    })
+  }
 
   const activeFilterCount = Object.values(applied).filter(Boolean).length
 
@@ -80,7 +91,7 @@ export default function DiscoverClient({
   const educations = useMemo(() => [...new Set(profiles.map(p => p.education).filter(Boolean))].sort(), [profiles])
 
   const filtered = useMemo(() => {
-    let list = profiles
+    let list = showSaved ? profiles.filter(p => savedIds.has(p.id)) : profiles
     const q = search.trim().toLowerCase().replace(/^#/, '')
     if (q) list = list.filter(p =>
       p.full_name.toLowerCase().includes(q) ||
@@ -101,7 +112,7 @@ export default function DiscoverClient({
       p.occupation?.toLowerCase().includes(applied.occupation.toLowerCase())
     )
     return list
-  }, [profiles, search, applied])
+  }, [profiles, search, applied, showSaved, savedIds])
 
   async function handleAiMatch() {
     setAiLoading(true); setAiError(''); setAiMatches(null)
@@ -195,6 +206,11 @@ export default function DiscoverClient({
               onBlur={e => (e.target.style.borderColor = c.border)}
             />
           </div>
+          {/* Saved toggle */}
+          <button onClick={() => setShowSaved(s => !s)}
+            style={{ padding: '0.75rem 1.1rem', background: showSaved ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showSaved ? c.gold : c.border}`, color: showSaved ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+            ★{showSaved ? ` Saved (${savedIds.size})` : ` Saved`}
+          </button>
           {/* Filter toggle button */}
           <button onClick={() => setShowFilters(f => !f)}
             style={{ padding: '0.75rem 1.1rem', background: showFilters ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${activeFilterCount > 0 ? c.gold : c.border}`, color: activeFilterCount > 0 ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
@@ -443,12 +459,12 @@ export default function DiscoverClient({
       {/* Grid */}
       {filtered.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '4rem 0', color: c.sepia, fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.1rem' }}>
-          No profiles match your search.
+          {showSaved ? 'No saved profiles yet. Tap ★ on any profile to save it.' : 'No profiles match your search.'}
         </div>
       ) : (
         <div className="disc-grid">
           {filtered.map(p => (
-            <CompactCard key={p.id} profile={p} onClick={() => setSelected(p)} />
+            <CompactCard key={p.id} profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} />
           ))}
         </div>
       )}
@@ -466,7 +482,7 @@ export default function DiscoverClient({
                 👤 This is your profile — exactly as other members see it
               </div>
             )}
-            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} />
+            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} />
           </div>
         </div>
       )}
@@ -474,7 +490,7 @@ export default function DiscoverClient({
   )
 }
 
-function CompactCard({ profile, onClick, isOwn }: { profile: ProfileData; onClick: () => void; isOwn?: boolean }) {
+function CompactCard({ profile, onClick, isOwn, isSaved }: { profile: ProfileData; onClick: () => void; isOwn?: boolean; isSaved?: boolean }) {
   const initials = profile.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
   const pid = '#' + profile.id.slice(0, 8).toUpperCase()
   return (
@@ -486,6 +502,11 @@ function CompactCard({ profile, onClick, isOwn }: { profile: ProfileData; onClic
       {isOwn && (
         <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', zIndex: 2, fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: 'rgba(74,222,128,0.85)', borderRadius: '4px', padding: '0.15rem 0.45rem' }}>
           You
+        </div>
+      )}
+      {isSaved && (
+        <div style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', zIndex: 2, color: '#c9a84c', fontSize: '0.9rem', lineHeight: 1, background: 'rgba(0,0,0,0.55)', borderRadius: '4px', padding: '0.15rem 0.3rem' }}>
+          ★
         </div>
       )}
       {profile.back_photo_1_url ? (

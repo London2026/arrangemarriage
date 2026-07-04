@@ -80,6 +80,28 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
   return { signedUrl: urlData.signedUrl }
 }
 
+export async function toggleSaveProfile(savedId: string): Promise<{ saved: boolean }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (user.id === savedId) throw new Error('Cannot save yourself')
+
+  const { data: existing } = await supabase
+    .from('saved_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('saved_profile_id', savedId)
+    .maybeSingle()
+
+  if (existing) {
+    await supabase.from('saved_profiles').delete().eq('user_id', user.id).eq('saved_profile_id', savedId)
+    return { saved: false }
+  } else {
+    await supabase.from('saved_profiles').insert({ user_id: user.id, saved_profile_id: savedId })
+    return { saved: true }
+  }
+}
+
 export async function reportProfile(reportedId: string, reason: string, details: string): Promise<void> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

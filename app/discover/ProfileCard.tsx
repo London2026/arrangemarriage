@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { revealPhoto, reportProfile } from './actions'
+import { revealPhoto, reportProfile, toggleSaveProfile } from './actions'
 import { requestVideoMeeting } from '@/app/profile/actions'
 import { maskName, firstNameOnly } from '@/lib/maskName'
 
@@ -114,8 +114,8 @@ function Row({ label, value }: { label: string; value: string | null | undefined
   )
 }
 
-export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false }: {
-  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean
+export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false, isSaved = false, onToggleSave }: {
+  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean; isSaved?: boolean; onToggleSave?: (saved: boolean) => void
 }) {
   const [revealed, setRevealed] = useState(profile.already_revealed)
   const [frontUrl, setFrontUrl] = useState<string | null>(profile.front_photo_url)
@@ -135,12 +135,28 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   const [meetSent, setMeetSent] = useState(false)
   const [meetError, setMeetError] = useState('')
   const [buyingExtra, setBuyingExtra] = useState(false)
+  const [saved, setSaved] = useState(isSaved)
+  const [savingToggle, setSavingToggle] = useState(false)
   const [showReport, setShowReport] = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reportDetails, setReportDetails] = useState('')
   const [reportSubmitting, setReportSubmitting] = useState(false)
   const [reportDone, setReportDone] = useState(false)
   const [reportError, setReportError] = useState('')
+
+  async function handleToggleSave() {
+    if (savingToggle) return
+    setSavingToggle(true)
+    const next = !saved
+    setSaved(next)
+    onToggleSave?.(next)
+    try {
+      await toggleSaveProfile(profile.id)
+    } catch {
+      setSaved(!next)
+      onToggleSave?.(!next)
+    } finally { setSavingToggle(false) }
+  }
 
   async function handleReport(e: React.FormEvent) {
     e.preventDefault()
@@ -252,17 +268,26 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               </span>
             ))}
             {!isOwnProfile && (
-              reportDone ? (
-                <span title="Reported" style={{ fontSize: '0.7rem', color: '#9ca3af', fontFamily: 'Raleway, sans-serif', padding: '0.3rem 0', letterSpacing: '0.05em' }}>Reported</span>
-              ) : (
+              <>
                 <button
-                  onClick={() => setShowReport(v => !v)}
-                  title="Report this profile"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s' }}
+                  onClick={handleToggleSave}
+                  title={saved ? 'Remove from saved' : 'Save profile'}
+                  style={{ background: 'none', border: 'none', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : 'rgba(201,168,76,0.28)' }}
                 >
-                  ⚑
+                  {saved ? '★' : '☆'}
                 </button>
-              )
+                {reportDone ? (
+                  <span title="Reported" style={{ fontSize: '0.7rem', color: '#9ca3af', fontFamily: 'Raleway, sans-serif', padding: '0.3rem 0', letterSpacing: '0.05em' }}>Reported</span>
+                ) : (
+                  <button
+                    onClick={() => setShowReport(v => !v)}
+                    title="Report this profile"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.2rem', lineHeight: 1, transition: 'color 0.15s' }}
+                  >
+                    ⚑
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -65,13 +65,14 @@ export default async function DiscoverPage() {
       .limit(30),
   ])
 
-  // Which profiles has the current user already revealed?
-  const { data: myReveals } = await supabase
-    .from('photo_reveals')
-    .select('viewed_id')
-    .eq('viewer_id', user.id)
+  // Which profiles has the current user already revealed or saved?
+  const [{ data: myReveals }, { data: mySaved }] = await Promise.all([
+    supabase.from('photo_reveals').select('viewed_id').eq('viewer_id', user.id),
+    supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', user.id),
+  ])
 
   const revealedSet = new Set((myReveals ?? []).map((r) => r.viewed_id as string))
+  const savedIds = (mySaved ?? []).map(s => s.saved_profile_id as string)
 
   // Existing video meetings
   const { data: meetingRows } = await supabase
@@ -276,7 +277,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} />
         )}
       </main>
     </div>
