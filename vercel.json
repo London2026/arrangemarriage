@@ -3,6 +3,14 @@
     {
       "path": "/api/billing-reminder",
       "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/onboarding-reminder",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/weekly-digest",
+      "schedule": "0 6 * * 1"
     }
   ]
 }

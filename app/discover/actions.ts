@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendPhotoRevealedEmail } from '@/lib/sendEmail'
+import { sendPhotoRevealedEmail, sendMutualShortlistEmail } from '@/lib/sendEmail'
 import { sendPhotoRevealSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 
@@ -96,10 +96,55 @@ export async function toggleSaveProfile(savedId: string): Promise<{ saved: boole
   if (existing) {
     await supabase.from('saved_profiles').delete().eq('user_id', user.id).eq('saved_profile_id', savedId)
     return { saved: false }
-  } else {
-    await supabase.from('saved_profiles').insert({ user_id: user.id, saved_profile_id: savedId })
-    return { saved: true }
   }
+
+  await supabase.from('saved_profiles').insert({ user_id: user.id, saved_profile_id: savedId })
+
+  // Check for mutual shortlist — if they also saved us, notify both
+  try {
+    const { data: theyAlsoSaved } = await supabase
+      .from('saved_profiles')
+      .select('id')
+      .eq('user_id', savedId)
+      .eq('saved_profile_id', user.id)
+      .maybeSingle()
+
+    if (theyAlsoSaved) {
+      const myDisplayId  = `Profile #${user.id.slice(0, 8).toUpperCase()}`
+      const theirDisplayId = `Profile #${savedId.slice(0, 8).toUpperCase()}`
+      const admin = createAdminClient()
+
+      const [{ data: myProfile }, { data: theirProfile }, { data: myAuth }, { data: theirAuth }] = await Promise.all([
+        supabase.from('profiles').select('full_name, email_unsubscribed').eq('id', user.id).single(),
+        supabase.from('profiles').select('full_name, email_unsubscribed').eq('id', savedId).single(),
+        admin.auth.admin.getUserById(user.id),
+        admin.auth.admin.getUserById(savedId),
+      ])
+
+      await Promise.all([
+        supabase.from('notifications').insert([
+          {
+            recipient_id: user.id, sender_id: savedId, type: 'mutual_shortlist',
+            message: `You and ${theirDisplayId} have both shortlisted each other — why not send a meeting request?`,
+          },
+          {
+            recipient_id: savedId, sender_id: user.id, type: 'mutual_shortlist',
+            message: `You and ${myDisplayId} have both shortlisted each other — why not send a meeting request?`,
+          },
+        ]),
+        myAuth?.user?.email && !myProfile?.email_unsubscribed
+          ? sendMutualShortlistEmail(myAuth.user.email, firstNameOnly(myProfile?.full_name ?? ''), theirDisplayId, user.id)
+          : Promise.resolve(),
+        theirAuth?.user?.email && !theirProfile?.email_unsubscribed
+          ? sendMutualShortlistEmail(theirAuth.user.email, firstNameOnly(theirProfile?.full_name ?? ''), myDisplayId, savedId)
+          : Promise.resolve(),
+      ])
+    }
+  } catch (err) {
+    console.error('Mutual shortlist notification error:', err)
+  }
+
+  return { saved: true }
 }
 
 export async function reportProfile(reportedId: string, reason: string, details: string): Promise<void> {

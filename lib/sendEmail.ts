@@ -505,3 +505,114 @@ export async function sendReferralRewardEmail(to: string, firstName: string, ref
   `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
+
+// ── Mutual shortlist alert ────────────────────────────────────────────────────
+export async function sendMutualShortlistEmail(to: string, firstName: string, otherDisplayId: string, userId?: string) {
+  const subject = `💞 Mutual interest — you and ${otherDisplayId} have both shortlisted each other`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">It's a mutual interest!</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">परस्पर रुचि!</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 20px;">
+      You and <strong style="font-family:'Courier New',monospace;">${otherDisplayId}</strong> have both shortlisted each other on Arrange Marriage.
+      This is often the first sign of a meaningful connection — why not take the next step?
+    </p>
+    <div style="background:#0d1f3c;border-radius:10px;padding:22px 24px;margin-bottom:24px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 10px;">Mutual Interest With</p>
+      <p style="font-family:'Courier New',monospace;font-size:28px;font-weight:900;color:#c9a84c;letter-spacing:0.18em;margin:0 0 10px;">${otherDisplayId}</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:rgba(245,240,230,0.75);line-height:1.7;margin:0;">
+        Log in to Arrange Marriage, find their profile on the Discover page, and send a video meeting request to connect face-to-face.
+      </p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">
+      आप और <strong style="font-family:'Courier New',monospace;">${otherDisplayId}</strong> दोनों ने एक-दूसरे को शॉर्टलिस्ट किया है। यह एक अच्छा संकेत है — अब वीडियो मीटिंग अनुरोध भेजने का सही समय है!
+    </p>
+    <div style="text-align:center;margin:24px 0 8px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Send Meeting Request →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
+// ── Weekly digest email ───────────────────────────────────────────────────────
+export async function sendWeeklyDigestEmail(
+  to: string,
+  firstName: string,
+  viewCount: number,
+  nearbyNewCount: number,
+  location: string,
+  userId?: string,
+) {
+  const subject = viewCount > 0
+    ? `Your Arrange Marriage update — ${viewCount} profile view${viewCount > 1 ? 's' : ''} this week`
+    : `New members near you on Arrange Marriage this week`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Your weekly update</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपका साप्ताहिक अपडेट</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 20px;">Dear <strong>${firstName}</strong>,</p>
+    <div style="display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+      ${viewCount > 0 ? `
+      <div style="flex:1;min-width:180px;background:#0d1f3c;border-radius:10px;padding:20px 22px;text-align:center;">
+        <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 8px;">Profile Views This Week</p>
+        <p style="font-family:'Playfair Display',serif;font-size:44px;font-weight:900;color:#c9a84c;margin:0 0 6px;line-height:1;">${viewCount}</p>
+        <p style="font-family:Georgia,serif;font-size:13px;color:rgba(245,240,230,0.65);margin:0;">members viewed your profile</p>
+      </div>` : ''}
+      ${nearbyNewCount > 0 ? `
+      <div style="flex:1;min-width:180px;background:#0d1f3c;border-radius:10px;padding:20px 22px;text-align:center;">
+        <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 8px;">New Members Near You</p>
+        <p style="font-family:'Playfair Display',serif;font-size:44px;font-weight:900;color:#c9a84c;margin:0 0 6px;line-height:1;">${nearbyNewCount}</p>
+        <p style="font-family:Georgia,serif;font-size:13px;color:rgba(245,240,230,0.65);margin:0;">joined from ${location} this week</p>
+      </div>` : ''}
+    </div>
+    ${viewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">
+      <strong>${viewCount} member${viewCount > 1 ? 's' : ''}</strong> viewed your profile on Arrange Marriage this week.
+      ${viewCount > 1 ? 'They could be considering sending you a meeting request.' : 'They could be considering sending you a meeting request.'}
+    </p>` : ''}
+    ${nearbyNewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">
+      <strong>${nearbyNewCount} new member${nearbyNewCount > 1 ? 's' : ''}</strong> from ${location} joined this week — log in to discover them.
+    </p>` : ''}
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    ${viewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:14px;color:#0d1f3c;line-height:1.9;margin:0 0 8px;">इस सप्ताह <strong>${viewCount}</strong> सदस्यों ने आपकी प्रोफ़ाइल देखी।</p>` : ''}
+    ${nearbyNewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 16px;">${location} से इस सप्ताह <strong>${nearbyNewCount}</strong> नए सदस्य जुड़े।</p>` : ''}
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Discover Profiles →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
+// ── Onboarding reminder email ─────────────────────────────────────────────────
+export async function sendOnboardingReminderEmail(to: string, firstName: string, hasPlan: boolean, userId?: string) {
+  const subject = `Complete your Arrange Marriage profile — you're almost there ✨`
+  const ctaUrl = hasPlan ? 'https://arrangemarriage.co.in/onboarding' : 'https://arrangemarriage.co.in/pricing'
+  const ctaLabel = hasPlan ? 'Complete My Profile →' : 'Choose a Plan →'
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Your profile is waiting</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपकी प्रोफ़ाइल अधूरी है</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 16px;">
+      You signed up for Arrange Marriage — but your profile isn't complete yet. Until you finish, other members cannot see your profile or connect with you.
+    </p>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">It only takes a few minutes to:</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">📝 Add your background, education, and family details</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">📸 Upload a profile photo</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">🎙 Record a short voice introduction</p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 16px;">
+      आपने Arrange Marriage में साइन अप किया लेकिन प्रोफ़ाइल अभी पूरी नहीं हुई है। जब तक आप इसे पूरा नहीं करते, अन्य सदस्य आपको नहीं देख सकते।
+    </p>
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="${ctaUrl}" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">${ctaLabel}</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Your journey to finding your partner starts here. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
