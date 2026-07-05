@@ -8,6 +8,7 @@ import MeetingCard from './MeetingCard'
 import ProfileActions from './ProfileActions'
 import ReferralSection from './ReferralSection'
 import BlockedMembersList from './BlockedMembersList'
+import { Reveal, FadeDown } from '@/components/anim'
 import { maskName } from '@/lib/maskName'
 
 const c = {
@@ -186,6 +187,9 @@ export default async function ProfilePage() {
         }
         .prof-sub { padding: 1.5rem 1.75rem; }
         .prof-sub-cta { display: inline-block; }
+        @keyframes profCardEnter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .prof-card-enter { animation: profCardEnter 0.7s ease-out 0.15s both; }
+        @media (prefers-reduced-motion: reduce) { .prof-card-enter { animation: none; } }
         @media (max-width: 480px) {
           .prof-sub { padding: 1.1rem 1rem; }
           .prof-sub-cta { display: block; text-align: center; }
@@ -218,6 +222,7 @@ export default async function ProfilePage() {
       <main className="prof-main">
 
         {/* Page header */}
+        <FadeDown>
         <div className="prof-header">
           <div>
             <h1 className="prof-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>My Profile</h1>
@@ -242,9 +247,10 @@ export default async function ProfilePage() {
           </Link>
         </div>
         <div style={{ height: '1px', background: `linear-gradient(to right, ${c.goldLight}, transparent)`, marginBottom: '1.75rem' }} />
+        </FadeDown>
 
         {/* ── Main profile card ── */}
-        <div style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
+        <div className="prof-card-enter" style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
 
           {/* Header */}
           <div style={{ padding: '1.75rem 1.75rem 1.4rem', borderBottom: `1px solid ${c.borderSub}` }}>
@@ -435,33 +441,41 @@ export default async function ProfilePage() {
         </div>
 
         {/* ── Refer a Friend ── */}
-        <ReferralSection
-          referralCode={profile.referral_code as string | null}
-          referralCount={(profile.referral_count as number) ?? 0}
-          planBonusUntil={profile.plan_bonus_until as string | null}
-          userId={user.id}
-        />
+        <Reveal>
+          <ReferralSection
+            referralCode={profile.referral_code as string | null}
+            referralCount={(profile.referral_count as number) ?? 0}
+            planBonusUntil={profile.plan_bonus_until as string | null}
+            userId={user.id}
+          />
+        </Reveal>
 
         {/* ── Subscription ── */}
-        <SubscriptionSection
-          plan={profile.plan ?? 'free'}
-          nextBillingDate={profile.next_billing_date as string | null}
-          planBonusUntil={profile.plan_bonus_until as string | null}
-          hasSubscription={!!profile.stripe_customer_id}
-        />
+        <Reveal>
+          <SubscriptionSection
+            plan={profile.plan ?? 'free'}
+            nextBillingDate={profile.next_billing_date as string | null}
+            planBonusUntil={profile.plan_bonus_until as string | null}
+            hasSubscription={!!profile.stripe_customer_id}
+          />
+        </Reveal>
 
         {/* ── Blocked Members ── */}
-        <BlockedMembersList members={blockedProfileData.map(p => ({
-          id: p.id,
-          displayId: `AM-${p.id.slice(0, 8).toUpperCase()}`,
-          maskedName: maskName(p.full_name ?? ''),
-        }))} />
+        <Reveal>
+          <BlockedMembersList members={blockedProfileData.map(p => ({
+            id: p.id,
+            displayId: `AM-${p.id.slice(0, 8).toUpperCase()}`,
+            maskedName: maskName(p.full_name ?? ''),
+          }))} />
+        </Reveal>
 
         {/* ── Account Settings (cancel subscription / delete profile) ── */}
-        <ProfileActions
-          plan={profile.plan ?? null}
-          hasSubscription={!!profile.stripe_customer_id}
-        />
+        <Reveal>
+          <ProfileActions
+            plan={profile.plan ?? null}
+            hasSubscription={!!profile.stripe_customer_id}
+          />
+        </Reveal>
 
       </main>
       <BottomNav />

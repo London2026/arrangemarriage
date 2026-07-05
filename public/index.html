@@ -336,6 +336,8 @@
   .btn-primary:hover {
     background: transparent;
     color: var(--burgundy);
+    box-shadow: 0 0 22px rgba(201,168,76,0.35);
+    transform: translateY(-2px);
   }
 
   .btn-outline {
@@ -357,6 +359,8 @@
   .btn-outline:hover {
     background: var(--burgundy);
     color: var(--cream);
+    box-shadow: 0 0 22px rgba(201,168,76,0.35);
+    transform: translateY(-2px);
   }
 
   .scroll-hint {
@@ -848,6 +852,9 @@
   .meeting-slide:nth-child(4) { animation-delay: 15s; }
   .meeting-slide:nth-child(5) { animation-delay: 20s; }
   .meeting-slide:nth-child(6) { animation-delay: 25s; }
+  /* First slide stays visible as a static base layer — the box always shows an
+     image even when animations are paused, blocked, or reduced by the browser */
+  .meeting-slide:first-child { opacity: 1; animation: none; }
 
   .meeting-img {
     width: 100%;
@@ -1535,6 +1542,16 @@
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Respect reduced-motion preferences: stop movement but keep all content visible.
+     Note: animation:none leaves elements at their base styles, so anything whose
+     base state is invisible needs an explicit visibility override below. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .meeting-slide:first-child { opacity: 1 !important; }
   }
 
   /* MODAL */
