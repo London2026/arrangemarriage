@@ -88,29 +88,38 @@ function OnboardingPage() {
   const isEdit = searchParams.get('edit') === 'true'
 
   useEffect(() => {
+    // Watchdog: if init hangs on a network call, show the form after 10s
+    // rather than leaving the user stuck on the loading screen forever.
+    const watchdog = setTimeout(() => setReady(true), 10000)
+    let redirecting = false
+
     async function init() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.replace('/login'); return }
+      if (!user) { redirecting = true; window.location.replace('/login'); return }
       const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
-      if (profile?.onboarding_complete && !isEdit) { router.replace('/discover'); return }
+      // Full page load rather than client navigation: immune to a hung or
+      // errored RSC fetch, which would otherwise freeze this loading screen
+      if (profile?.onboarding_complete && !isEdit) { redirecting = true; window.location.replace('/discover'); return }
       setUserId(user.id)
       setHasExistingPhotos(!!(profile?.back_photo_1_path && profile?.back_photo_2_path && profile?.front_photo_path))
       setHasExistingVoice(!!profile?.voice_path)
-      // Load signed URLs for existing media so they're visible when returning to those steps
+      // Load signed URLs for existing media in the background — the form must
+      // never block on storage network calls
       const supabase2 = createClient()
       const paths = [
         profile?.voice_path, profile?.voice_en_path,
         profile?.back_photo_1_path, profile?.back_photo_2_path, profile?.front_photo_path,
       ]
-      const signed = await Promise.all(
+      Promise.all(
         paths.map(p => p ? supabase2.storage.from('profile-media').createSignedUrl(p, 604800) : Promise.resolve(null))
-      )
-      if (signed[0]?.data?.signedUrl) setExistingVoiceUrl(signed[0].data.signedUrl)
-      if (signed[1]?.data?.signedUrl) setExistingVoiceEnUrl(signed[1].data.signedUrl)
-      if (signed[2]?.data?.signedUrl) setExistingBack1Url(signed[2].data.signedUrl)
-      if (signed[3]?.data?.signedUrl) setExistingBack2Url(signed[3].data.signedUrl)
-      if (signed[4]?.data?.signedUrl) setExistingFrontUrl(signed[4].data.signedUrl)
+      ).then(signed => {
+        if (signed[0]?.data?.signedUrl) setExistingVoiceUrl(signed[0].data.signedUrl)
+        if (signed[1]?.data?.signedUrl) setExistingVoiceEnUrl(signed[1].data.signedUrl)
+        if (signed[2]?.data?.signedUrl) setExistingBack1Url(signed[2].data.signedUrl)
+        if (signed[3]?.data?.signedUrl) setExistingBack2Url(signed[3].data.signedUrl)
+        if (signed[4]?.data?.signedUrl) setExistingFrontUrl(signed[4].data.signedUrl)
+      }).catch(() => { /* media previews are optional — never block onboarding on them */ })
       // Restore saved step
       const savedStep = localStorage.getItem(`ob_step_${user.id}`)
       if (savedStep) setStep(parseInt(savedStep))
@@ -178,9 +187,11 @@ function OnboardingPage() {
         const nameParts = rawName.split(/\s+/).filter(Boolean)
         setDraft(d => ({ ...d, firstName: nameParts[0] ?? '', lastName: nameParts.slice(1).join(' ') ?? '' }))
       }
-      setReady(true)
     }
     init()
+      .catch(err => console.error('Onboarding init failed:', err))
+      .finally(() => { if (!redirecting) { clearTimeout(watchdog); setReady(true) } })
+    return () => clearTimeout(watchdog)
   }, [router, isEdit])
 
   function change(key: string, value: string) { setDraft(d => ({ ...d, [key]: value })); setError(''); setSavedMsg('') }
