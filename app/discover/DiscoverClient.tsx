@@ -56,13 +56,14 @@ function prefScore(viewer: ProfileData, candidate: ProfileData): number {
 }
 
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [],
+  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [], initialBlockedIds = [],
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
   meetingsTotal: number; meetingsUsed: number
   ownProfile?: ProfileData | null
   initialSavedIds?: string[]
   revealedByProfiles?: ProfileData[]
+  initialBlockedIds?: string[]
 }) {
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -83,6 +84,7 @@ export default function DiscoverClient({
   const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set(initialSavedIds))
   const [showSaved, setShowSaved] = useState(false)
   const [showViewedMe, setShowViewedMe] = useState(false)
+  const [blockedIds, setBlockedIds] = useState<Set<string>>(() => new Set(initialBlockedIds))
 
   function handleToggleSave(profileId: string, nowSaved: boolean) {
     setSavedIds(prev => {
@@ -90,6 +92,11 @@ export default function DiscoverClient({
       if (nowSaved) next.add(profileId); else next.delete(profileId)
       return next
     })
+  }
+
+  function handleBlock(profileId: string) {
+    setBlockedIds(prev => new Set([...prev, profileId]))
+    setSelected(null)
   }
 
   const activeFilterCount = Object.values(applied).filter(Boolean).length
@@ -109,7 +116,9 @@ export default function DiscoverClient({
   const educations = useMemo(() => [...new Set(profiles.map(p => p.education).filter(Boolean))].sort(), [profiles])
 
   const filtered = useMemo(() => {
-    let list = showSaved ? profiles.filter(p => savedIds.has(p.id)) : profiles
+    let list = showSaved
+      ? profiles.filter(p => savedIds.has(p.id) && !blockedIds.has(p.id))
+      : profiles.filter(p => !blockedIds.has(p.id))
     const q = search.trim().toLowerCase().replace(/^#/, '')
     if (q) list = list.filter(p =>
       p.full_name.toLowerCase().includes(q) ||
@@ -134,7 +143,7 @@ export default function DiscoverClient({
       list = [...list].sort((a, b) => prefScore(ownProfile, b) - prefScore(ownProfile, a))
     }
     return list
-  }, [profiles, search, applied, showSaved, savedIds, ownProfile])
+  }, [profiles, search, applied, showSaved, savedIds, ownProfile, blockedIds])
 
   async function handleAiMatch() {
     setAiLoading(true); setAiError(''); setAiMatches(null)
@@ -522,7 +531,7 @@ export default function DiscoverClient({
                 👤 This is your profile — exactly as other members see it
               </div>
             )}
-            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} />
+            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} />
           </div>
         </div>
       )}

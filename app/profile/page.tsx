@@ -7,6 +7,8 @@ import RevealedByCard, { type Viewer } from './RevealedByCard'
 import MeetingCard from './MeetingCard'
 import ProfileActions from './ProfileActions'
 import ReferralSection from './ReferralSection'
+import BlockedMembersList from './BlockedMembersList'
+import { maskName } from '@/lib/maskName'
 
 const c = {
   bg: '#07111f', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -79,6 +81,15 @@ export default async function ProfilePage() {
     const { data: signed } = await supabase.storage.from('profile-media').createSignedUrls(ownPaths, 3600)
     for (const s of signed ?? []) { if (s.path && s.signedUrl) ownUrlMap[s.path] = s.signedUrl }
   }
+
+  // Who the user has blocked
+  const { data: blockedRows } = await supabase
+    .from('blocked_profiles').select('blocked_id').eq('blocker_id', user.id)
+
+  const blockedProfileIds = (blockedRows ?? []).map(r => r.blocked_id as string)
+  const blockedProfileData = blockedProfileIds.length > 0
+    ? (await supabase.from('profiles').select('id, full_name').in('id', blockedProfileIds)).data ?? []
+    : []
 
   // Who revealed YOUR photo
   const { data: revealRows } = await supabase
@@ -432,6 +443,13 @@ export default async function ProfilePage() {
           planBonusUntil={profile.plan_bonus_until as string | null}
           hasSubscription={!!profile.stripe_customer_id}
         />
+
+        {/* ── Blocked Members ── */}
+        <BlockedMembersList members={blockedProfileData.map(p => ({
+          id: p.id,
+          displayId: `Profile #${p.id.slice(0, 8).toUpperCase()}`,
+          maskedName: maskName(p.full_name ?? ''),
+        }))} />
 
         {/* ── Account Settings (cancel subscription / delete profile) ── */}
         <ProfileActions

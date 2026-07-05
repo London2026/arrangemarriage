@@ -147,6 +147,28 @@ export async function toggleSaveProfile(savedId: string): Promise<{ saved: boole
   return { saved: true }
 }
 
+export async function blockMember(blockedId: string): Promise<{ blocked: boolean }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (user.id === blockedId) throw new Error('Cannot block yourself')
+
+  const { data: existing } = await supabase
+    .from('blocked_profiles')
+    .select('id')
+    .eq('blocker_id', user.id)
+    .eq('blocked_id', blockedId)
+    .maybeSingle()
+
+  if (existing) {
+    await supabase.from('blocked_profiles').delete().eq('blocker_id', user.id).eq('blocked_id', blockedId)
+    return { blocked: false }
+  }
+
+  await supabase.from('blocked_profiles').insert({ blocker_id: user.id, blocked_id: blockedId })
+  return { blocked: true }
+}
+
 export async function reportProfile(reportedId: string, reason: string, details: string): Promise<void> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

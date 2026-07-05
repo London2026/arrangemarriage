@@ -66,6 +66,14 @@ export async function requestVideoMeeting(
   const { data: recipientPlan } = await supabase.from('profiles').select('plan').eq('id', recipientId).single()
   if (!recipientPlan?.plan || recipientPlan.plan === 'free') throw new Error('This member is on a free plan and cannot receive meeting requests at this time')
 
+  // Block check — either party blocking the other prevents meeting requests
+  const { data: blockExists } = await supabase
+    .from('blocked_profiles')
+    .select('id')
+    .or(`and(blocker_id.eq.${user.id},blocked_id.eq.${recipientId}),and(blocker_id.eq.${recipientId},blocked_id.eq.${user.id})`)
+    .maybeSingle()
+  if (blockExists) throw new Error('Meeting request not possible.')
+
   // Check if a pending/accepted meeting already exists
   const { data: existing } = await supabase
     .from('video_meetings')

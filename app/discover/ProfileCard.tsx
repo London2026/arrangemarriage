@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { revealPhoto, reportProfile, toggleSaveProfile } from './actions'
+import { revealPhoto, reportProfile, toggleSaveProfile, blockMember } from './actions'
 import { requestVideoMeeting } from '@/app/profile/actions'
 import { maskName, firstNameOnly } from '@/lib/maskName'
 
@@ -114,8 +114,8 @@ function Row({ label, value }: { label: string; value: string | null | undefined
   )
 }
 
-export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false, isSaved = false, onToggleSave }: {
-  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean; isSaved?: boolean; onToggleSave?: (saved: boolean) => void
+export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false, isSaved = false, onToggleSave, onBlock }: {
+  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean; isSaved?: boolean; onToggleSave?: (saved: boolean) => void; onBlock?: () => void
 }) {
   const [revealed, setRevealed] = useState(profile.already_revealed)
   const [frontUrl, setFrontUrl] = useState<string | null>(profile.front_photo_url)
@@ -143,6 +143,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   const [reportSubmitting, setReportSubmitting] = useState(false)
   const [reportDone, setReportDone] = useState(false)
   const [reportError, setReportError] = useState('')
+  const [blockStep, setBlockStep] = useState<'idle' | 'confirm' | 'loading'>('idle')
 
   async function handleToggleSave() {
     if (savingToggle) return
@@ -168,6 +169,16 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
     } catch (err) {
       setReportError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally { setReportSubmitting(false) }
+  }
+
+  async function handleBlock() {
+    setBlockStep('loading')
+    try {
+      await blockMember(profile.id)
+      onBlock?.()
+    } catch {
+      setBlockStep('idle')
+    }
   }
 
   const initials = profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase()
@@ -287,6 +298,14 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                     ⚑
                   </button>
                 )}
+                <button
+                  onClick={() => setBlockStep('confirm')}
+                  title="Block this member"
+                  disabled={blockStep === 'loading'}
+                  style={{ background: 'none', border: 'none', cursor: blockStep === 'loading' ? 'default' : 'pointer', color: blockStep !== 'idle' ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s', opacity: blockStep === 'loading' ? 0.5 : 1 }}
+                >
+                  🚫
+                </button>
               </>
             )}
           </div>
@@ -331,6 +350,28 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* ── Block confirm panel ── */}
+      {blockStep === 'confirm' && !isOwnProfile && (
+        <div style={{ background: 'rgba(248,113,113,0.05)', border: '1px solid rgba(248,113,113,0.2)', borderTop: 'none', padding: '1rem 1.25rem' }}>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#f87171', margin: '0 0 0.5rem' }}>
+            Block Member
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: '#bdb5a6', margin: '0 0 0.85rem', lineHeight: 1.6 }}>
+            This member will no longer appear in your Discover and cannot send you meeting requests. You can unblock them from your Profile page.
+          </p>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={handleBlock}
+              style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.45rem 1rem', borderRadius: '4px', border: 'none', cursor: 'pointer', background: '#9e2a2b', color: '#fecaca' }}>
+              Confirm Block
+            </button>
+            <button type="button" onClick={() => setBlockStep('idle')}
+              style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.45rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', background: 'transparent', color: '#9ca3af' }}>
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 

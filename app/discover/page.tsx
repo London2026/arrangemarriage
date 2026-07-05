@@ -67,11 +67,18 @@ export default async function DiscoverPage() {
   ])
 
   // Which profiles has the current user already revealed or saved?
-  const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }] = await Promise.all([
+  const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }, { data: myBlocked }, { data: blockedMe }] = await Promise.all([
     supabase.from('photo_reveals').select('viewed_id').eq('viewer_id', user.id),
     supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', user.id),
     supabase.from('photo_reveals').select('viewer_id').eq('viewed_id', user.id),
+    supabase.from('blocked_profiles').select('blocked_id').eq('blocker_id', user.id),
+    supabase.from('blocked_profiles').select('blocker_id').eq('blocked_id', user.id),
   ])
+
+  const blockedIds = [
+    ...(myBlocked ?? []).map(b => b.blocked_id as string),
+    ...(blockedMe ?? []).map(b => b.blocker_id as string),
+  ]
 
   const viewedMeIds = [...new Set((viewedMeRows ?? []).map(r => r.viewer_id as string))]
 
@@ -295,7 +302,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} initialBlockedIds={blockedIds} />
         )}
       </main>
     </div>
