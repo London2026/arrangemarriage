@@ -39,13 +39,30 @@ function isPositiveReason(r: string): boolean {
   return !negative.some(k => l.includes(k))
 }
 
+function prefScore(viewer: ProfileData, candidate: ProfileData): number {
+  let score = 0
+  if (viewer.pref_gender && candidate.gender &&
+      candidate.gender.toLowerCase() === viewer.pref_gender.toLowerCase()) score += 40
+  const meetsMin = viewer.pref_age_min == null || candidate.age >= viewer.pref_age_min
+  const meetsMax = viewer.pref_age_max == null || candidate.age <= viewer.pref_age_max
+  if (meetsMin && meetsMax && (viewer.pref_age_min != null || viewer.pref_age_max != null)) score += 25
+  if (viewer.pref_religion && candidate.religion &&
+      candidate.religion.toLowerCase() === viewer.pref_religion.toLowerCase()) score += 20
+  if (viewer.pref_location) {
+    const loc = viewer.pref_location.toLowerCase()
+    if (candidate.city?.toLowerCase().includes(loc) || candidate.country?.toLowerCase().includes(loc)) score += 15
+  }
+  return score
+}
+
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [],
+  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [],
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
   meetingsTotal: number; meetingsUsed: number
   ownProfile?: ProfileData | null
   initialSavedIds?: string[]
+  revealedByProfiles?: ProfileData[]
 }) {
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -65,6 +82,7 @@ export default function DiscoverClient({
   const [aiError, setAiError] = useState('')
   const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set(initialSavedIds))
   const [showSaved, setShowSaved] = useState(false)
+  const [showViewedMe, setShowViewedMe] = useState(false)
 
   function handleToggleSave(profileId: string, nowSaved: boolean) {
     setSavedIds(prev => {
@@ -111,8 +129,12 @@ export default function DiscoverClient({
     if (applied.occupation) list = list.filter(p =>
       p.occupation?.toLowerCase().includes(applied.occupation.toLowerCase())
     )
+    // Sort by preference match score — best matches first
+    if (ownProfile) {
+      list = [...list].sort((a, b) => prefScore(ownProfile, b) - prefScore(ownProfile, a))
+    }
     return list
-  }, [profiles, search, applied, showSaved, savedIds])
+  }, [profiles, search, applied, showSaved, savedIds, ownProfile])
 
   async function handleAiMatch() {
     setAiLoading(true); setAiError(''); setAiMatches(null)
@@ -126,6 +148,8 @@ export default function DiscoverClient({
       setAiError(err instanceof Error ? err.message : 'Something went wrong')
     } finally { setAiLoading(false) }
   }
+
+  const displayProfiles = showViewedMe ? revealedByProfiles : filtered
 
   return (
     <>
@@ -216,9 +240,14 @@ export default function DiscoverClient({
             />
           </div>
           {/* Saved toggle */}
-          <button onClick={() => setShowSaved(s => !s)} className="disc-icon-btn"
+          <button onClick={() => { setShowSaved(s => !s); setShowViewedMe(false) }} className="disc-icon-btn"
             style={{ background: showSaved ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showSaved ? c.gold : c.border}`, color: showSaved ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
             ★<span className="btn-label">{showSaved ? ` Saved (${savedIds.size})` : ` Saved`}</span>
+          </button>
+          {/* Viewed Me toggle */}
+          <button onClick={() => { setShowViewedMe(s => !s); setShowSaved(false) }} className="disc-icon-btn"
+            style={{ background: showViewedMe ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showViewedMe ? c.gold : c.border}`, color: showViewedMe ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
+            👁<span className="btn-label">{showViewedMe ? ` Viewed Me (${revealedByProfiles.length})` : revealedByProfiles.length > 0 ? ` Viewed Me (${revealedByProfiles.length})` : ` Viewed Me`}</span>
           </button>
           {/* Filter toggle button */}
           <button onClick={() => setShowFilters(f => !f)} className="disc-icon-btn"
@@ -461,18 +490,20 @@ export default function DiscoverClient({
 
       {/* Profile count */}
       <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', color: c.sepia, letterSpacing: '0.08em', marginBottom: '1rem' }}>
-        {filtered.length} {filtered.length === 1 ? 'profile' : 'profiles'}{(search || activeFilterCount > 0) ? ' found' : ''}
-        {activeFilterCount > 0 && <span style={{ color: c.gold }}> · {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active</span>}
+        {showViewedMe
+          ? `${displayProfiles.length} ${displayProfiles.length === 1 ? 'person' : 'people'} viewed your photo`
+          : <>{displayProfiles.length} {displayProfiles.length === 1 ? 'profile' : 'profiles'}{(search || activeFilterCount > 0) ? ' found' : ''}{activeFilterCount > 0 && <span style={{ color: c.gold }}> · {activeFilterCount} filter{activeFilterCount > 1 ? 's' : ''} active</span>}</>
+        }
       </p>
 
       {/* Grid */}
-      {filtered.length === 0 ? (
+      {displayProfiles.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '4rem 0', color: c.sepia, fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.1rem' }}>
-          {showSaved ? 'No saved profiles yet. Tap ★ on any profile to save it.' : 'No profiles match your search.'}
+          {showViewedMe ? 'No one has viewed your photo yet.' : showSaved ? 'No saved profiles yet. Tap ★ on any profile to save it.' : 'No profiles match your search.'}
         </div>
       ) : (
         <div className="disc-grid">
-          {filtered.map(p => (
+          {displayProfiles.map(p => (
             <CompactCard key={p.id} profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} />
           ))}
         </div>

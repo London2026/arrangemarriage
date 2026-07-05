@@ -67,19 +67,26 @@ export default async function DiscoverPage() {
   ])
 
   // Which profiles has the current user already revealed or saved?
-  const [{ data: myReveals }, { data: mySaved }] = await Promise.all([
+  const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }] = await Promise.all([
     supabase.from('photo_reveals').select('viewed_id').eq('viewer_id', user.id),
     supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', user.id),
+    supabase.from('photo_reveals').select('viewer_id').eq('viewed_id', user.id),
   ])
+
+  const viewedMeIds = [...new Set((viewedMeRows ?? []).map(r => r.viewer_id as string))]
 
   const revealedSet = new Set((myReveals ?? []).map((r) => r.viewed_id as string))
   const savedIds = (mySaved ?? []).map(s => s.saved_profile_id as string)
 
-  // Existing video meetings
-  const { data: meetingRows } = await supabase
-    .from('video_meetings')
-    .select('room_id, requester_id, recipient_id, status')
-    .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+  // Existing video meetings + profiles of people who viewed me (parallel)
+  const [{ data: meetingRows }, { data: viewedMeProfileRows }] = await Promise.all([
+    supabase.from('video_meetings')
+      .select('room_id, requester_id, recipient_id, status')
+      .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`),
+    viewedMeIds.length > 0
+      ? supabase.from('profiles').select(PROFILE_SELECT).in('id', viewedMeIds).eq('onboarding_complete', true)
+      : Promise.resolve({ data: [] as Record<string, unknown>[], error: null }),
+  ])
 
   const meetingByOther: Record<string, { room_id: string; status: string }> = {}
   for (const m of meetingRows ?? []) {
@@ -98,6 +105,7 @@ export default async function DiscoverPage() {
   }
   if (ownRow) addPaths(ownRow as Record<string, string | null | undefined>, true)
   for (const p of rows ?? []) addPaths(p as Record<string, string | null | undefined>, true)
+  for (const p of viewedMeProfileRows ?? []) addPaths(p as Record<string, string | null | undefined>, false)
 
   // Batch sign all URLs in one call
   const urlMap: Record<string, string> = {}
@@ -175,6 +183,15 @@ export default async function DiscoverPage() {
     base.meeting_room_id = meetingByOther[p.id]?.room_id ?? null
     base.meeting_status  = meetingByOther[p.id]?.status ?? null
     if (revealedSet.has(p.id) && p.front_photo_path) base.front_photo_url = urlMap[p.front_photo_path] ?? null
+    return base
+  })
+
+  const revealedByProfiles: ProfileData[] = (viewedMeProfileRows ?? []).map(p => {
+    const row = p as NonNullable<typeof ownRow>
+    const base = mapProfile(row, revealedSet.has(row.id))
+    base.meeting_room_id = meetingByOther[row.id]?.room_id ?? null
+    base.meeting_status  = meetingByOther[row.id]?.status ?? null
+    if (revealedSet.has(row.id) && row.front_photo_path) base.front_photo_url = urlMap[row.front_photo_path] ?? null
     return base
   })
 
@@ -278,7 +295,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} />
         )}
       </main>
     </div>
