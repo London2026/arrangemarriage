@@ -29,7 +29,7 @@ export default function TermsPage() {
         <div style={{ marginBottom: '2rem' }}>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: c.gold, margin: '0 0 0.5rem' }}>Legal</p>
           <h1 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '2.4rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>Terms of Service</h1>
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.sepia, margin: 0 }}>Last updated: May 2026</p>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.sepia, margin: 0 }}>Last updated: July 2026</p>
           <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginTop: '1.25rem' }} />
         </div>
 
@@ -63,6 +63,9 @@ export default function TermsPage() {
         <p style={p}>
           All payments are processed securely through Razorpay. Arrange Marriage does not store your card details. Prices are displayed in INR.
         </p>
+        <p style={p}>
+          You can view your current plan, next renewal date, and included features at any time from the Subscription section of your Profile page. Referral bonuses — earned when a friend you referred subscribes — are applied automatically and extend your paid access accordingly.
+        </p>
 
         <h2 style={h2}>4. Cancellation Policy</h2>
         <p style={p}>
@@ -74,9 +77,15 @@ export default function TermsPage() {
           You retain ownership of the photos, voice recordings, and other content you upload to Arrange Marriage. By uploading content, you grant Arrange Marriage a limited licence to display that content to other members as part of the service. You must not upload content that is offensive, illegal, or that you do not have the right to share.
         </p>
 
-        <h2 style={h2}>6. Privacy</h2>
+        <h2 style={h2}>6. Privacy & Profile Visibility</h2>
         <p style={p}>
-          Your privacy is important to us. Your face photo is never shown to other members unless you explicitly choose to reveal it. Voice recordings and back-side photos are visible to other members as part of the discovery experience. Please review our <Link href="/privacy" style={{ color: c.gold, textDecoration: 'underline' }}>Privacy Policy</Link> for full details on how we collect and use your data.
+          Your privacy is important to us. Your face photo is never shown to other members unless you explicitly choose to reveal it. Voice recordings and back-side photos are visible to other members as part of the discovery experience.
+        </p>
+        <p style={p}>
+          When you view another member's profile and reveal their face photo, that action may be recorded and shown to them via the "Viewed Me" feature, so they can see who has expressed interest. By using Arrange Marriage you consent to this reciprocal visibility.
+        </p>
+        <p style={p}>
+          Please review our <Link href="/privacy" style={{ color: c.gold, textDecoration: 'underline' }}>Privacy Policy</Link> for full details on how we collect and use your data.
         </p>
 
         <h2 style={h2}>7. Prohibited Conduct</h2>
@@ -95,22 +104,38 @@ export default function TermsPage() {
           Arrange Marriage reserves the right to suspend or permanently ban any account found to be in violation of these terms.
         </p>
 
-        <h2 style={h2}>8. Limitation of Liability</h2>
+        <h2 style={h2}>8. Member Blocking</h2>
+        <p style={p}>
+          You may block another member at any time from their profile. Blocking a member prevents them from appearing in your Discover feed and prevents either party from sending meeting requests to the other. You can unblock a member at any time from the Blocked Members section of your Profile page.
+        </p>
+        <p style={p}>
+          The blocking feature exists to protect your safety and comfort. You agree not to misuse blocking to manipulate search rankings, circumvent platform rules, or harm other members unfairly. Arrange Marriage may review patterns of blocking behaviour and take action where misuse is identified.
+        </p>
+
+        <h2 style={h2}>9. Meeting Feedback & Ratings</h2>
+        <p style={p}>
+          After a scheduled video meeting has taken place, Arrange Marriage may invite both participants to provide feedback by rating the meeting (1–5 stars) and leaving an optional note. This feedback is used solely to improve the matchmaking experience and to flag conduct that may be in breach of these Terms.
+        </p>
+        <p style={p}>
+          Feedback you submit is associated with the relevant meeting record in our systems. You agree to provide honest and good-faith feedback. Submitting false or malicious ratings intended to harm another member's standing is a violation of these Terms and may result in account suspension.
+        </p>
+
+        <h2 style={h2}>10. Limitation of Liability</h2>
         <p style={p}>
           Arrange Marriage is a platform that facilitates connections between individuals. We do not conduct background checks on members and are not responsible for the conduct of any member on or off the platform. You use the service at your own risk. Arrange Marriage's total liability to you shall not exceed the amount you paid us in the three months prior to the claim.
         </p>
 
-        <h2 style={h2}>9. Changes to These Terms</h2>
+        <h2 style={h2}>11. Changes to These Terms</h2>
         <p style={p}>
           We may update these Terms of Service from time to time. We will notify you of significant changes by email or through a notice on the platform. Continued use of Arrange Marriage after changes take effect constitutes your acceptance of the revised terms.
         </p>
 
-        <h2 style={h2}>10. Governing Law</h2>
+        <h2 style={h2}>12. Governing Law</h2>
         <p style={p}>
           These Terms are governed by and construed in accordance with the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.
         </p>
 
-        <h2 style={h2}>11. Contact</h2>
+        <h2 style={h2}>13. Contact</h2>
         <p style={p}>
           If you have any questions about these Terms, please contact us at{' '}
           <a href="mailto:support@arrangemarriage.co.in" style={{ color: c.gold }}>support@arrangemarriage.co.in</a>.
