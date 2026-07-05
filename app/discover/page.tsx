@@ -12,11 +12,19 @@ export default async function DiscoverPage() {
   if (!user) redirect('/login')
 
   // Guard: onboarding must be complete, not suspended
-  const { data: me } = await supabase
+  const { data: me, error: meError } = await supabase
     .from('profiles')
     .select('onboarding_complete, plan, plan_bonus_until, suspended')
     .eq('id', user.id)
     .maybeSingle()
+
+  // A failed query must never be treated as "no profile" — that caused an
+  // infinite /discover ↔ /onboarding redirect loop when a queried column
+  // was missing from the database. Fail loudly instead.
+  if (meError) {
+    console.error('Discover profile guard query failed:', meError.message)
+    throw new Error(`Profile lookup failed: ${meError.message}`)
+  }
 
   if (!me?.onboarding_complete) redirect('/onboarding')
   if ((me as Record<string, unknown> | null)?.suspended) redirect('/suspended')
