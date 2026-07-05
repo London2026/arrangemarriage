@@ -364,7 +364,7 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                   <tbody>
                     {members.filter(m => m.onboarding_complete).slice(0, 10).map((m: any) => (
                       <tr key={m.id} className="admin-row">
-                        <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
+                        <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>AM-{(m.id as string).slice(0, 8).toUpperCase()}</td>
                         <td style={td}>{m.full_name ?? '—'}</td>
                         <td style={td}>{m.age ?? '—'}</td>
                         <td style={td}>{[m.city, m.country].filter(Boolean).join(', ') || '—'}</td>
@@ -401,7 +401,7 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                     return (
                       <>
                         <tr key={m.id} className="admin-row">
-                          <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>#{(m.id as string).slice(0, 8).toUpperCase()}</td>
+                          <td style={{ ...td, fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.78rem', letterSpacing: '0.08em' }}>AM-{(m.id as string).slice(0, 8).toUpperCase()}</td>
                           <td style={{ ...td, color: c.text, fontWeight: 500 }}>
                             {m.full_name ?? '—'}
                             {suspendedIds.has(m.id as string) && <span style={{ marginLeft: '0.4rem', fontSize: '0.62rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, color: '#f87171' }}>⛔ Suspended</span>}
@@ -530,7 +530,7 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                     <div key={m.id} style={{ background: isFollowUp ? 'rgba(251,191,36,0.05)' : c.card, border: `1px solid ${isFollowUp ? 'rgba(251,191,36,0.3)' : c.border2}`, borderRadius: 6, overflow: 'hidden' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem 1rem', flexWrap: 'wrap' }}>
                         <div style={{ fontFamily: '"Courier New", monospace', color: c.gold, fontSize: '0.72rem', letterSpacing: '0.08em', flexShrink: 0 }}>
-                          #{(m.id as string).slice(0, 8).toUpperCase()}
+                          AM-{(m.id as string).slice(0, 8).toUpperCase()}
                         </div>
                         <div style={{ flex: 1, minWidth: 120 }}>
                           <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.text, fontWeight: 600 }}>

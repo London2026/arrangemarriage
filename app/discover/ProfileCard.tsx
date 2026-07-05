@@ -265,7 +265,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               </h2>
               {profile.id_verified && <span title="ID Verified" style={{ fontSize: '1rem', flexShrink: 0, color: '#16a34a' }}>✅</span>}
               <span className="pc-id" style={{ fontFamily: '"Courier New", monospace', fontWeight: 700, color: c.goldLight, background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)', padding: '0.18rem 0.5rem', borderRadius: '4px', letterSpacing: '0.08em', flexShrink: 0 }}>
-                #{profile.id.slice(0, 8).toUpperCase()}
+                AM-{profile.id.slice(0, 8).toUpperCase()}
               </span>
             </div>
             <p className="pc-meta" style={{ fontFamily: '"Cormorant Garamond", serif', color: c.ivoryDim, margin: 0 }}>

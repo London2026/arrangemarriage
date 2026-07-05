@@ -453,7 +453,7 @@ export default async function ProfilePage() {
         {/* ── Blocked Members ── */}
         <BlockedMembersList members={blockedProfileData.map(p => ({
           id: p.id,
-          displayId: `Profile #${p.id.slice(0, 8).toUpperCase()}`,
+          displayId: `AM-${p.id.slice(0, 8).toUpperCase()}`,
           maskedName: maskName(p.full_name ?? ''),
         }))} />
 

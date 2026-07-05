@@ -12,7 +12,7 @@ const c = {
 
 interface AIMatch { id: string; score: number; reasons: string[]; profile: ProfileData }
 
-function profileId(id: string) { return '#' + id.slice(0, 8).toUpperCase() }
+function profileId(id: string) { return 'AM-' + id.slice(0, 8).toUpperCase() }
 
 function scoreLabel(score: number) {
   if (score >= 90) return 'Exceptional Match'
@@ -119,7 +119,7 @@ export default function DiscoverClient({
     let list = showSaved
       ? profiles.filter(p => savedIds.has(p.id) && !blockedIds.has(p.id))
       : profiles.filter(p => !blockedIds.has(p.id))
-    const q = search.trim().toLowerCase().replace(/^#/, '')
+    const q = search.trim().toLowerCase().replace(/^am-|^#/i, '')
     if (q) list = list.filter(p =>
       p.full_name.toLowerCase().includes(q) ||
       p.id.slice(0, 8).toLowerCase().startsWith(q)
@@ -544,7 +544,7 @@ export default function DiscoverClient({
 
 function CompactCard({ profile, onClick, isOwn, isSaved }: { profile: ProfileData; onClick: () => void; isOwn?: boolean; isSaved?: boolean }) {
   const initials = profile.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
-  const pid = '#' + profile.id.slice(0, 8).toUpperCase()
+  const pid = 'AM-' + profile.id.slice(0, 8).toUpperCase()
   return (
     <div onClick={onClick}
       style={{ background: c.card, border: `1px solid ${isOwn ? 'rgba(74,222,128,0.35)' : c.border}`, borderRadius: '12px', overflow: 'hidden', cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s', position: 'relative', maxWidth: isOwn ? '220px' : undefined }}
