@@ -24,11 +24,19 @@ export default function PrivacyPage() {
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 70%)' }} />
       <Navigation />
 
-      <main style={{ maxWidth: '760px', margin: '0 auto', padding: '6rem 1.5rem 5rem' }}>
+      <style>{`
+        .legal-main { max-width: 760px; margin: 0 auto; padding: 6rem 1.5rem 5rem; }
+        .legal-h1 { font-size: 2.4rem; }
+        @media (max-width: 480px) {
+          .legal-main { padding: 4.5rem 1rem 4rem; }
+          .legal-h1 { font-size: 1.65rem; }
+        }
+      `}</style>
+      <main className="legal-main">
 
         <div style={{ marginBottom: '2rem' }}>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: c.gold, margin: '0 0 0.5rem' }}>Legal</p>
-          <h1 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '2.4rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>Privacy Policy</h1>
+          <h1 className="legal-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>Privacy Policy</h1>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.sepia, margin: 0 }}>Last updated: July 2026</p>
           <div style={{ height: '1px', background: `linear-gradient(to right, ${c.gold}, transparent)`, marginTop: '1.25rem' }} />
         </div>
