@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import AboutStep from './steps/AboutStep'
@@ -494,8 +495,14 @@ function OnboardingPage() {
         .ob-card { width: 100%; max-width: 720px; background: #fff; border-radius: 10px; box-shadow: 0 16px 60px rgba(13,31,60,0.12); border: 1px solid rgba(13,31,60,0.08); overflow: hidden; }
         .ob-card-inner { padding: 2.5rem 2.5rem 1.5rem; }
         .ob-nav { padding: 1.25rem 2.5rem 2rem; display: flex; gap: 0.75rem; border-top: 1px solid rgba(13,31,60,0.06); align-items: center; flex-wrap: wrap; }
-        .ob-btn-back { padding: 0.85rem 1.5rem; min-height: 48px; background: transparent; border: 1px solid rgba(13,31,60,0.2); color: #5a6e82; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 4px; white-space: nowrap; }
-        .ob-btn-next { padding: 0.85rem 2.25rem; min-height: 48px; border: none; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 4px; transition: background 0.2s; white-space: nowrap; }
+        .ob-btn-back { padding: 0.85rem 1.5rem; min-height: 48px; background: transparent; border: 1px solid rgba(13,31,60,0.2); color: #5a6e82; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 4px; white-space: nowrap; transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease; }
+        .ob-btn-back:hover { border-color: #1b3a6b; color: #1b3a6b; transform: translateY(-1px); }
+        .ob-btn-next { padding: 0.85rem 2.25rem; min-height: 48px; border: none; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 4px; transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease; white-space: nowrap; }
+        .ob-btn-next:hover { box-shadow: 0 4px 18px rgba(139,105,20,0.3); transform: translateY(-1px); }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-btn-back, .ob-btn-next { transition: none; }
+          .ob-btn-back:hover, .ob-btn-next:hover { transform: none; }
+        }
         .ob-step-h2 { font-family: var(--font-playfair, "Playfair Display", serif); font-size: 1.9rem; font-weight: 600; }
         .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.1rem; }
         @media (max-width: 640px) {
@@ -558,6 +565,15 @@ function OnboardingPage() {
       <div className="ob-card">
 
         <div className="ob-card-inner">
+          <MotionConfig reducedMotion="user">
+          <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -28 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
           {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, ownFarmLand: draft.ownFarmLand, disability: draft.disability, foodHabits: draft.foodHabits, hobby: draft.hobby }} onChange={change} />}
           {step === 1 && <HabitsStep data={{ smoking: draft.smoking, alcohol: draft.alcohol, drugs: draft.drugs, betting: draft.betting }} onChange={change} />}
           {step === 2 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, universityName: draft.universityName, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
@@ -575,6 +591,9 @@ function OnboardingPage() {
             existingBack1Url={existingBack1Url} existingBack2Url={existingBack2Url} existingFrontUrl={existingFrontUrl} />}
           {step === 6 && <PersonalityStep data={{ favReels: draft.favReels, favYoutube: draft.favYoutube, favWebSeries: draft.favWebSeries, favTravel: draft.favTravel, favFoods: draft.favFoods, favAiTools: draft.favAiTools }} onChange={change} />}
           {step === 7 && <IdVerificationStep idCountry={draft.idCountry} idFile={idFile} onIdChange={(country, file) => { change('idCountry', country); setIdFile(file); if (file) autoUploadId(file) }} />}
+          </motion.div>
+          </AnimatePresence>
+          </MotionConfig>
 
           {error && (
             <div style={{ marginTop: '1rem', background: 'rgba(158,42,43,0.07)', border: '1px solid rgba(158,42,43,0.2)', borderRadius: '4px', padding: '0.65rem 0.9rem', color: c.rose, fontSize: '0.9rem', fontFamily: '"Cormorant Garamond", serif', textAlign: 'center' }}>

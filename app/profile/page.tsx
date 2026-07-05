@@ -8,6 +8,7 @@ import MeetingCard from './MeetingCard'
 import ProfileActions from './ProfileActions'
 import ReferralSection from './ReferralSection'
 import BlockedMembersList from './BlockedMembersList'
+import { Reveal, FadeDown } from '@/components/anim'
 import { maskName } from '@/lib/maskName'
 
 const c = {
@@ -186,6 +187,9 @@ export default async function ProfilePage() {
         }
         .prof-sub { padding: 1.5rem 1.75rem; }
         .prof-sub-cta { display: inline-block; }
+        @keyframes profCardEnter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .prof-card-enter { animation: profCardEnter 0.7s ease-out 0.15s both; }
+        @media (prefers-reduced-motion: reduce) { .prof-card-enter { animation: none; } }
         @media (max-width: 480px) {
           .prof-sub { padding: 1.1rem 1rem; }
           .prof-sub-cta { display: block; text-align: center; }
@@ -218,13 +222,14 @@ export default async function ProfilePage() {
       <main className="prof-main">
 
         {/* Page header */}
+        <FadeDown>
         <div className="prof-header">
           <div>
             <h1 className="prof-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>My Profile</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.45rem 1rem', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '8px' }}>
                 <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.sepia }}>Profile ID</span>
-                <span style={{ fontFamily: '"Courier New", monospace', fontSize: '1.2rem', fontWeight: 900, color: c.goldLight, letterSpacing: '0.12em' }}>#{user.id.slice(0, 8).toUpperCase()}</span>
+                <span style={{ fontFamily: '"Courier New", monospace', fontSize: '1.2rem', fontWeight: 900, color: c.goldLight, letterSpacing: '0.12em' }}>AM-{user.id.slice(0, 8).toUpperCase()}</span>
               </div>
               {(!profile.plan || profile.plan === 'free') ? (
                 <Link href="/pricing" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 1rem', background: 'linear-gradient(135deg, rgba(232,200,118,0.18), rgba(201,168,76,0.12))', border: '1px solid rgba(201,168,76,0.5)', borderRadius: '8px', fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: c.goldLight, textDecoration: 'none', whiteSpace: 'nowrap' }}>
@@ -242,9 +247,10 @@ export default async function ProfilePage() {
           </Link>
         </div>
         <div style={{ height: '1px', background: `linear-gradient(to right, ${c.goldLight}, transparent)`, marginBottom: '1.75rem' }} />
+        </FadeDown>
 
         {/* ── Main profile card ── */}
-        <div style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
+        <div className="prof-card-enter" style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
 
           {/* Header */}
           <div style={{ padding: '1.75rem 1.75rem 1.4rem', borderBottom: `1px solid ${c.borderSub}` }}>
@@ -435,33 +441,41 @@ export default async function ProfilePage() {
         </div>
 
         {/* ── Refer a Friend ── */}
-        <ReferralSection
-          referralCode={profile.referral_code as string | null}
-          referralCount={(profile.referral_count as number) ?? 0}
-          planBonusUntil={profile.plan_bonus_until as string | null}
-          userId={user.id}
-        />
+        <Reveal>
+          <ReferralSection
+            referralCode={profile.referral_code as string | null}
+            referralCount={(profile.referral_count as number) ?? 0}
+            planBonusUntil={profile.plan_bonus_until as string | null}
+            userId={user.id}
+          />
+        </Reveal>
 
         {/* ── Subscription ── */}
-        <SubscriptionSection
-          plan={profile.plan ?? 'free'}
-          nextBillingDate={profile.next_billing_date as string | null}
-          planBonusUntil={profile.plan_bonus_until as string | null}
-          hasSubscription={!!profile.stripe_customer_id}
-        />
+        <Reveal>
+          <SubscriptionSection
+            plan={profile.plan ?? 'free'}
+            nextBillingDate={profile.next_billing_date as string | null}
+            planBonusUntil={profile.plan_bonus_until as string | null}
+            hasSubscription={!!profile.stripe_customer_id}
+          />
+        </Reveal>
 
         {/* ── Blocked Members ── */}
-        <BlockedMembersList members={blockedProfileData.map(p => ({
-          id: p.id,
-          displayId: `AM-${p.id.slice(0, 8).toUpperCase()}`,
-          maskedName: maskName(p.full_name ?? ''),
-        }))} />
+        <Reveal>
+          <BlockedMembersList members={blockedProfileData.map(p => ({
+            id: p.id,
+            displayId: `AM-${p.id.slice(0, 8).toUpperCase()}`,
+            maskedName: maskName(p.full_name ?? ''),
+          }))} />
+        </Reveal>
 
         {/* ── Account Settings (cancel subscription / delete profile) ── */}
-        <ProfileActions
-          plan={profile.plan ?? null}
-          hasSubscription={!!profile.stripe_customer_id}
-        />
+        <Reveal>
+          <ProfileActions
+            plan={profile.plan ?? null}
+            hasSubscription={!!profile.stripe_customer_id}
+          />
+        </Reveal>
 
       </main>
       <BottomNav />

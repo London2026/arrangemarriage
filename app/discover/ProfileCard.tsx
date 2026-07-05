@@ -555,8 +555,12 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         ) : revealed ? (
           /* Revealed — show clearly */
           <div>
+            <style>{`
+              @keyframes pcUnblur { from { filter: blur(22px); transform: scale(1.08); } to { filter: blur(0); transform: scale(1); } }
+              @media (prefers-reduced-motion: reduce) { .pc-reveal-img { animation: none !important; } }
+            `}</style>
             <div style={{ borderRadius: '10px', overflow: 'hidden', aspectRatio: '3/4' }}>
-              <img src={frontUrl} alt={profile.full_name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <img src={frontUrl} alt={profile.full_name} className="pc-reveal-img" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', animation: 'pcUnblur 1.1s ease-out' }} />
             </div>
             {revealMsg && (
               <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: '#4ade80', textAlign: 'center', margin: '0.75rem 0 0', padding: '0.75rem', background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: '6px' }}>

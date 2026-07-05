@@ -336,6 +336,8 @@
   .btn-primary:hover {
     background: transparent;
     color: var(--burgundy);
+    box-shadow: 0 0 22px rgba(201,168,76,0.35);
+    transform: translateY(-2px);
   }
 
   .btn-outline {
@@ -357,6 +359,8 @@
   .btn-outline:hover {
     background: var(--burgundy);
     color: var(--cream);
+    box-shadow: 0 0 22px rgba(201,168,76,0.35);
+    transform: translateY(-2px);
   }
 
   .scroll-hint {
@@ -1535,6 +1539,17 @@
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* Respect reduced-motion preferences: show everything, stop movement */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .reveal { opacity: 1; transform: none; }
   }
 
   /* MODAL */
