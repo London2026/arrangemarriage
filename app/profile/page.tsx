@@ -184,6 +184,12 @@ export default async function ProfilePage() {
           .prof-main { padding: 4.5rem 0.5rem 7rem; }
           .prof-row-label { min-width: 130px !important; }
         }
+        .prof-sub { padding: 1.5rem 1.75rem; }
+        .prof-sub-cta { display: inline-block; }
+        @media (max-width: 480px) {
+          .prof-sub { padding: 1.1rem 1rem; }
+          .prof-sub-cta { display: block; text-align: center; }
+        }
       `}</style>
 
       {/* Rose petals */}
@@ -501,7 +507,7 @@ function SubscriptionSection({ plan, nextBillingDate, planBonusUntil, hasSubscri
       ]
 
   return (
-    <div style={{ background: 'rgba(13,31,60,0.3)', border: `1px solid rgba(201,168,76,0.18)`, borderRadius: '12px', padding: '1.5rem 1.75rem', marginBottom: '1.5rem' }}>
+    <div className="prof-sub" style={{ background: 'rgba(13,31,60,0.3)', border: `1px solid rgba(201,168,76,0.18)`, borderRadius: '12px', marginBottom: '1.5rem' }}>
       <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 1.25rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
         💳 Subscription
       </p>
@@ -543,7 +549,7 @@ function SubscriptionSection({ plan, nextBillingDate, planBonusUntil, hasSubscri
 
       {/* CTA */}
       {(isFree || isStarter) && (
-        <Link href="/pricing" style={{ display: 'inline-block', padding: '0.65rem 1.75rem', background: 'linear-gradient(135deg,#e8c876,#c9a84c)', color: '#0d1f3c', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: '6px', textDecoration: 'none' }}>
+        <Link href="/pricing" className="prof-sub-cta" style={{ padding: '0.65rem 1.75rem', background: 'linear-gradient(135deg,#e8c876,#c9a84c)', color: '#0d1f3c', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: '6px', textDecoration: 'none' }}>
           {isFree ? '✦ Upgrade to Starter →' : '✦ Upgrade to Premium →'}
         </Link>
       )}

@@ -33,9 +33,9 @@ export default function BlockedMembersList({ members }: { members: BlockedMember
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
         {list.map(m => (
           <div key={m.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.65rem 0.85rem', background: 'rgba(248,113,113,0.04)', border: '1px solid rgba(248,113,113,0.15)', borderRadius: '8px' }}>
-            <div>
+            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
               <span style={{ fontFamily: '"Courier New", monospace', fontSize: '0.85rem', fontWeight: 700, color: c.gold, letterSpacing: '0.06em' }}>{m.displayId}</span>
-              <span style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.ivoryDim, marginLeft: '0.6rem' }}>{m.maskedName}</span>
+              <span style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.ivoryDim, marginLeft: '0.6rem', display: 'inline-block', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', verticalAlign: 'bottom' }}>{m.maskedName}</span>
             </div>
             <button
               onClick={() => handleUnblock(m.id)}

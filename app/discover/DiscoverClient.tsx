@@ -233,6 +233,9 @@ export default function DiscoverClient({
           .disc-icon-btn { padding: 0.75rem 0.8rem; }
           .disc-icon-btn .btn-label { display: none; }
         }
+        @media (max-width: 360px) {
+          .disc-icon-btn { flex: 1; justify-content: center; }
+        }
       `}</style>
 
       {/* Search bar + filter toggle */}
