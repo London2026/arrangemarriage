@@ -204,9 +204,20 @@ export default async function ProfilePage() {
         <div className="prof-header">
           <div>
             <h1 className="prof-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>My Profile</h1>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.45rem 1rem', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '8px' }}>
-              <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.sepia }}>Profile ID</span>
-              <span style={{ fontFamily: '"Courier New", monospace', fontSize: '1.2rem', fontWeight: 900, color: c.goldLight, letterSpacing: '0.12em' }}>#{user.id.slice(0, 8).toUpperCase()}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.45rem 1rem', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '8px' }}>
+                <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.sepia }}>Profile ID</span>
+                <span style={{ fontFamily: '"Courier New", monospace', fontSize: '1.2rem', fontWeight: 900, color: c.goldLight, letterSpacing: '0.12em' }}>#{user.id.slice(0, 8).toUpperCase()}</span>
+              </div>
+              {(!profile.plan || profile.plan === 'free') ? (
+                <Link href="/pricing" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 1rem', background: 'linear-gradient(135deg, rgba(232,200,118,0.18), rgba(201,168,76,0.12))', border: '1px solid rgba(201,168,76,0.5)', borderRadius: '8px', fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: c.goldLight, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                  ✦ Upgrade →
+                </Link>
+              ) : (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.45rem 1rem', background: profile.plan === 'standard' ? 'rgba(74,222,128,0.08)' : 'rgba(201,168,76,0.08)', border: `1px solid ${profile.plan === 'standard' ? 'rgba(74,222,128,0.3)' : 'rgba(201,168,76,0.3)'}`, borderRadius: '8px', fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: profile.plan === 'standard' ? '#4ade80' : c.goldLight }}>
+                  {profile.plan === 'standard' ? '💎 Standard Plan' : '⭐ Starter Plan'}
+                </span>
+              )}
             </div>
           </div>
           <Link href="/onboarding?edit=true" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.goldLight, textDecoration: 'none', padding: '0.55rem 1.1rem', border: `1px solid rgba(201,168,76,0.35)`, borderRadius: '6px', whiteSpace: 'nowrap' }}>
