@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import ProfileCard, { type ProfileData } from './ProfileCard'
 import { maskName } from '@/lib/maskName'
 
@@ -270,16 +269,7 @@ export default function DiscoverClient({
         </div>
 
         {/* Filter panel */}
-        <MotionConfig reducedMotion="user">
-        <AnimatePresence initial={false}>
         {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: 'easeInOut' }}
-            style={{ overflow: 'hidden' }}
-          >
           <div style={{ marginTop: '0.6rem', background: c.card, border: `1px solid ${c.border}`, borderRadius: '10px', padding: '1.1rem 1.25rem' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem' }}>
 
@@ -375,10 +365,7 @@ export default function DiscoverClient({
               </button>
             </div>
           </div>
-          </motion.div>
         )}
-        </AnimatePresence>
-        </MotionConfig>
       </div>
 
       {/* Meeting usage counter — visible only for paid members */}
@@ -527,41 +514,17 @@ export default function DiscoverClient({
           {showViewedMe ? 'No one has viewed your photo yet.' : showSaved ? 'No saved profiles yet. Tap ★ on any profile to save it.' : 'No profiles match your search.'}
         </div>
       ) : (
-        <MotionConfig reducedMotion="user">
-          <div className="disc-grid">
-            {displayProfiles.map((p, i) => (
-              <motion.div
-                key={p.id}
-                initial={{ opacity: 0, y: 22 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: Math.min(i * 0.06, 0.6), ease: 'easeOut' }}
-              >
-                <CompactCard profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} />
-              </motion.div>
-            ))}
-          </div>
-        </MotionConfig>
+        <div className="disc-grid">
+          {displayProfiles.map(p => (
+            <CompactCard key={p.id} profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} />
+          ))}
+        </div>
       )}
 
       {/* Expanded modal */}
-      <MotionConfig reducedMotion="user">
-      <AnimatePresence>
       {selected && (
-        <motion.div
-          className="disc-modal-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          onClick={e => { if (e.target === e.currentTarget) setSelected(null) }}
-        >
-          <motion.div
-            className="disc-modal-inner"
-            initial={{ opacity: 0, scale: 0.96, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.97, y: 10 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            style={{ position: 'relative', width: '100%', maxWidth: '820px', maxHeight: '93vh', overflowY: 'auto', borderRadius: '16px' }}>
+        <div className="disc-modal-overlay" onClick={e => { if (e.target === e.currentTarget) setSelected(null) }}>
+          <div className="disc-modal-inner" style={{ position: 'relative', width: '100%', maxWidth: '820px', maxHeight: '93vh', overflowY: 'auto', borderRadius: '16px' }}>
             <button onClick={() => setSelected(null)}
               style={{ position: 'sticky', top: '0.75rem', float: 'right', marginRight: '0.75rem', zIndex: 10, width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,26,53,0.9)', border: `1px solid ${c.border}`, color: c.ivoryDim, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               ✕
@@ -572,11 +535,9 @@ export default function DiscoverClient({
               </div>
             )}
             <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
-      </AnimatePresence>
-      </MotionConfig>
     </>
   )
 }
