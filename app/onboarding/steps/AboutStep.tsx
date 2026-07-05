@@ -11,7 +11,6 @@ const GENDERS   = ['Man', 'Woman', 'Other']
 const HOUSING   = ['Own House', 'Rented House', 'Family Home', 'Other']
 const YES_NO    = ['No', 'Yes']
 const FOOD      = ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Jain', 'Mix / Flexible']
-const SMOKE_ALC = ['No', 'Yes', 'Occasionally']
 const RASHI = [
   'Mesha (Aries)', 'Vrishabha (Taurus)', 'Mithuna (Gemini)', 'Karka (Cancer)',
   'Simha (Leo)', 'Kanya (Virgo)', 'Tula (Libra)', 'Vrishchika (Scorpio)',
@@ -24,7 +23,7 @@ interface Props {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
     height: string; weight: string; rashi: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
-    housing: string; ownFarmLand: string; disability: string; foodHabits: string; smoking: string; alcohol: string; hobby: string
+    housing: string; ownFarmLand: string; disability: string; foodHabits: string; hobby: string
   }
   onChange: (key: string, value: string) => void
 }
@@ -156,11 +155,6 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Hobby / Interests" k="hobby" val={data.hobby} ph="e.g. Cricket, Reading…" onChange={onChange} />
       </div>
 
-      {/* Smoking + Alcohol */}
-      <Row>
-        <Sel lbl="Smoking" k="smoking" val={data.smoking} opts={SMOKE_ALC} ph="Select" onChange={onChange} />
-        <Sel lbl="Alcohol" k="alcohol" val={data.alcohol} opts={SMOKE_ALC} ph="Select" onChange={onChange} />
-      </Row>
     </div>
   )
 }

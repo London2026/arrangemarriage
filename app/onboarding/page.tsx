@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import AboutStep from './steps/AboutStep'
+import HabitsStep from './steps/HabitsStep'
 import BackgroundStep from './steps/BackgroundStep'
 import PreferencesStep from './steps/PreferencesStep'
 import VoiceStep from './steps/VoiceStep'
@@ -12,8 +13,8 @@ import PhotosStep from './steps/PhotosStep'
 import PersonalityStep from './steps/PersonalityStep'
 import IdVerificationStep from './steps/IdVerificationStep'
 
-const STEPS = ['About You', 'Your Heritage', 'Preferences', 'Voice Intro', 'Your Photos', 'Personality', 'ID Verification']
-const STEP_TIMES = [3, 2, 2, 2, 2, 2, 1] // estimated minutes to fill each step's form
+const STEPS = ['About You', 'Lifestyle & Habits', 'Your Heritage', 'Preferences', 'Voice Intro', 'Your Photos', 'Personality', 'ID Verification']
+const STEP_TIMES = [3, 1, 2, 2, 2, 2, 2, 1] // estimated minutes to fill each step's form
 
 const c = {
   cream: '#f4f1eb', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -24,7 +25,7 @@ interface Draft {
   firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
   height: string; weight: string; rashi: string
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
-  housing: string; ownFarmLand: string; disability: string; foodHabits: string; smoking: string; alcohol: string
+  housing: string; ownFarmLand: string; disability: string; foodHabits: string; smoking: string; alcohol: string; drugs: string; betting: string
   religion: string; caste: string; motherTongue: string
   education: string; universityName: string; educationSubject: string; otherQualifications: string
   occupation: string; occupationCity: string; annualSalary: string
@@ -39,7 +40,7 @@ const EMPTY: Draft = {
   firstName: '', lastName: '', age: '', gender: '', city: '', country: '', phone: '',
   height: '', weight: '', rashi: '',
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
-  housing: '', ownFarmLand: '', disability: '', foodHabits: '', smoking: '', alcohol: '',
+  housing: '', ownFarmLand: '', disability: '', foodHabits: '', smoking: '', alcohol: '', drugs: '', betting: '',
   religion: '', caste: '', motherTongue: '',
   education: '', universityName: '', educationSubject: '', otherQualifications: '',
   occupation: '', occupationCity: '', annualSalary: '',
@@ -159,6 +160,8 @@ function OnboardingPage() {
           foodHabits: profile.food_habits ?? '',
           smoking: profile.smoking ?? '',
           alcohol: profile.alcohol ?? '',
+          drugs: profile.drugs ?? '',
+          betting: profile.betting ?? '',
           universityName: profile.university_name ?? '',
           educationSubject: profile.education_subject ?? '',
           otherQualifications: profile.other_qualifications ?? '',
@@ -262,25 +265,25 @@ function OnboardingPage() {
       if (!draft.city || !draft.country) return 'Please enter your city and country.'
     }
     if (step === 0 && !draft.phone.trim()) return 'Mobile number is required.'
-    if (step === 1 && (!draft.religion || !draft.motherTongue || !draft.education || !draft.occupation))
+    if (step === 2 && (!draft.religion || !draft.motherTongue || !draft.education || !draft.occupation))
       return 'Please complete religion, mother tongue, education and occupation.'
-    if (step === 2) {
+    if (step === 3) {
       if (!draft.prefGender) return 'Please select who you are looking for.'
       if (parseInt(draft.prefAgeMin) >= parseInt(draft.prefAgeMax)) return 'Max age must be greater than min age.'
       if (!draft.prefReligion) return 'Please select a religion preference.'
     }
-    if (step === 3 && !voiceBlob && !hasExistingVoice) return 'Please record your voice introduction.'
-    if (step === 5) {
+    if (step === 4 && !voiceBlob && !hasExistingVoice) return 'Please record your voice introduction.'
+    if (step === 6) {
       const missing = ['favReels', 'favYoutube', 'favWebSeries', 'favTravel', 'favFoods', 'favAiTools']
         .filter(k => !draft[k as keyof typeof draft])
       if (missing.length > 0) return 'Please add at least 1 entry in every category.'
     }
-    if (step === 4) {
+    if (step === 5) {
       if (!back1 && !hasExistingPhotos) return 'Please upload both back-side photos.'
       if ((!back1 || !back2) && !hasExistingPhotos) return 'Please upload both back-side photos.'
       if (!front && !hasExistingPhotos) return 'Please upload your reveal photo.'
     }
-    // Steps 5 & 6 are optional — no validation required
+    // Steps 6 & 7 are optional — no validation required
     return ''
   }
 
@@ -288,7 +291,7 @@ function OnboardingPage() {
     const msg = validate()
     if (msg) { setError(msg); return }
     setError('')
-    if (step < 6) {
+    if (step < 7) {
       const next = step + 1
       setStep(next)
       if (userId) localStorage.setItem(`ob_step_${userId}`, String(next))
@@ -360,6 +363,7 @@ function OnboardingPage() {
         father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
         housing: draft.housing || null, own_farm_land: draft.ownFarmLand || null, disability: draft.disability || null,
         food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+        drugs: draft.drugs || null, betting: draft.betting || null,
         university_name: draft.universityName || null,
         education_subject: draft.educationSubject || null,
         other_qualifications: draft.otherQualifications || null,
@@ -430,6 +434,7 @@ function OnboardingPage() {
       father_occupation: draft.fatherOccupation || null, mother_occupation: draft.motherOccupation || null,
       housing: draft.housing || null, disability: draft.disability || null,
       food_habits: draft.foodHabits || null, smoking: draft.smoking || null, alcohol: draft.alcohol || null,
+      drugs: draft.drugs || null, betting: draft.betting || null,
       university_name: draft.universityName || null,
       education_subject: draft.educationSubject || null, other_qualifications: draft.otherQualifications || null,
       occupation_city: draft.occupationCity || null, annual_salary: draft.annualSalary || null,
@@ -553,22 +558,23 @@ function OnboardingPage() {
       <div className="ob-card">
 
         <div className="ob-card-inner">
-          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, ownFarmLand: draft.ownFarmLand, disability: draft.disability, foodHabits: draft.foodHabits, smoking: draft.smoking, alcohol: draft.alcohol, hobby: draft.hobby }} onChange={change} />}
-          {step === 1 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, universityName: draft.universityName, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
-          {step === 2 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefCaste: draft.prefCaste, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking, prefOther: draft.prefOther }} onChange={change} />}
-          {step === 3 && <VoiceStep
+          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, ownFarmLand: draft.ownFarmLand, disability: draft.disability, foodHabits: draft.foodHabits, hobby: draft.hobby }} onChange={change} />}
+          {step === 1 && <HabitsStep data={{ smoking: draft.smoking, alcohol: draft.alcohol, drugs: draft.drugs, betting: draft.betting }} onChange={change} />}
+          {step === 2 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, universityName: draft.universityName, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
+          {step === 3 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefCaste: draft.prefCaste, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking, prefOther: draft.prefOther }} onChange={change} />}
+          {step === 4 && <VoiceStep
             onVoiceChange={b => { setVoiceBlob(b); if (b) autoUploadVoice(b, false) }}
             onVoiceEnChange={b => { setVoiceBlobEn(b); if (b) autoUploadVoice(b, true) }}
             hasRecording={!!voiceBlob} existingUrl={existingVoiceUrl} existingEnUrl={existingVoiceEnUrl} />}
-          {step === 4 && <PhotosStep back1={back1} back2={back2} front={front}
+          {step === 5 && <PhotosStep back1={back1} back2={back2} front={front}
             onPhotosChange={(b1, b2, f) => {
               if (b1 !== back1) { setBack1(b1); if (b1) autoUploadPhoto(b1, 'back-1') }
               if (b2 !== back2) { setBack2(b2); if (b2) autoUploadPhoto(b2, 'back-2') }
               if (f !== front)  { setFront(f);  if (f)  autoUploadPhoto(f,  'front')  }
             }}
             existingBack1Url={existingBack1Url} existingBack2Url={existingBack2Url} existingFrontUrl={existingFrontUrl} />}
-          {step === 5 && <PersonalityStep data={{ favReels: draft.favReels, favYoutube: draft.favYoutube, favWebSeries: draft.favWebSeries, favTravel: draft.favTravel, favFoods: draft.favFoods, favAiTools: draft.favAiTools }} onChange={change} />}
-          {step === 6 && <IdVerificationStep idCountry={draft.idCountry} idFile={idFile} onIdChange={(country, file) => { change('idCountry', country); setIdFile(file); if (file) autoUploadId(file) }} />}
+          {step === 6 && <PersonalityStep data={{ favReels: draft.favReels, favYoutube: draft.favYoutube, favWebSeries: draft.favWebSeries, favTravel: draft.favTravel, favFoods: draft.favFoods, favAiTools: draft.favAiTools }} onChange={change} />}
+          {step === 7 && <IdVerificationStep idCountry={draft.idCountry} idFile={idFile} onIdChange={(country, file) => { change('idCountry', country); setIdFile(file); if (file) autoUploadId(file) }} />}
 
           {error && (
             <div style={{ marginTop: '1rem', background: 'rgba(158,42,43,0.07)', border: '1px solid rgba(158,42,43,0.2)', borderRadius: '4px', padding: '0.65rem 0.9rem', color: c.rose, fontSize: '0.9rem', fontFamily: '"Cormorant Garamond", serif', textAlign: 'center' }}>
