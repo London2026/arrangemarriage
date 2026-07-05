@@ -105,16 +105,9 @@ function Recorder({
         <div style={{ textAlign: 'center' }}>
           <button onClick={recording ? stopRecording : startRecording}
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem', margin: '0 auto' }}>
-            <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: recording ? 'rgba(196,120,32,0.08)' : 'rgba(29,82,82,0.08)', border: `2px solid ${recording ? c.rose : c.teal}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', transition: 'all 0.3s', animation: recording ? 'recPulse 1.6s ease-in-out infinite' : 'none' }}>
+            <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: recording ? 'rgba(196,120,32,0.08)' : 'rgba(29,82,82,0.08)', border: `2px solid ${recording ? c.rose : c.teal}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.75rem', transition: 'all 0.3s' }}>
               {recording ? '⏹' : '🎙️'}
             </div>
-            <style>{`
-              @keyframes recPulse {
-                0%, 100% { box-shadow: 0 0 0 0 rgba(158,42,43,0.35); }
-                50% { box-shadow: 0 0 0 12px rgba(158,42,43,0); }
-              }
-              @media (prefers-reduced-motion: reduce) { @keyframes recPulse { 0%, 100% { box-shadow: none; } } }
-            `}</style>
             <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.13em', textTransform: 'uppercase', color: recording ? c.rose : c.teal }}>
               {recording ? 'Stop Recording' : 'Tap to Record'}
             </span>

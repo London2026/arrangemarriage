@@ -186,9 +186,6 @@ export default async function ProfilePage() {
         }
         .prof-sub { padding: 1.5rem 1.75rem; }
         .prof-sub-cta { display: inline-block; }
-        @keyframes profCardEnter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        .prof-card-enter { animation: profCardEnter 0.7s ease-out 0.15s both; }
-        @media (prefers-reduced-motion: reduce) { .prof-card-enter { animation: none; } }
         @media (max-width: 480px) {
           .prof-sub { padding: 1.1rem 1rem; }
           .prof-sub-cta { display: block; text-align: center; }
@@ -247,7 +244,7 @@ export default async function ProfilePage() {
         <div style={{ height: '1px', background: `linear-gradient(to right, ${c.goldLight}, transparent)`, marginBottom: '1.75rem' }} />
 
         {/* ── Main profile card ── */}
-        <div className="prof-card-enter" style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
+        <div style={{ background: 'rgba(26,58,92,0.25)', border: `1px solid ${c.border}`, borderRadius: '14px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 8px 40px rgba(0,0,0,0.4)' }}>
 
           {/* Header */}
           <div style={{ padding: '1.75rem 1.75rem 1.4rem', borderBottom: `1px solid ${c.borderSub}` }}>

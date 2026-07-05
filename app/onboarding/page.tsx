@@ -505,14 +505,8 @@ function OnboardingPage() {
         .ob-card { width: 100%; max-width: 720px; background: #fff; border-radius: 10px; box-shadow: 0 16px 60px rgba(13,31,60,0.12); border: 1px solid rgba(13,31,60,0.08); overflow: hidden; }
         .ob-card-inner { padding: 2.5rem 2.5rem 1.5rem; }
         .ob-nav { padding: 1.25rem 2.5rem 2rem; display: flex; gap: 0.75rem; border-top: 1px solid rgba(13,31,60,0.06); align-items: center; flex-wrap: wrap; }
-        .ob-btn-back { padding: 0.85rem 1.5rem; min-height: 48px; background: transparent; border: 1px solid rgba(13,31,60,0.2); color: #5a6e82; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 4px; white-space: nowrap; transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease; }
-        .ob-btn-back:hover { border-color: #1b3a6b; color: #1b3a6b; transform: translateY(-1px); }
-        .ob-btn-next { padding: 0.85rem 2.25rem; min-height: 48px; border: none; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 4px; transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease; white-space: nowrap; }
-        .ob-btn-next:hover { box-shadow: 0 4px 18px rgba(139,105,20,0.3); transform: translateY(-1px); }
-        @media (prefers-reduced-motion: reduce) {
-          .ob-btn-back, .ob-btn-next { transition: none; }
-          .ob-btn-back:hover, .ob-btn-next:hover { transform: none; }
-        }
+        .ob-btn-back { padding: 0.85rem 1.5rem; min-height: 48px; background: transparent; border: 1px solid rgba(13,31,60,0.2); color: #5a6e82; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 4px; white-space: nowrap; }
+        .ob-btn-next { padding: 0.85rem 2.25rem; min-height: 48px; border: none; font-family: Raleway, sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 4px; transition: background 0.2s; white-space: nowrap; }
         .ob-step-h2 { font-family: var(--font-playfair, "Playfair Display", serif); font-size: 1.9rem; font-weight: 600; }
         .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.1rem; }
         @media (max-width: 640px) {
