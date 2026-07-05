@@ -852,6 +852,9 @@
   .meeting-slide:nth-child(4) { animation-delay: 15s; }
   .meeting-slide:nth-child(5) { animation-delay: 20s; }
   .meeting-slide:nth-child(6) { animation-delay: 25s; }
+  /* First slide stays visible as a static base layer — the box always shows an
+     image even when animations are paused, blocked, or reduced by the browser */
+  .meeting-slide:first-child { opacity: 1; animation: none; }
 
   .meeting-img {
     width: 100%;
@@ -1541,15 +1544,14 @@
     transform: translateY(0);
   }
 
-  /* Respect reduced-motion preferences: show everything, stop movement */
+  /* Respect reduced-motion preferences: stop movement but keep all content visible.
+     Note: animation:none leaves elements at their base styles, so anything whose
+     base state is invisible needs an explicit visibility override below. */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-    .reveal { opacity: 1; transform: none; }
+    html { scroll-behavior: auto !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    .meeting-slide:first-child { opacity: 1 !important; }
   }
 
   /* MODAL */
