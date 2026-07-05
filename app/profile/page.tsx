@@ -425,6 +425,14 @@ export default async function ProfilePage() {
           userId={user.id}
         />
 
+        {/* ── Subscription ── */}
+        <SubscriptionSection
+          plan={profile.plan ?? 'free'}
+          nextBillingDate={profile.next_billing_date as string | null}
+          planBonusUntil={profile.plan_bonus_until as string | null}
+          hasSubscription={!!profile.stripe_customer_id}
+        />
+
         {/* ── Account Settings (cancel subscription / delete profile) ── */}
         <ProfileActions
           plan={profile.plan ?? null}
@@ -433,6 +441,94 @@ export default async function ProfilePage() {
 
       </main>
       <BottomNav />
+    </div>
+  )
+}
+
+function SubscriptionSection({ plan, nextBillingDate, planBonusUntil, hasSubscription }: {
+  plan: string; nextBillingDate: string | null; planBonusUntil: string | null; hasSubscription: boolean
+}) {
+  const isFree     = !plan || plan === 'free'
+  const isStarter  = plan === 'starter'
+  const isStandard = plan === 'standard'
+
+  const renewalStr = nextBillingDate
+    ? new Date(nextBillingDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })
+    : null
+
+  const bonusActive = planBonusUntil && new Date(planBonusUntil) > new Date()
+  const bonusStr = planBonusUntil
+    ? new Date(planBonusUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' })
+    : null
+
+  const features = isFree
+    ? [
+        { text: 'Browse & discover all profiles', ok: true },
+        { text: 'Full profile with voice introduction', ok: true },
+        { text: 'Reveal face photos', ok: false },
+        { text: 'Video meeting requests', ok: false },
+      ]
+    : isStarter
+    ? [
+        { text: 'Browse & discover all profiles', ok: true },
+        { text: 'Reveal face photos (unlimited)', ok: true },
+        { text: '2 video meeting requests per month', ok: true },
+        { text: '4 video meetings/month (Premium only)', ok: false },
+      ]
+    : [
+        { text: 'Browse & discover all profiles', ok: true },
+        { text: 'Reveal face photos (unlimited)', ok: true },
+        { text: '4 video meeting requests per month', ok: true },
+        { text: 'Priority profile visibility', ok: true },
+      ]
+
+  return (
+    <div style={{ background: 'rgba(13,31,60,0.3)', border: `1px solid rgba(201,168,76,0.18)`, borderRadius: '12px', padding: '1.5rem 1.75rem', marginBottom: '1.5rem' }}>
+      <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 1.25rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+        💳 Subscription
+      </p>
+
+      {/* Plan badge + price */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+        <div>
+          <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.35rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.2rem' }}>
+            {isStandard ? '💎 Premium Plan' : isStarter ? '⭐ Starter Plan' : '🔓 Free Plan'}
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: c.sepia, margin: 0 }}>
+            {isStandard ? '₹550/month' : isStarter ? '₹350/month' : 'No charge · browse freely'}
+          </p>
+        </div>
+        {renewalStr && hasSubscription && (
+          <div style={{ background: 'rgba(201,168,76,0.07)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px', padding: '0.5rem 1rem', textAlign: 'right' }}>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: c.sepia, margin: '0 0 0.15rem' }}>Next renewal</p>
+            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.95rem', color: c.goldLight, margin: 0 }}>{renewalStr}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Referral bonus banner */}
+      {bonusActive && bonusStr && (
+        <div style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.25)', borderRadius: '8px', padding: '0.65rem 1rem', marginBottom: '1rem', fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: '#4ade80', lineHeight: 1.5 }}>
+          🎁 Referral bonus active — extended access until {bonusStr}
+        </div>
+      )}
+
+      {/* Features */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1.25rem' }}>
+        {features.map((f, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span style={{ fontSize: '0.9rem', flexShrink: 0 }}>{f.ok ? '✓' : '✗'}</span>
+            <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: f.ok ? c.ivoryDim : 'rgba(90,110,130,0.6)', lineHeight: 1.4, textDecoration: f.ok ? 'none' : 'line-through' }}>{f.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      {(isFree || isStarter) && (
+        <Link href="/pricing" style={{ display: 'inline-block', padding: '0.65rem 1.75rem', background: 'linear-gradient(135deg,#e8c876,#c9a84c)', color: '#0d1f3c', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', borderRadius: '6px', textDecoration: 'none' }}>
+          {isFree ? '✦ Upgrade to Starter →' : '✦ Upgrade to Premium →'}
+        </Link>
+      )}
     </div>
   )
 }

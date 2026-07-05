@@ -90,6 +90,8 @@ function StarRating({ meetingId, alreadyRated }: { meetingId: string; alreadyRat
   const [rated, setRated] = useState(alreadyRated)
   const [saved, setSaved] = useState(0)
   const [hovered, setHovered] = useState(0)
+  const [selected, setSelected] = useState(0)
+  const [note, setNote] = useState('')
   const [saving, setSaving] = useState(false)
 
   if (rated) {
@@ -100,11 +102,12 @@ function StarRating({ meetingId, alreadyRated }: { meetingId: string; alreadyRat
     )
   }
 
-  async function handleRate(stars: number) {
+  async function handleSubmit() {
+    if (!selected) return
     setSaving(true)
     try {
-      await rateMeeting(meetingId, stars)
-      setSaved(stars)
+      await rateMeeting(meetingId, selected, note || undefined)
+      setSaved(selected)
       setRated(true)
     } finally {
       setSaving(false)
@@ -112,24 +115,42 @@ function StarRating({ meetingId, alreadyRated }: { meetingId: string; alreadyRat
   }
 
   return (
-    <div style={{ marginTop: '0.75rem', textAlign: 'center' }}>
-      <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, margin: '0 0 0.5rem' }}>
+    <div style={{ marginTop: '0.75rem' }}>
+      <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, margin: '0 0 0.5rem', textAlign: 'center' }}>
         How did the meeting go?
       </p>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem', marginBottom: selected ? '0.75rem' : 0 }}>
         {[1, 2, 3, 4, 5].map(star => (
           <button
             key={star}
-            onClick={() => !saving && handleRate(star)}
+            onClick={() => !saving && setSelected(star)}
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
             disabled={saving}
-            style={{ background: 'none', border: 'none', cursor: saving ? 'default' : 'pointer', padding: '0.1rem', fontSize: '1.6rem', lineHeight: 1, color: star <= (hovered || saved) ? c.goldLight : 'rgba(201,168,76,0.25)', transition: 'color 0.1s' }}
+            style={{ background: 'none', border: 'none', cursor: saving ? 'default' : 'pointer', padding: '0.1rem', fontSize: '1.6rem', lineHeight: 1, color: star <= (hovered || selected) ? c.goldLight : 'rgba(201,168,76,0.25)', transition: 'color 0.1s' }}
           >
             ★
           </button>
         ))}
       </div>
+      {selected > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <textarea
+            value={note}
+            onChange={e => setNote(e.target.value)}
+            placeholder="Add a note (optional)…"
+            rows={2}
+            style={{ width: '100%', padding: '0.55rem 0.75rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(201,168,76,0.25)', color: '#f5f0e6', fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', borderRadius: '6px', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+          />
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            style={{ alignSelf: 'center', padding: '0.55rem 1.5rem', background: 'linear-gradient(135deg,#e8c876,#c9a84c)', color: '#0d1f3c', fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', border: 'none', borderRadius: '6px', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? 'Saving…' : 'Submit Feedback'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

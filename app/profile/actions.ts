@@ -261,7 +261,7 @@ export async function cancelMeeting(meetingId: string): Promise<void> {
   ])
 }
 
-export async function rateMeeting(meetingId: string, rating: number): Promise<void> {
+export async function rateMeeting(meetingId: string, rating: number, note?: string): Promise<void> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
@@ -277,7 +277,7 @@ export async function rateMeeting(meetingId: string, rating: number): Promise<vo
   if (meeting.requester_id !== user.id && meeting.recipient_id !== user.id) throw new Error('Not authorised')
 
   await supabase.from('meeting_ratings').upsert(
-    { meeting_id: meetingId, rater_id: user.id, rating },
+    { meeting_id: meetingId, rater_id: user.id, rating, ...(note?.trim() ? { note: note.trim() } : {}) },
     { onConflict: 'meeting_id,rater_id' }
   )
 }

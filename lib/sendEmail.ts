@@ -587,6 +587,39 @@ export async function sendWeeklyDigestEmail(
 }
 
 // ── Onboarding reminder email ─────────────────────────────────────────────────
+export async function sendPostMeetingFeedbackEmail(
+  to: string,
+  firstName: string,
+  otherProfileId: string,
+  dateStr: string,
+  meetingId: string,
+  raterId: string,
+  userId?: string,
+) {
+  const subject = `How did your Arrange Marriage meeting go? 💛`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 12px;">How did your meeting go?</h2>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 16px;">
+      Dear <strong>${firstName}</strong>,
+    </p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 8px;">
+      You had a video meeting with <strong>${otherProfileId}</strong> on <strong>${dateStr}</strong>.
+      We hope it went well — your feedback takes just one tap and helps us maintain a trusted community.
+    </p>
+    ${ratingStarsHtml(meetingId, raterId)}
+    <p style="font-family:Georgia,serif;font-size:14px;color:#9aabb8;line-height:1.7;margin:20px 0 24px;font-style:italic;">
+      You can also leave a written note in your inbox after rating. All feedback is private and reviewed only by the Arrange Marriage team.
+    </p>
+    <div style="text-align:center;margin-bottom:8px;">
+      <a href="https://www.arrangemarriage.co.in/discover" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+        Open Inbox →
+      </a>
+    </div>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
 export async function sendOnboardingReminderEmail(to: string, firstName: string, hasPlan: boolean, userId?: string) {
   const subject = `Complete your Arrange Marriage profile — you're almost there ✨`
   const ctaUrl = hasPlan ? 'https://arrangemarriage.co.in/onboarding' : 'https://arrangemarriage.co.in/pricing'
