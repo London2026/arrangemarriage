@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
+import { useState, useMemo, useEffect } from 'react'
+import { AnimatePresence, MotionConfig, motion, animate } from 'framer-motion'
 import ProfileCard, { type ProfileData } from './ProfileCard'
 import { maskName } from '@/lib/maskName'
 
@@ -14,6 +14,16 @@ const c = {
 interface AIMatch { id: string; score: number; reasons: string[]; profile: ProfileData }
 
 function profileId(id: string) { return 'AM-' + id.slice(0, 8).toUpperCase() }
+
+/** Counts up from 0 to the target value when the AI results appear */
+function ScoreCounter({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0)
+  useEffect(() => {
+    const controls = animate(0, value, { duration: 1.4, ease: 'easeOut', onUpdate: v => setDisplay(Math.round(v)) })
+    return () => controls.stop()
+  }, [value])
+  return <>{display}</>
+}
 
 function scoreLabel(score: number) {
   if (score >= 90) return 'Exceptional Match'
@@ -466,13 +476,18 @@ export default function DiscoverClient({
                   </span>
                 </div>
 
-                {/* Score bar */}
+                {/* Score bar — grows from zero while the number counts up */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                  <div style={{ flex: 1, height: '7px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px' }}>
-                    <div style={{ height: '100%', width: `${m.score}%`, background: scoreGradient(m.score), borderRadius: '4px', transition: 'width 0.6s ease' }} />
+                  <div style={{ flex: 1, height: '7px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${m.score}%` }}
+                      transition={{ duration: 1.4, ease: 'easeOut' }}
+                      style={{ height: '100%', background: scoreGradient(m.score), borderRadius: '4px' }}
+                    />
                   </div>
                   <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.3rem', fontWeight: 700, color: scoreColor(m.score), minWidth: '60px', textAlign: 'right' }}>
-                    {m.score}/100
+                    <ScoreCounter value={m.score} />/100
                   </span>
                 </div>
 

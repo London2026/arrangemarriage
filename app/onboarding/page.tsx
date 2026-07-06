@@ -413,10 +413,20 @@ function OnboardingPage() {
     return (
       <div style={{ minHeight: '100vh', background: c.cream, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ background: '#fff', borderRadius: 14, padding: '14px 24px', display: 'inline-block', boxShadow: '0 2px 18px rgba(13,31,60,0.09)', marginBottom: '0.75rem' }}>
+          <style>{`
+            @keyframes logoBreath { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+            @keyframes dotFade { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+            @media (prefers-reduced-motion: reduce) { .ob-load-logo, .ob-load-dot { animation: none !important; } }
+          `}</style>
+          <div className="ob-load-logo" style={{ background: '#fff', borderRadius: 14, padding: '14px 24px', display: 'inline-block', boxShadow: '0 2px 18px rgba(13,31,60,0.09)', marginBottom: '0.75rem', animation: 'logoBreath 2.8s ease-in-out infinite' }}>
             <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: 'auto', height: '120px', maxWidth: '320px', objectFit: 'contain', display: 'block' }} />
           </div>
-          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.sepia }}>Preparing your profile…</p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.sepia }}>
+            Preparing your profile
+            {[0, 1, 2].map(i => (
+              <span key={i} className="ob-load-dot" style={{ animation: `dotFade 1.4s ease-in-out ${i * 0.25}s infinite` }}>.</span>
+            ))}
+          </p>
         </div>
       </div>
     )

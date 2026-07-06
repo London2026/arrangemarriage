@@ -1544,6 +1544,60 @@
     transform: translateY(0);
   }
 
+  /* ── MOTION GRAPHICS ── */
+
+  /* Golden sparks drifting up through the hero, like diya embers */
+  .hero-sparks { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .hero-sparks span {
+    position: absolute;
+    bottom: -4%;
+    color: rgba(201,168,76,0.55);
+    text-shadow: 0 0 12px rgba(201,168,76,0.8);
+    opacity: 0;
+    animation: sparkRise var(--d) linear var(--delay) infinite;
+  }
+  @keyframes sparkRise {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    12%  { opacity: 0.85; }
+    75%  { opacity: 0.35; }
+    100% { transform: translateY(-105vh) rotate(200deg); opacity: 0; }
+  }
+
+  /* Soft gold sheen sweeping across primary CTAs */
+  .btn-primary, .btn-gold { position: relative; overflow: hidden; }
+  .btn-primary::after, .btn-gold::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -80%;
+    width: 45%; height: 100%;
+    background: linear-gradient(105deg, transparent, rgba(255,255,255,0.32), transparent);
+    transform: skewX(-20deg);
+    animation: btnSheen 5.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes btnSheen {
+    0%, 72% { left: -80%; }
+    100%    { left: 130%; }
+  }
+
+  /* Gold underline draws itself in as section titles scroll into view */
+  .section-header .section-title::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #c9a84c, transparent);
+    margin: 0.9rem auto 0;
+    transition: width 1.1s ease 0.35s;
+  }
+  .section-header.reveal.visible .section-title::after { width: 130px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-sparks { display: none; }
+    .btn-primary::after, .btn-gold::after { animation: none; left: -80%; }
+    .section-header .section-title::after { transition: none; }
+  }
+
   /* Respect reduced-motion preferences: stop movement but keep all content visible.
      Note: animation:none leaves elements at their base styles, so anything whose
      base state is invisible needs an explicit visibility override below. */
@@ -2311,6 +2365,16 @@
 
 <!-- HERO -->
 <header class="hero">
+
+  <div class="hero-sparks" aria-hidden="true">
+    <span style="left:6%;  font-size:13px; --d:13s; --delay:0s;">✦</span>
+    <span style="left:18%; font-size:9px;  --d:17s; --delay:4s;">✦</span>
+    <span style="left:33%; font-size:11px; --d:15s; --delay:8s;">✦</span>
+    <span style="left:52%; font-size:8px;  --d:19s; --delay:2s;">✦</span>
+    <span style="left:68%; font-size:12px; --d:14s; --delay:6s;">✦</span>
+    <span style="left:81%; font-size:9px;  --d:18s; --delay:10s;">✦</span>
+    <span style="left:93%; font-size:11px; --d:16s; --delay:3s;">✦</span>
+  </div>
 
   <p id="lang-cycle" style="font-family:'Noto Sans Devanagari',sans-serif;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--rose);font-weight:700;margin-bottom:0.5rem;letter-spacing:0.02em;animation:fadeUp 1.2s ease 0.1s both;transition:opacity 0.6s ease;">आपका जीवनसाथी यहाँ है</p>
   <h1>Find Your <em>Perfect Match</em></h1>
