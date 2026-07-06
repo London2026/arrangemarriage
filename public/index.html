@@ -1571,13 +1571,14 @@
     top: 0; left: -80%;
     width: 45%; height: 100%;
     background: linear-gradient(105deg, transparent, rgba(255,255,255,0.32), transparent);
-    transform: skewX(-20deg);
+    transform: skewX(-20deg) translateX(0);
     animation: btnSheen 5.5s ease-in-out infinite;
     pointer-events: none;
   }
+  /* transform-only animation: GPU-composited, no layout work on mobile */
   @keyframes btnSheen {
-    0%, 72% { left: -80%; }
-    100%    { left: 130%; }
+    0%, 72% { transform: skewX(-20deg) translateX(0); }
+    100%    { transform: skewX(-20deg) translateX(470%); }
   }
 
   /* Gold underline draws itself in as section titles scroll into view */
@@ -1594,7 +1595,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .hero-sparks { display: none; }
-    .btn-primary::after, .btn-gold::after, .nav-cta::after, .mm-begin::after { animation: none; left: -80%; }
+    .btn-primary::after, .btn-gold::after, .nav-cta::after, .mm-begin::after { animation: none; }
     .section-header .section-title::after { transition: none; }
   }
 
