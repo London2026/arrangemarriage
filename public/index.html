@@ -1564,8 +1564,8 @@
   }
 
   /* Soft gold sheen sweeping across primary CTAs */
-  .btn-primary, .btn-gold { position: relative; overflow: hidden; }
-  .btn-primary::after, .btn-gold::after {
+  .btn-primary, .btn-gold, .nav-cta, .mm-begin { position: relative; overflow: hidden; }
+  .btn-primary::after, .btn-gold::after, .nav-cta::after, .mm-begin::after {
     content: '';
     position: absolute;
     top: 0; left: -80%;
@@ -1594,7 +1594,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .hero-sparks { display: none; }
-    .btn-primary::after, .btn-gold::after { animation: none; left: -80%; }
+    .btn-primary::after, .btn-gold::after, .nav-cta::after, .mm-begin::after { animation: none; left: -80%; }
     .section-header .section-title::after { transition: none; }
   }
 
