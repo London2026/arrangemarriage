@@ -133,6 +133,17 @@ export async function sendBillingReminderSMS(
   })
 }
 
+export async function sendProfileCompleteSMS(
+  toPhone: string,
+  firstName: string,
+  profileId: string,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_PROFILE_COMPLETE ?? '', {
+    var1: firstName,
+    var2: `AM-${profileId.slice(0, 8).toUpperCase()}`,
+  })
+}
+
 export async function sendProfileLikedSMS(
   toPhone: string,
   ownerFirstName: string,

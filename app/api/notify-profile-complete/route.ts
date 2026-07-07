@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { sendProfileCompleteEmail, sendAdminAlert } from '@/lib/sendEmail'
+import { sendProfileCompleteSMS } from '@/lib/sendSMS'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function POST() {
@@ -29,7 +30,8 @@ export async function POST() {
     await admin.from('profiles').update(profileUpdate).eq('id', user.id)
 
     await Promise.all([
-      email ? sendProfileCompleteEmail(email, firstName, user.id) : Promise.resolve(),  // userId = profileId, unsubUrl auto-included
+      email ? sendProfileCompleteEmail(email, firstName, user.id) : Promise.resolve(),
+      profile?.phone ? sendProfileCompleteSMS(profile.phone, firstName, user.id) : Promise.resolve(),
       sendAdminAlert('New member joined', {
         Name:     profile?.full_name ?? '—',
         Email:    email ?? '—',
