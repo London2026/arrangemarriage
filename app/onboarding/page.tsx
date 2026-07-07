@@ -418,8 +418,8 @@ function OnboardingPage() {
             @keyframes dotFade { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
             @media (prefers-reduced-motion: reduce) { .ob-load-logo, .ob-load-dot { animation: none !important; } }
           `}</style>
-          <div className="ob-load-logo" style={{ background: '#fff', borderRadius: 14, padding: '14px 24px', display: 'inline-block', boxShadow: '0 2px 18px rgba(13,31,60,0.09)', marginBottom: '0.75rem', animation: 'logoBreath 2.8s ease-in-out infinite' }}>
-            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: 'auto', height: '120px', maxWidth: '320px', objectFit: 'contain', display: 'block' }} />
+          <div className="ob-load-logo" style={{ background: '#fff', border: '2px solid #111', borderRadius: 14, width: 160, height: 160, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 18px rgba(13,31,60,0.09)', marginBottom: '0.75rem', animation: 'logoBreath 2.8s ease-in-out infinite' }}>
+            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ maxWidth: '144px', maxHeight: '144px', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block' }} />
           </div>
           <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.sepia }}>
             Preparing your profile
@@ -507,8 +507,8 @@ function OnboardingPage() {
     <div className="ob-page" style={{ minHeight: '100dvh', background: c.cream, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0.75rem 0.75rem' }}>
       <style>{`
         .ob-page { box-sizing: border-box; overflow-x: hidden; }
-        .ob-logo-wrap { background: #fff; border-radius: 14px; padding: 16px 28px; display: inline-block; box-shadow: 0 2px 18px rgba(13,31,60,0.09); margin-bottom: 1.25rem; }
-        .ob-logo { width: auto; height: 155px; max-width: 360px; object-fit: contain; display: block; }
+        .ob-logo-wrap { background: #fff; border: 2px solid #111; border-radius: 14px; width: 190px; height: 190px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 18px rgba(13,31,60,0.09); margin-bottom: 1.25rem; }
+        .ob-logo { max-width: 174px; max-height: 174px; width: auto; height: auto; object-fit: contain; display: block; }
         .ob-progress { width: 100%; max-width: 720px; margin-bottom: 1rem; }
         .ob-topnav { width: 100%; max-width: 720px; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.85rem; flex-wrap: wrap; }
         .ob-topnav a, .ob-topnav button { box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-family: Raleway, sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 0.5rem 0.85rem; min-height: 36px; border-radius: 4px; cursor: pointer; border: 1px solid rgba(13,31,60,0.35); background: transparent; color: #2c4a6e; }
@@ -528,8 +528,8 @@ function OnboardingPage() {
         .ob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.1rem; }
         @media (max-width: 640px) {
           .ob-page { justify-content: flex-start !important; padding: 0.75rem 0.5rem 1.5rem !important; }
-          .ob-logo-wrap { padding: 12px 20px !important; margin-bottom: 1rem !important; }
-          .ob-logo { width: auto !important; height: 110px !important; }
+          .ob-logo-wrap { width: 150px !important; height: 150px !important; margin-bottom: 1rem !important; }
+          .ob-logo { max-width: 136px !important; max-height: 136px !important; height: auto !important; }
           .ob-progress { margin-bottom: 0.6rem; }
           .ob-card-inner { padding: 1.25rem 1rem 1rem !important; }
           .ob-nav { padding: 0.75rem 1rem 1.25rem !important; gap: 0.5rem !important; }
