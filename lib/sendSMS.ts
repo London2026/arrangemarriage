@@ -132,3 +132,25 @@ export async function sendBillingReminderSMS(
     var3: billingDate,
   })
 }
+
+export async function sendProfileLikedSMS(
+  toPhone: string,
+  ownerFirstName: string,
+  likerProfileId: string,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_PROFILE_LIKED ?? '', {
+    var1: ownerFirstName,
+    var2: likerProfileId,
+  })
+}
+
+export async function sendMutualLikeSMS(
+  toPhone: string,
+  recipientFirstName: string,
+  otherProfileId: string,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_MUTUAL_LIKE ?? '', {
+    var1: recipientFirstName,
+    var2: otherProfileId,
+  })
+}

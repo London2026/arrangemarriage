@@ -36,14 +36,16 @@ const plans = [
     tagline: 'Try Arrange Marriage',
     cta: 'Continue Free',
     highlighted: false,
-    meetings: 0,
+    meetings: 1,
+    likes: 2,
     features: [
       { text: 'Full profile with voice introduction', included: true },
       { text: 'Back-side photo upload (2 photos)', included: true },
       { text: 'Browse & discover all profiles', included: true },
+      { text: '2 profile likes per month', included: true },
+      { text: '1 video meeting/month (mutual like required)', included: true },
       { text: 'Reveal face photos', included: false },
       { text: 'See who revealed your photo', included: false },
-      { text: 'Video meeting requests', included: false },
     ],
   },
   {
@@ -55,14 +57,16 @@ const plans = [
     tagline: 'Begin your journey',
     cta: 'Get Started',
     highlighted: false,
-    meetings: 2,
+    meetings: 4,
+    likes: 10,
     features: [
       { text: 'Full profile with voice introduction', included: true },
       { text: 'Back-side photo upload (2 photos)', included: true },
       { text: 'Browse & discover all profiles', included: true },
+      { text: '10 profile likes per month', included: true },
       { text: 'Reveal face photos (unlimited)', included: true },
       { text: 'See who revealed your photo', included: true },
-      { text: '2 video meetings/month', included: true },
+      { text: '4 video meetings/month (mutual like required)', included: true },
     ],
   },
   {
@@ -74,14 +78,16 @@ const plans = [
     tagline: 'Most popular',
     cta: 'Start Premium',
     highlighted: true,
-    meetings: 4,
+    meetings: 8,
+    likes: 15,
     features: [
       { text: 'Full profile with voice introduction', included: true },
       { text: 'Back-side photo upload (2 photos)', included: true },
       { text: 'Browse & discover all profiles', included: true },
+      { text: '15 profile likes per month', included: true },
       { text: 'Reveal face photos (unlimited)', included: true },
       { text: 'See who revealed your photo', included: true },
-      { text: '4 video meetings/month', included: true },
+      { text: '8 video meetings/month (mutual like required)', included: true },
     ],
   },
 ]
@@ -112,23 +118,22 @@ function PlanCard({ plan, onSelect, pending, stripeLoading }: {
         </div>
         <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', color: c.ivoryDim, margin: '0 0 1rem', letterSpacing: '0.05em' }}>{plan.billing}</p>
 
-        {plan.meetings > 0 ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.65rem 0.9rem', background: 'rgba(201,168,76,0.06)', border: `1px solid ${c.border}`, borderRadius: '8px' }}>
-            <span style={{ fontSize: '1.25rem' }}>🎥</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 0.9rem', background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '8px' }}>
+            <span style={{ fontSize: '1.1rem' }}>❤️</span>
             <div>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: c.ivory, margin: 0 }}>{plan.meetings} video meetings/month</p>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', color: c.ivoryDim, margin: 0 }}>included</p>
+              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: c.ivory, margin: 0 }}>{(plan as typeof plan & { likes: number }).likes} profile likes/month</p>
+              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', color: c.ivoryDim, margin: 0 }}>like to unlock meetings</p>
             </div>
           </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.65rem 0.9rem', background: 'rgba(90,110,130,0.08)', border: '1px solid rgba(90,110,130,0.2)', borderRadius: '8px' }}>
-            <span style={{ fontSize: '1.25rem' }}>🔒</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 0.9rem', background: 'rgba(201,168,76,0.06)', border: `1px solid ${c.border}`, borderRadius: '8px' }}>
+            <span style={{ fontSize: '1.1rem' }}>🎥</span>
             <div>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: c.ivoryDim, margin: 0 }}>No video meetings</p>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', color: c.sepia, margin: 0 }}>upgrade to unlock</p>
+              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, color: c.ivory, margin: 0 }}>{plan.meetings} video meeting{plan.meetings !== 1 ? 's' : ''}/month</p>
+              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', color: c.ivoryDim, margin: 0 }}>mutual like required</p>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Features */}

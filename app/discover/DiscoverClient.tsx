@@ -67,7 +67,7 @@ function prefScore(viewer: ProfileData, candidate: ProfileData): number {
 }
 
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [], initialBlockedIds = [],
+  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [], initialBlockedIds = [], initialLikedIds = [], initialLikedMeIds = [], likesLeft = 0, likesUsed = 0, likesTotal = 2,
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
   meetingsTotal: number; meetingsUsed: number
@@ -75,6 +75,11 @@ export default function DiscoverClient({
   initialSavedIds?: string[]
   revealedByProfiles?: ProfileData[]
   initialBlockedIds?: string[]
+  initialLikedIds?: string[]
+  initialLikedMeIds?: string[]
+  likesLeft?: number
+  likesUsed?: number
+  likesTotal?: number
 }) {
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -93,6 +98,9 @@ export default function DiscoverClient({
   const [aiMatches, setAiMatches] = useState<AIMatch[] | null>(null)
   const [aiError, setAiError] = useState('')
   const [savedIds, setSavedIds] = useState<Set<string>>(() => new Set(initialSavedIds))
+  const [likedIds, setLikedIds] = useState<Set<string>>(() => new Set(initialLikedIds))
+  const [likedMeIds] = useState<Set<string>>(() => new Set(initialLikedMeIds))
+  const [clientLikesLeft, setClientLikesLeft] = useState(likesLeft)
   const [showSaved, setShowSaved] = useState(false)
   const [showViewedMe, setShowViewedMe] = useState(false)
   const [blockedIds, setBlockedIds] = useState<Set<string>>(() => new Set(initialBlockedIds))
@@ -104,6 +112,20 @@ export default function DiscoverClient({
       return next
     })
   }
+
+  function handleToggleLike(profileId: string, nowLiked: boolean) {
+    setLikedIds(prev => {
+      const next = new Set(prev)
+      if (nowLiked) next.add(profileId); else next.delete(profileId)
+      return next
+    })
+    setClientLikesLeft(prev => nowLiked ? Math.max(0, prev - 1) : Math.min(likesTotal, prev + 1))
+  }
+
+  const mutualLikeIds = useMemo(
+    () => new Set([...likedIds].filter(id => likedMeIds.has(id))),
+    [likedIds, likedMeIds]
+  )
 
   function handleBlock(profileId: string) {
     setBlockedIds(prev => new Set([...prev, profileId]))
@@ -391,10 +413,20 @@ export default function DiscoverClient({
         </MotionConfig>
       </div>
 
-      {/* Meeting usage counter — visible only for paid members */}
-      {canMeet && meetingsTotal > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px' }}>
+      {/* Likes + meetings usage counters */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+        {/* Likes counter */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '8px' }}>
+          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.ivoryDim }}>
+            ❤️ Likes this month
+          </span>
+          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.9rem', fontWeight: 700, color: clientLikesLeft === 0 ? '#f87171' : '#f9a8d4' }}>
+            {clientLikesLeft} / {likesTotal}
+          </span>
+        </div>
+        {/* Meeting usage counter */}
+        {meetingsTotal > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px' }}>
             <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim }}>
               Meeting requests this month
             </span>
@@ -407,8 +439,8 @@ export default function DiscoverClient({
               {meetingsLeft} remaining
             </span>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Find My Match button */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.75rem' }}>
@@ -551,7 +583,7 @@ export default function DiscoverClient({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: Math.min(i * 0.06, 0.6), ease: 'easeOut' }}
               >
-                <CompactCard profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} />
+                <CompactCard profile={p} onClick={() => setSelected(p)} isSaved={savedIds.has(p.id)} isLiked={likedIds.has(p.id)} isMutual={mutualLikeIds.has(p.id)} />
               </motion.div>
             ))}
           </div>
@@ -586,7 +618,7 @@ export default function DiscoverClient({
                 👤 This is your profile — exactly as other members see it
               </div>
             )}
-            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} />
+            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} isLiked={likedIds.has(selected.id)} hasMutualLike={mutualLikeIds.has(selected.id)} onToggleLike={nowLiked => handleToggleLike(selected.id, nowLiked)} likesLeft={clientLikesLeft} />
           </motion.div>
         </motion.div>
       )}
@@ -596,7 +628,7 @@ export default function DiscoverClient({
   )
 }
 
-function CompactCard({ profile, onClick, isOwn, isSaved }: { profile: ProfileData; onClick: () => void; isOwn?: boolean; isSaved?: boolean }) {
+function CompactCard({ profile, onClick, isOwn, isSaved, isLiked, isMutual }: { profile: ProfileData; onClick: () => void; isOwn?: boolean; isSaved?: boolean; isLiked?: boolean; isMutual?: boolean }) {
   const initials = profile.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
   const pid = 'AM-' + profile.id.slice(0, 8).toUpperCase()
   return (
@@ -610,9 +642,19 @@ function CompactCard({ profile, onClick, isOwn, isSaved }: { profile: ProfileDat
           You
         </div>
       )}
-      {isSaved && (
+      {isMutual && (
+        <div style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', zIndex: 3, fontSize: '0.75rem', fontFamily: 'Raleway, sans-serif', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#fff', background: 'rgba(248,113,113,0.85)', borderRadius: '4px', padding: '0.12rem 0.4rem' }}>
+          💞 Mutual
+        </div>
+      )}
+      {!isMutual && isSaved && (
         <div style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', zIndex: 2, color: '#c9a84c', fontSize: '0.9rem', lineHeight: 1, background: 'rgba(0,0,0,0.55)', borderRadius: '4px', padding: '0.15rem 0.3rem' }}>
           ★
+        </div>
+      )}
+      {!isMutual && !isSaved && isLiked && (
+        <div style={{ position: 'absolute', top: '0.4rem', right: '0.4rem', zIndex: 2, fontSize: '0.85rem', lineHeight: 1, background: 'rgba(0,0,0,0.55)', borderRadius: '4px', padding: '0.15rem 0.3rem' }}>
+          ❤️
         </div>
       )}
       {profile.back_photo_1_url ? (

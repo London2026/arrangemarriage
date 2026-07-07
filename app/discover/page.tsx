@@ -32,13 +32,14 @@ export default async function DiscoverPage() {
   const bonusActive = me?.plan_bonus_until ? new Date(me.plan_bonus_until) > new Date() : false
   const userPlan  = me?.plan ?? 'free'
   const canReveal = userPlan !== 'free' || bonusActive
-  const canMeet   = userPlan !== 'free' || bonusActive
+  const canMeet   = true // All plans now include at least 1 meeting/month
 
-  const PLAN_LIMITS: Record<string, number> = { free: 0, starter: 2, standard: 4 }
+  const PLAN_LIMITS:      Record<string, number> = { free: 1, starter: 4, standard: 8 }
+  const LIKE_LIMITS:      Record<string, number> = { free: 2, starter: 10, standard: 15 }
   const monthStart = new Date()
   monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
 
-  const [{ count: meetingsSent }, { count: extraPurchased }] = await Promise.all([
+  const [{ count: meetingsSent }, { count: extraPurchased }, { count: likesGivenThisMonth }] = await Promise.all([
     // Only count active (pending/accepted) meetings — cancelled/declined ones return the slot
     supabase.from('video_meetings').select('*', { count: 'exact', head: true })
       .eq('requester_id', user.id)
@@ -46,11 +47,18 @@ export default async function DiscoverPage() {
       .in('status', ['pending', 'accepted']),
     supabase.from('extra_meeting_purchases').select('*', { count: 'exact', head: true })
       .eq('user_id', user.id).gte('created_at', monthStart.toISOString()),
+    supabase.from('profile_likes').select('*', { count: 'exact', head: true })
+      .eq('liker_id', user.id)
+      .gte('created_at', monthStart.toISOString()),
   ])
-  const planLimit      = (bonusActive && userPlan === 'free') ? 2 : (PLAN_LIMITS[userPlan] ?? 0)
+  const planLimit      = PLAN_LIMITS[bonusActive && userPlan === 'free' ? 'starter' : userPlan] ?? 1
   const meetingsTotal  = planLimit + (extraPurchased ?? 0)
   const meetingsUsed   = Math.min(meetingsSent ?? 0, meetingsTotal)
   const meetingsLeft   = Math.max(0, meetingsTotal - meetingsUsed)
+
+  const likesTotal = LIKE_LIMITS[userPlan] ?? 2
+  const likesUsed  = Math.min(likesGivenThisMonth ?? 0, likesTotal)
+  const likesLeft  = Math.max(0, likesTotal - likesUsed)
 
   const PROFILE_SELECT = `
     id, full_name, age, gender, city, country, plan,
@@ -74,13 +82,15 @@ export default async function DiscoverPage() {
       .limit(30),
   ])
 
-  // Which profiles has the current user already revealed or saved?
-  const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }, { data: myBlocked }, { data: blockedMe }] = await Promise.all([
+  // Which profiles has the current user already revealed, saved, or liked?
+  const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }, { data: myBlocked }, { data: blockedMe }, { data: myLikes }, { data: likedMeRows }] = await Promise.all([
     supabase.from('photo_reveals').select('viewed_id').eq('viewer_id', user.id),
     supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', user.id),
     supabase.from('photo_reveals').select('viewer_id').eq('viewed_id', user.id),
     supabase.from('blocked_profiles').select('blocked_id').eq('blocker_id', user.id),
     supabase.from('blocked_profiles').select('blocker_id').eq('blocked_id', user.id),
+    supabase.from('profile_likes').select('liked_id').eq('liker_id', user.id),
+    supabase.from('profile_likes').select('liker_id').eq('liked_id', user.id),
   ])
 
   const blockedIds = [
@@ -91,7 +101,9 @@ export default async function DiscoverPage() {
   const viewedMeIds = [...new Set((viewedMeRows ?? []).map(r => r.viewer_id as string))]
 
   const revealedSet = new Set((myReveals ?? []).map((r) => r.viewed_id as string))
-  const savedIds = (mySaved ?? []).map(s => s.saved_profile_id as string)
+  const savedIds    = (mySaved   ?? []).map(s => s.saved_profile_id as string)
+  const likedIds    = (myLikes   ?? []).map(l => l.liked_id as string)
+  const likedMeIds  = (likedMeRows ?? []).map(l => l.liker_id as string)
 
   // Existing video meetings + profiles of people who viewed me (parallel)
   const [{ data: meetingRows }, { data: viewedMeProfileRows }] = await Promise.all([
@@ -310,7 +322,7 @@ export default async function DiscoverPage() {
         {profiles.length === 0 ? (
           <EmptyState />
         ) : (
-          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} initialBlockedIds={blockedIds} />
+          <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} meetingsTotal={meetingsTotal} meetingsUsed={meetingsUsed} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} initialBlockedIds={blockedIds} initialLikedIds={likedIds} initialLikedMeIds={likedMeIds} likesLeft={likesLeft} likesUsed={likesUsed} likesTotal={likesTotal} />
         )}
       </main>
     </div>

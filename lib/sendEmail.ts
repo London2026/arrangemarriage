@@ -537,6 +537,69 @@ export async function sendMutualShortlistEmail(to: string, firstName: string, ot
   await send(to, subject, html)
 }
 
+// ── Profile liked email ───────────────────────────────────────────────────────
+export async function sendProfileLikedEmail(to: string, ownerFirstName: string, likerProfileId: string, userId?: string) {
+  const subject = `💕 Your Arrange Marriage profile was liked — ${likerProfileId}`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Someone liked your profile!</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">किसी ने आपकी प्रोफ़ाइल पसंद की!</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${ownerFirstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 20px;">
+      Great news — <strong style="font-family:'Courier New',monospace;">${likerProfileId}</strong> has liked your profile on Arrange Marriage.
+      Log in to view their profile, and if you like them back, <strong>video meeting requests will be unlocked between you both</strong>.
+    </p>
+    <div style="background:#0d1f3c;border-radius:10px;padding:22px 24px;margin-bottom:24px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 10px;">Liked By</p>
+      <p style="font-family:'Courier New',monospace;font-size:28px;font-weight:900;color:#c9a84c;letter-spacing:0.18em;margin:0 0 10px;">${likerProfileId}</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:rgba(245,240,230,0.75);line-height:1.7;margin:0;">
+        Log in to Arrange Marriage and find their profile on the Discover page. Like them back to activate video meeting requests.
+      </p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">
+      <strong>${likerProfileId}</strong> ने Arrange Marriage पर आपकी प्रोफ़ाइल पसंद की है। लॉग इन करें और उनकी प्रोफ़ाइल देखें — यदि आप भी उन्हें पसंद करते हैं, तो वीडियो मीटिंग का अनुरोध सक्रिय हो जाएगा।
+    </p>
+    <div style="text-align:center;margin:24px 0 8px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">View Their Profile →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
+// ── Mutual like email ─────────────────────────────────────────────────────────
+export async function sendMutualLikeEmail(to: string, firstName: string, otherProfileId: string, userId?: string) {
+  const subject = `💞 It's a Mutual Like! Video meetings unlocked with ${otherProfileId}`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">It's a Mutual Like!</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">परस्पर पसंद — वीडियो मीटिंग सक्रिय!</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 20px;">
+      Wonderful news — you and <strong style="font-family:'Courier New',monospace;">${otherProfileId}</strong> have both liked each other on Arrange Marriage.
+      Your <strong>online video meeting request is now activated</strong>. You can now request a video meeting and connect face to face with your family.
+    </p>
+    <div style="background:#0d1f3c;border-radius:10px;padding:22px 24px;margin-bottom:24px;text-align:center;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(201,168,76,0.7);margin:0 0 10px;">Mutual Like With</p>
+      <p style="font-family:'Courier New',monospace;font-size:28px;font-weight:900;color:#c9a84c;letter-spacing:0.18em;margin:0 0 10px;">${otherProfileId}</p>
+      <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#4ade80;margin:0 0 8px;">🎥 Video Meeting Request — Activated!</p>
+      <p style="font-family:Georgia,serif;font-size:14px;color:rgba(245,240,230,0.75);line-height:1.7;margin:0;">
+        Log in to Arrange Marriage, find their profile on the Discover page, and send a video meeting request to connect face to face with your family.
+      </p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">
+      आप और <strong style="font-family:'Courier New',monospace;">${otherProfileId}</strong> दोनों ने एक-दूसरे की प्रोफ़ाइल पसंद की है। आपकी <strong>ऑनलाइन वीडियो मीटिंग का अनुरोध अब सक्रिय हो गया है</strong> — लॉग इन करें और अपने परिवार के साथ वीडियो मीटिंग का अनुरोध करें।
+    </p>
+    <div style="text-align:center;margin:24px 0 8px;">
+      <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Request Video Meeting →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Wishing you a beautiful and meaningful connection. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
 // ── Weekly digest email ───────────────────────────────────────────────────────
 export async function sendWeeklyDigestEmail(
   to: string,

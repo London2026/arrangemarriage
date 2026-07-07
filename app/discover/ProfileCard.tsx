@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { revealPhoto, reportProfile, toggleSaveProfile, blockMember } from './actions'
+import { revealPhoto, reportProfile, toggleSaveProfile, blockMember, toggleLikeProfile } from './actions'
 import { requestVideoMeeting } from '@/app/profile/actions'
 import { maskName, firstNameOnly } from '@/lib/maskName'
 
@@ -114,8 +114,8 @@ function Row({ label, value }: { label: string; value: string | null | undefined
   )
 }
 
-export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false, isSaved = false, onToggleSave, onBlock }: {
-  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean; isSaved?: boolean; onToggleSave?: (saved: boolean) => void; onBlock?: () => void
+export default function ProfileCard({ profile, canReveal = true, canMeet = true, meetingsLeft = 0, isOwnProfile = false, isSaved = false, isLiked = false, hasMutualLike = false, likesLeft = 0, onToggleSave, onToggleLike, onBlock }: {
+  profile: ProfileData; canReveal?: boolean; canMeet?: boolean; meetingsLeft?: number; isOwnProfile?: boolean; isSaved?: boolean; isLiked?: boolean; hasMutualLike?: boolean; likesLeft?: number; onToggleSave?: (saved: boolean) => void; onToggleLike?: (liked: boolean) => void; onBlock?: () => void
 }) {
   const [revealed, setRevealed] = useState(profile.already_revealed)
   const [frontUrl, setFrontUrl] = useState<string | null>(profile.front_photo_url)
@@ -144,6 +144,8 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
   const [reportDone, setReportDone] = useState(false)
   const [reportError, setReportError] = useState('')
   const [blockStep, setBlockStep] = useState<'idle' | 'confirm' | 'loading'>('idle')
+  const [likingToggle, setLikingToggle] = useState(false)
+  const [likeError, setLikeError] = useState('')
 
   async function handleToggleSave() {
     if (savingToggle) return
@@ -169,6 +171,24 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
     } catch (err) {
       setReportError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally { setReportSubmitting(false) }
+  }
+
+  async function handleToggleLike() {
+    if (likingToggle || isOwnProfile) return
+    if (!isLiked && likesLeft === 0) {
+      setLikeError('You have no likes remaining this month. Upgrade your plan for more likes.')
+      return
+    }
+    setLikingToggle(true)
+    setLikeError('')
+    const next = !isLiked
+    onToggleLike?.(next)
+    try {
+      await toggleLikeProfile(profile.id)
+    } catch (err) {
+      onToggleLike?.(!next)
+      setLikeError(err instanceof Error ? err.message : 'Could not like profile. Please try again.')
+    } finally { setLikingToggle(false) }
   }
 
   async function handleBlock() {
@@ -280,6 +300,16 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
             ))}
             {!isOwnProfile && (
               <>
+                {/* Like button — gateway to video meetings */}
+                <button
+                  onClick={handleToggleLike}
+                  title={isLiked ? 'Unlike this profile' : likesLeft === 0 ? 'No likes remaining this month' : 'Like this profile to unlock video meetings'}
+                  disabled={likingToggle}
+                  style={{ background: isLiked ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${isLiked ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.18)'}`, borderRadius: '8px', cursor: likingToggle ? 'default' : 'pointer', fontSize: '1.1rem', padding: '0.5rem 0.7rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', transition: 'all 0.15s', opacity: likingToggle ? 0.5 : 1 }}
+                >
+                  <span>{isLiked ? '❤️' : '🤍'}</span>
+                  {isLiked && hasMutualLike && <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.06em', color: '#f87171', textTransform: 'uppercase' }}>Mutual</span>}
+                </button>
                 <button
                   onClick={handleToggleSave}
                   title={saved ? 'Remove from saved' : 'Save profile'}
@@ -372,6 +402,14 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               Cancel
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ── Like error ── */}
+      {likeError && (
+        <div style={{ background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', borderTop: 'none', padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', color: '#f87171', margin: 0 }}>{likeError}</p>
+          <button onClick={() => setLikeError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f87171', fontSize: '0.9rem', padding: '0.2rem', flexShrink: 0 }}>✕</button>
         </div>
       )}
 
@@ -616,15 +654,24 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
           <a href="/pricing" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '100%', padding: '0.75rem', borderRadius: '6px', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim, border: '1px solid rgba(90,110,130,0.2)', textDecoration: 'none', background: 'rgba(90,110,130,0.05)', boxSizing: 'border-box' }}>
             🔒 Upgrade to request video meetings
           </a>
-        ) : canMeet && (!profile.plan || profile.plan === 'free') && !roomId ? (
-          <div style={{ padding: '1.1rem 1.25rem', background: 'rgba(201,168,76,0.04)', border: `1px solid rgba(201,168,76,0.15)`, borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>🕊️</div>
+        ) : !hasMutualLike && !roomId && !meetPending && !meetSent ? (
+          /* Mutual like required */
+          <div style={{ padding: '1.1rem 1.25rem', background: isLiked ? 'rgba(201,168,76,0.05)' : 'rgba(248,113,113,0.04)', border: `1px solid ${isLiked ? 'rgba(201,168,76,0.2)' : 'rgba(248,113,113,0.15)'}`, borderRadius: '8px', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{isLiked ? '💛' : '🤍'}</div>
             <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem', lineHeight: 1.5 }}>
-              Video meetings are not available for this profile
+              {isLiked ? 'Waiting for a Mutual Like' : 'Like This Profile to Unlock Video Meetings'}
             </p>
-            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.ivoryDim, margin: 0, lineHeight: 1.7 }}>
-              {firstName} is currently on our free membership. Video meeting requests will become available once they upgrade to a paid plan. We appreciate your patience and kindly ask you to check back soon.
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.95rem', color: c.ivoryDim, margin: '0 0 0.85rem', lineHeight: 1.7 }}>
+              {isLiked
+                ? `You have liked ${firstName}'s profile. Once they like you back, video meeting requests will be activated between you both.`
+                : `Like ${firstName}'s profile to express your interest. Once you both like each other, video meeting requests will be unlocked — so you can connect face to face with your family.`}
             </p>
+            {!isLiked && (
+              <button onClick={handleToggleLike} disabled={likingToggle || likesLeft === 0}
+                style={{ padding: '0.65rem 1.5rem', background: likingToggle || likesLeft === 0 ? 'rgba(248,113,113,0.2)' : 'linear-gradient(135deg, rgba(248,113,113,0.3), rgba(248,113,113,0.5))', border: '1px solid rgba(248,113,113,0.4)', color: '#fecaca', fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: likingToggle || likesLeft === 0 ? 'default' : 'pointer', borderRadius: '6px', transition: 'all 0.2s' }}>
+                {likingToggle ? 'Liking…' : likesLeft === 0 ? 'No Likes Remaining' : `❤️ Like ${firstName}'s Profile`}
+              </button>
+            )}
           </div>
         ) : canMeet && meetingsLeft === 0 && !roomId && !meetPending && !meetSent ? (
           <div style={{ textAlign: 'center', padding: '1rem 1.25rem', background: 'rgba(201,168,76,0.04)', border: `1px solid rgba(201,168,76,0.2)`, borderRadius: '8px' }}>

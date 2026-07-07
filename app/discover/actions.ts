@@ -2,8 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendPhotoRevealedEmail, sendMutualShortlistEmail } from '@/lib/sendEmail'
-import { sendPhotoRevealSMS } from '@/lib/sendSMS'
+import { sendPhotoRevealedEmail, sendMutualShortlistEmail, sendProfileLikedEmail, sendMutualLikeEmail } from '@/lib/sendEmail'
+import { sendPhotoRevealSMS, sendProfileLikedSMS, sendMutualLikeSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 
 
@@ -179,6 +179,109 @@ export async function reportProfile(reportedId: string, reason: string, details:
     { onConflict: 'reporter_id,reported_id', ignoreDuplicates: false }
   )
   if (error) throw new Error(error.message)
+}
+
+export async function toggleLikeProfile(likedId: string): Promise<{ liked: boolean; mutual: boolean }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (user.id === likedId) throw new Error('Cannot like yourself')
+
+  const { data: existing } = await supabase
+    .from('profile_likes')
+    .select('id')
+    .eq('liker_id', user.id)
+    .eq('liked_id', likedId)
+    .maybeSingle()
+
+  if (existing) {
+    await supabase.from('profile_likes').delete()
+      .eq('liker_id', user.id).eq('liked_id', likedId)
+    return { liked: false, mutual: false }
+  }
+
+  // Check monthly quota
+  const { data: myRow } = await supabase.from('profiles')
+    .select('plan').eq('id', user.id).single()
+  const LIKE_LIMITS: Record<string, number> = { free: 2, starter: 10, standard: 15 }
+  const limit = LIKE_LIMITS[myRow?.plan ?? 'free'] ?? 2
+  const monthStart = new Date()
+  monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
+  const { count: likesThisMonth } = await supabase
+    .from('profile_likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('liker_id', user.id)
+    .gte('created_at', monthStart.toISOString())
+  if ((likesThisMonth ?? 0) >= limit) {
+    throw new Error(`You have used all ${limit} likes for this month. Upgrade your plan for more likes.`)
+  }
+
+  await supabase.from('profile_likes').insert({ liker_id: user.id, liked_id: likedId })
+
+  const { data: theyLikedMe } = await supabase
+    .from('profile_likes')
+    .select('id')
+    .eq('liker_id', likedId)
+    .eq('liked_id', user.id)
+    .maybeSingle()
+  const isMutual = !!theyLikedMe
+
+  const myDisplayId   = `AM-${user.id.slice(0, 8).toUpperCase()}`
+  const theirDisplayId = `AM-${likedId.slice(0, 8).toUpperCase()}`
+
+  try {
+    const admin = createAdminClient()
+    const [{ data: myData }, { data: ownerData }, { data: myAuth }, { data: ownerAuth }] = await Promise.all([
+      supabase.from('profiles').select('full_name, phone, email_unsubscribed').eq('id', user.id).single(),
+      supabase.from('profiles').select('full_name, phone, email_unsubscribed').eq('id', likedId).single(),
+      admin.auth.admin.getUserById(user.id),
+      admin.auth.admin.getUserById(likedId),
+    ])
+    const myFirstName    = firstNameOnly(myData?.full_name ?? '')
+    const ownerFirstName = firstNameOnly(ownerData?.full_name ?? '')
+    const myEmail        = myAuth?.user?.email
+    const ownerEmail     = ownerAuth?.user?.email
+    const myPhone        = myData?.phone ?? null
+    const ownerPhone     = ownerData?.phone ?? null
+
+    if (isMutual) {
+      await Promise.all([
+        supabase.from('notifications').insert([
+          {
+            recipient_id: likedId, sender_id: user.id, type: 'mutual_like',
+            message: `You and ${myDisplayId} have both liked each other! Video meeting requests are now activated — log in to request a meeting.`,
+          },
+          {
+            recipient_id: user.id, sender_id: likedId, type: 'mutual_like',
+            message: `You and ${theirDisplayId} have both liked each other! Video meeting requests are now activated — log in to request a meeting.`,
+          },
+        ]),
+        ownerEmail && !ownerData?.email_unsubscribed
+          ? sendMutualLikeEmail(ownerEmail, ownerFirstName, myDisplayId, likedId)
+          : Promise.resolve(),
+        myEmail && !myData?.email_unsubscribed
+          ? sendMutualLikeEmail(myEmail, myFirstName, theirDisplayId, user.id)
+          : Promise.resolve(),
+        ownerPhone ? sendMutualLikeSMS(ownerPhone, ownerFirstName, myDisplayId) : Promise.resolve(),
+        myPhone    ? sendMutualLikeSMS(myPhone, myFirstName, theirDisplayId)    : Promise.resolve(),
+      ])
+    } else {
+      await Promise.all([
+        supabase.from('notifications').insert({
+          recipient_id: likedId, sender_id: user.id, type: 'profile_liked',
+          message: `${myDisplayId} liked your profile! Log in to see their profile. Like them back to unlock video meeting requests between you.`,
+        }),
+        ownerEmail && !ownerData?.email_unsubscribed
+          ? sendProfileLikedEmail(ownerEmail, ownerFirstName, myDisplayId, likedId)
+          : Promise.resolve(),
+        ownerPhone ? sendProfileLikedSMS(ownerPhone, ownerFirstName, myDisplayId) : Promise.resolve(),
+      ])
+    }
+  } catch (err) {
+    console.error('Like notification error:', err)
+  }
+
+  return { liked: true, mutual: isMutual }
 }
 
 export async function markNotificationRead(notificationId: string) {
