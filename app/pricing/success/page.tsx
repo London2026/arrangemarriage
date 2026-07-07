@@ -39,8 +39,8 @@ export default function PaymentSuccessPage() {
       <main style={{ maxWidth: '520px', margin: '0 auto', padding: '8rem 1.5rem 4rem', textAlign: 'center' }}>
 
         {/* Logo */}
-        <div style={{ background: '#fff', border: '2px solid #111', borderRadius: '10px', padding: '8px 20px', display: 'inline-flex', alignItems: 'center', margin: '0 auto 2rem' }}>
-          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width: 'auto', height: '90px', maxWidth: '320px', objectFit: 'contain', display: 'block' }} />
+        <div style={{ background: '#fff', border: '2px solid #111', borderRadius: '12px', width: '120px', height: '120px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
+          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ maxWidth: '108px', maxHeight: '108px', width: 'auto', height: 'auto', objectFit: 'contain', display: 'block' }} />
         </div>
 
         {/* Heading */}

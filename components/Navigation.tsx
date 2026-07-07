@@ -108,12 +108,12 @@ export default function Navigation() {
     <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: c.nav, backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: `1px solid ${c.border}` }}>
       <style>{`
         .nav-bar { height: 80px; }
-        .nav-logo-box { background: #fff; border: 2px solid #111; border-radius: 10px; padding: 6px 8px; display: inline-flex; align-items: center; }
-        .nav-logo-box img { height: 60px; width: auto; max-width: 300px; object-fit: contain; display: block; }
+        .nav-logo-box { background: #fff; border: 2px solid #111; border-radius: 10px; width: 72px; height: 72px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .nav-logo-box img { max-width: 66px; max-height: 66px; width: auto; height: auto; object-fit: contain; display: block; }
         @media (max-width: 600px) {
           .nav-bar { height: 64px; }
-          .nav-logo-box { padding: 4px 6px; border-radius: 8px; }
-          .nav-logo-box img { height: 44px; max-width: 180px; }
+          .nav-logo-box { width: 54px; height: 54px; border-radius: 8px; }
+          .nav-logo-box img { max-width: 48px; max-height: 48px; }
         }
       `}</style>
       <div className="nav-bar" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

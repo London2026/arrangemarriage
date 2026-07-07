@@ -125,14 +125,19 @@
     background: #fff;
     border: 2px solid #111;
     border-radius: 10px;
-    padding: 6px 8px;
+    width: 72px;
+    height: 72px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 
   .nav-logo-img {
+    max-width: 66px;
+    max-height: 66px;
     width: auto;
-    height: 60px;
+    height: auto;
     object-fit: contain;
     display: block;
   }
@@ -1462,16 +1467,20 @@
   .footer-logo-inner {
     background: #fff;
     border: 2px solid #111;
-    border-radius: 10px;
-    padding: 14px 28px;
+    border-radius: 14px;
+    width: 220px;
+    height: 220px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
   }
 
   .footer-logo-img {
-    height: 180px;
+    max-width: 200px;
+    max-height: 200px;
     width: auto;
-    max-width: 520px;
+    height: auto;
+    object-fit: contain;
     display: block;
   }
 
@@ -2124,8 +2133,8 @@
 
     /* NAV */
     nav { padding: 0.5rem 1rem; overflow: hidden; }
-    .nav-logo-inner { padding: 4px 6px !important; border-radius: 8px !important; }
-    .nav-logo-img { width: auto !important; height: 44px !important; }
+    .nav-logo-inner { width: 54px !important; height: 54px !important; border-radius: 8px !important; }
+    .nav-logo-img { max-width: 48px !important; max-height: 48px !important; height: auto !important; }
     .nav-signin-btn { display: none; }
 
     /* HERO */
@@ -2180,7 +2189,8 @@
 
     /* FOOTER */
     footer { padding: 3rem 1.5rem 1.5rem; }
-    .footer-logo-img { height: 130px !important; width: auto !important; max-width: 340px !important; }
+    .footer-logo-inner { width: 160px !important; height: 160px !important; }
+    .footer-logo-img { max-width: 145px !important; max-height: 145px !important; }
     .footer-links { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
 
     /* TOAST */
@@ -2367,8 +2377,8 @@
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
-    <div style="background:#fff;border:2px solid #111;border-radius:8px;padding:4px 12px;display:inline-flex;align-items:center;">
-      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style="height:46px;width:auto;object-fit:contain;display:block;" />
+    <div style="background:#fff;border:2px solid #111;border-radius:8px;width:56px;height:56px;display:inline-flex;align-items:center;justify-content:center;">
+      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style="max-width:50px;max-height:50px;width:auto;height:auto;object-fit:contain;display:block;" />
     </div>
     <button class="mobile-menu-close" onclick="toggleMenu()">×</button>
   </div>
