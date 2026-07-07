@@ -121,11 +121,19 @@
     align-items: center;
   }
 
+  .nav-logo-inner {
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 10px;
+    padding: 6px 8px;
+    display: inline-flex;
+    align-items: center;
+  }
+
   .nav-logo-img {
     width: auto;
-    height: 52px;
+    height: 60px;
     object-fit: contain;
-    border-radius: 8px;
     display: block;
   }
 
@@ -1451,11 +1459,20 @@
     margin-bottom: 2rem;
   }
 
+  .footer-logo-inner {
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 10px;
+    padding: 14px 28px;
+    display: inline-flex;
+    align-items: center;
+  }
+
   .footer-logo-img {
-    width: 420px;
-    height: 160px;
-    object-fit: contain;
-    border-radius: 8px;
+    height: 180px;
+    width: auto;
+    max-width: 520px;
+    display: block;
   }
 
   .footer-links {
@@ -2107,7 +2124,7 @@
 
     /* NAV */
     nav { padding: 0.75rem 1rem; overflow: hidden; }
-    .nav-logo-img { width: auto !important; height: 44px !important; }
+    .nav-logo-img { width: auto !important; height: 46px !important; }
     .nav-signin-btn { display: none; }
 
     /* HERO */
@@ -2162,7 +2179,7 @@
 
     /* FOOTER */
     footer { padding: 3rem 1.5rem 1.5rem; }
-    .footer-logo-img { width: 300px !important; height: 120px !important; }
+    .footer-logo-img { height: 130px !important; width: auto !important; max-width: 340px !important; }
     .footer-links { gap: 1.2rem; flex-wrap: wrap; justify-content: center; }
 
     /* TOAST */
@@ -2321,7 +2338,9 @@
 <!-- NAV -->
 <nav>
   <div class="nav-logo">
-    <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" class="nav-logo-img" />
+    <div class="nav-logo-inner">
+      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" class="nav-logo-img" />
+    </div>
   </div>
   <ul class="nav-links">
     <li><a href="#demo">Browse Profiles</a></li>
@@ -2347,7 +2366,9 @@
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-header">
-    <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" />
+    <div style="background:#fff;border:2px solid #111;border-radius:8px;padding:4px 12px;display:inline-flex;align-items:center;">
+      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style="height:46px;width:auto;object-fit:contain;display:block;" />
+    </div>
     <button class="mobile-menu-close" onclick="toggleMenu()">×</button>
   </div>
   <a href="#demo" onclick="toggleMenu()">Browse Profiles</a>
@@ -3092,7 +3113,9 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo-img-wrap">
-    <img src="/arrangemarriage-logo.png" alt="Arrange Marriage — Your Perfect Match Awaits" class="footer-logo-img" />
+    <div class="footer-logo-inner">
+      <img src="/arrangemarriage-logo.png" alt="Arrange Marriage — Your Perfect Match Awaits" class="footer-logo-img" />
+    </div>
   </div>
   <ul class="footer-links">
     <li><a href="#demo">About Us</a></li>

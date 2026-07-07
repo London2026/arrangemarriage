@@ -106,11 +106,13 @@ export default function Navigation() {
 
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: c.nav, backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: `1px solid ${c.border}` }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
-          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ height: '52px', width: 'auto', maxWidth: '200px', objectFit: 'contain', display: 'block' }} />
+          <div style={{ background: '#fff', border: '2px solid #111', borderRadius: '10px', padding: '6px 8px', display: 'inline-flex', alignItems: 'center' }}>
+            <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ height: '60px', width: 'auto', maxWidth: '300px', objectFit: 'contain', display: 'block' }} />
+          </div>
         </Link>
 
         {user ? (
