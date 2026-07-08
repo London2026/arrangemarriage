@@ -1206,6 +1206,82 @@
     color: rgba(245,239,224,0.22);
   }
 
+  .free-trial-callout {
+    background: linear-gradient(135deg, rgba(8,40,20,0.75), rgba(4,28,12,0.6));
+    border: 1px solid rgba(80,200,100,0.22);
+    border-radius: 14px;
+    padding: 2.25rem 2.5rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  .free-trial-callout .ftc-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(100,210,120,0.85);
+    margin: 0 0 0.6rem;
+  }
+  .free-trial-callout h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin: 0 0 0.3rem;
+    line-height: 1.2;
+  }
+  .free-trial-callout .ftc-hindi {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    color: rgba(245,239,224,0.6);
+    font-style: italic;
+    margin: 0 0 1.5rem;
+  }
+  .free-trial-callout .ftc-chips {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+  }
+  .free-trial-callout .ftc-chip {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 30px;
+    padding: 0.55rem 1.15rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--light-gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+  }
+  .free-trial-callout .ftc-chip em {
+    font-style: normal;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    color: rgba(245,239,224,0.45);
+    font-weight: 400;
+  }
+  .free-trial-callout .ftc-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: rgba(245,239,224,0.45);
+    font-size: 0.92rem;
+    margin: 0 0 1.5rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  @media (max-width: 768px) {
+    .free-trial-callout { padding: 1.75rem 1.25rem; }
+    .free-trial-callout h3 { font-size: 1.55rem; }
+    .free-trial-callout .ftc-chips { gap: 0.6rem; }
+    .free-trial-callout .ftc-chip { font-size: 0.65rem; padding: 0.45rem 0.9rem; }
+  }
+
   .btn-gold {
     font-family: 'Raleway', sans-serif;
     font-size: 0.78rem;
@@ -2888,24 +2964,37 @@
       <p class="section-sub" style="color: rgba(245,239,224,0.6);">Pay for meaningful meetings, not idle swiping.</p>
     </div>
 
+    <!-- FREE TRIAL CALLOUT -->
+    <div class="free-trial-callout reveal">
+      <p class="ftc-label">✦ No Credit Card Required &nbsp;·&nbsp; क्रेडिट कार्ड की ज़रूरत नहीं</p>
+      <h3>Try One Month for Free</h3>
+      <p class="ftc-hindi">एक महीना मुफ़्त आज़माएं — देखें कि यह आपके लिए सही है या नहीं</p>
+      <div class="ftc-chips">
+        <div class="ftc-chip">❤️&nbsp; 5 Profile Likes<em>5 प्रोफ़ाइल लाइक</em></div>
+        <div class="ftc-chip">📸&nbsp; 5 Photo Reveals<em>5 फोटो रिवील</em></div>
+        <div class="ftc-chip">🎥&nbsp; 2 Video Meetings<em>2 वीडियो मीटिंग</em></div>
+      </div>
+      <p class="ftc-note">If you enjoy the experience, upgrade to a paid plan after your free month and continue your journey. No pressure — your choice, your time. &nbsp;·&nbsp; एक महीने बाद, पेड प्लान में अपग्रेड करें। कोई दबाव नहीं।</p>
+      <button class="btn-gold" onclick="openModal()">Start Your Free Month →<br><span style="font-size:0.78em; opacity:0.75; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:400;">अभी शुरू करें</span></button>
+    </div>
+
     <div class="pricing-grid reveal">
 
-      <!-- FREE -->
+      <!-- FREE TRIAL -->
       <div class="pricing-card">
-        <div class="pricing-name">Free</div>
+        <div class="pricing-badge" style="background:rgba(80,200,100,0.15); color:rgba(100,220,120,0.9); border:1px solid rgba(80,200,100,0.25); font-size:0.6rem; padding:0.25rem 0.9rem;">1 Month Free</div>
+        <div class="pricing-name" style="margin-top:1.25rem;">Free Trial</div>
         <div class="pricing-price"><sup style="font-size:1.5rem;vertical-align:top;margin-top:0.6rem;display:inline-block;">₹</sup>0</div>
-        <div class="pricing-period">forever free</div>
+        <div class="pricing-period">valid for 1 month &nbsp;·&nbsp; एक महीने के लिए</div>
         <ul class="pricing-features">
-          <li>Create profile with voice intro</li>
-          <li>Upload 2 back-side photos</li>
+          <li>Create profile with voice introduction</li>
           <li>Browse &amp; discover all profiles</li>
-          <li>Listen to voice introductions</li>
-          <li>2 profile likes per month</li>
-          <li>1 video meeting/month (mutual like required)</li>
-          <li class="unavailable">Reveal face photos</li>
-          <li class="unavailable">See who revealed your photo</li>
+          <li>5 profile likes &nbsp;<span style="font-family:'Cormorant Garamond',serif; font-style:italic; color:rgba(245,239,224,0.45); font-size:0.88rem;">5 प्रोफ़ाइल लाइक</span></li>
+          <li>5 photo reveals &nbsp;<span style="font-family:'Cormorant Garamond',serif; font-style:italic; color:rgba(245,239,224,0.45); font-size:0.88rem;">5 फोटो रिवील</span></li>
+          <li>2 video meetings — request or accept &nbsp;<span style="font-family:'Cormorant Garamond',serif; font-style:italic; color:rgba(245,239,224,0.45); font-size:0.88rem;">2 वीडियो मीटिंग</span></li>
+          <li style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.88rem; color:rgba(245,239,224,0.45);">Upgrade after 1 month to continue &nbsp;·&nbsp; बाद में पेड प्लान चुनें</li>
         </ul>
-        <button class="btn-gold-outline" onclick="openModal()">Start for Free</button>
+        <button class="btn-gold-outline" onclick="openModal()">Start Free Trial &nbsp;·&nbsp; शुरू करें</button>
       </div>
 
       <!-- STARTER -->

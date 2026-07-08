@@ -29,23 +29,22 @@ const c = {
 const plans = [
   {
     key: 'free',
-    name: 'Free',
+    name: 'Free Trial',
     price: '₹0',
     period: '',
-    billing: 'No credit card required',
-    tagline: 'Try Arrange Marriage',
-    cta: 'Continue Free',
+    billing: 'No credit card required · Valid for 1 month',
+    tagline: 'Try One Month for Free · एक महीना मुफ़्त',
+    cta: 'Start Free Trial · शुरू करें',
     highlighted: false,
-    meetings: 1,
-    likes: 2,
+    meetings: 2,
+    likes: 5,
     features: [
       { text: 'Full profile with voice introduction', included: true },
-      { text: 'Back-side photo upload (2 photos)', included: true },
       { text: 'Browse & discover all profiles', included: true },
-      { text: '2 profile likes per month', included: true },
-      { text: '1 video meeting/month (mutual like required)', included: true },
-      { text: 'Reveal face photos', included: false },
-      { text: 'See who revealed your photo', included: false },
+      { text: '5 profile likes  ·  5 प्रोफ़ाइल लाइक', included: true },
+      { text: '5 photo reveals  ·  5 फोटो रिवील', included: true },
+      { text: '2 video meetings — request or accept  ·  2 वीडियो मीटिंग', included: true },
+      { text: 'After 1 month, upgrade to continue your journey', included: true },
     ],
   },
   {
@@ -98,18 +97,24 @@ function PlanCard({ plan, onSelect, pending, stripeLoading }: {
   pending: boolean
   stripeLoading: boolean
 }) {
+  const isFree = plan.key === 'free'
   return (
-    <div style={{ position: 'relative', background: c.navyMid, border: plan.highlighted ? `1px solid ${c.goldLight}` : `1px solid ${c.border}`, borderRadius: '12px', display: 'flex', flexDirection: 'column', boxShadow: plan.highlighted ? '0 0 40px rgba(201,168,76,0.12), 0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.4)' }}>
+    <div style={{ position: 'relative', background: isFree ? 'rgba(8,40,20,0.45)' : c.navyMid, border: plan.highlighted ? `1px solid ${c.goldLight}` : isFree ? '1px solid rgba(80,200,100,0.22)' : `1px solid ${c.border}`, borderRadius: '12px', display: 'flex', flexDirection: 'column', boxShadow: plan.highlighted ? '0 0 40px rgba(201,168,76,0.12), 0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.4)' }}>
 
       {plan.highlighted && (
         <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0.25rem 1rem', borderRadius: '20px', whiteSpace: 'nowrap' }}>
           ✦ Most Popular
         </div>
       )}
+      {isFree && (
+        <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(8,50,20,0.95)', border: '1px solid rgba(80,200,100,0.35)', color: 'rgba(100,220,120,0.9)', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0.25rem 1rem', borderRadius: '20px', whiteSpace: 'nowrap' }}>
+          ✦ 1 Month Free · एक महीना मुफ़्त
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ padding: '1.75rem 1.5rem 1.25rem', borderBottom: `1px solid rgba(201,168,76,0.1)` }}>
-        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: plan.highlighted ? c.goldLight : c.ivoryDim, margin: '0 0 0.4rem' }}>{plan.tagline}</p>
+        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: plan.highlighted ? c.goldLight : isFree ? 'rgba(100,210,120,0.85)' : c.ivoryDim, margin: '0 0 0.4rem' }}>{plan.tagline}</p>
         <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.6rem', fontWeight: 600, color: c.ivory, margin: '0 0 1rem' }}>{plan.name}</h2>
 
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginBottom: '0.2rem' }}>
@@ -256,15 +261,18 @@ export default function PricingPage() {
       <main style={{ maxWidth: '900px', margin: '0 auto', padding: '7rem 1rem 5rem' }}>
 
         {/* Hero */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <span style={{ display: 'inline-block', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', padding: '0.3rem 1rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, color: c.goldLight, borderRadius: '20px', marginBottom: '1.25rem' }}>
-            Simple, transparent pricing
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <span style={{ display: 'inline-block', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', padding: '0.3rem 1rem', background: 'rgba(80,200,100,0.07)', border: '1px solid rgba(80,200,100,0.2)', color: 'rgba(100,210,120,0.85)', borderRadius: '20px', marginBottom: '1rem' }}>
+            ✦ No credit card required · क्रेडिट कार्ड की ज़रूरत नहीं
           </span>
-          <h1 className="pricing-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 700, color: c.ivory, margin: '0 0 0.75rem', lineHeight: 1.2 }}>
-            Choose your journey
+          <h1 className="pricing-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 700, color: c.ivory, margin: '0 0 0.5rem', lineHeight: 1.2 }}>
+            Try One Month for Free
           </h1>
-          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.1rem', fontStyle: 'italic', color: c.ivoryDim, maxWidth: '440px', margin: '0 auto 1.5rem' }}>
-            Start free and upgrade anytime to unlock photo reveals and video meetings.
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.25rem', fontStyle: 'italic', color: 'rgba(189,181,166,0.6)', margin: '0 0 0.5rem' }}>
+            एक महीना मुफ़्त आज़माएं — देखें कि यह आपके लिए सही है या नहीं
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', fontStyle: 'italic', color: c.ivoryDim, maxWidth: '460px', margin: '0 auto 1.5rem' }}>
+            Explore Arrange Marriage with no commitment. If you enjoy the experience, upgrade to a paid plan after your free month.
           </p>
           <div style={{ height: '1px', width: '80px', background: `linear-gradient(to right, transparent, ${c.goldLight}, transparent)`, margin: '0 auto' }} />
         </div>
