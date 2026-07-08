@@ -262,6 +262,27 @@ export default function DiscoverClient({
         .disc-filter-inp::placeholder { color: #8a9db5 !important; }
         .disc-filter-inp:focus { border-color: #c9a84c !important; }
 
+        /* Connections section */
+        .conn-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; }
+        .conn-card { border-radius: 10px; padding: 0.85rem 1rem; }
+        .conn-num { font-family: "Playfair Display",serif; font-size: 1.8rem; font-weight: 700; margin: 0 0 0.2rem; line-height: 1; }
+        .conn-label { font-family: Raleway,sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; }
+        .conn-sub { font-family: "Cormorant Garamond",serif; font-size: 0.75rem; font-style: italic; margin: 0.2rem 0 0; line-height: 1.3; }
+        @media (max-width: 400px) {
+          .conn-card { padding: 0.65rem 0.6rem; }
+          .conn-num { font-size: 1.4rem; }
+          .conn-label { font-size: 0.52rem; letter-spacing: 0.06em; }
+          .conn-sub { font-size: 0.68rem; }
+        }
+
+        /* Trial stats row */
+        .trial-stats { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .trial-chip { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 1rem; border-radius: 8px; }
+        @media (max-width: 480px) {
+          .trial-stats { gap: 0.5rem; }
+          .trial-chip { padding: 0.5rem 0.75rem; gap: 0.5rem; width: 100%; box-sizing: border-box; }
+        }
+
         .disc-toolbar { display: flex; gap: 0.6rem; flex-wrap: wrap; }
         .disc-toolbar-search { flex: 1; min-width: 160px; position: relative; }
         .disc-icon-btn { padding: 0.75rem 1rem; white-space: nowrap; }
@@ -418,9 +439,9 @@ export default function DiscoverClient({
       </div>
 
       {/* Likes + meetings usage counters */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+      <div className="trial-stats">
         {/* Likes counter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.55rem 1rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '8px' }}>
+        <div className="trial-chip" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
           <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.ivoryDim }}>
             ❤️ {trialActive ? 'Trial likes' : 'Likes this month'}
           </span>
@@ -431,7 +452,7 @@ export default function DiscoverClient({
 
         {/* Photo reveals counter — shown only for free trial users */}
         {trialActive && revealsTotal > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(56,189,248,0.05)', border: '1px solid rgba(56,189,248,0.18)', borderRadius: '8px' }}>
+          <div className="trial-chip" style={{ background: 'rgba(56,189,248,0.05)', border: '1px solid rgba(56,189,248,0.18)' }}>
             <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.ivoryDim }}>
               📸 Trial photo reveals
             </span>
@@ -443,7 +464,7 @@ export default function DiscoverClient({
 
         {/* Trial days remaining badge */}
         {trialActive && trialDaysLeft > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(8,40,20,0.6)', border: '1px solid rgba(80,200,100,0.22)', borderRadius: '8px', flexWrap: 'wrap' }}>
+          <div className="trial-chip" style={{ background: 'rgba(8,40,20,0.6)', border: '1px solid rgba(80,200,100,0.22)', flexWrap: 'wrap' }}>
             <div>
               <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(100,210,120,0.85)', margin: 0 }}>
                 ⏳ {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} left in free trial
@@ -457,7 +478,7 @@ export default function DiscoverClient({
 
         {/* Trial expired banner */}
         {!trialActive && likesTotal === 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.75rem 1.25rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '8px', flexWrap: 'wrap' }}>
+          <div className="trial-chip" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', justifyContent: 'space-between', flexWrap: 'wrap' }}>
             <div>
               <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f87171', margin: 0 }}>
                 Free trial ended
@@ -474,7 +495,7 @@ export default function DiscoverClient({
 
         {/* Meeting usage counter */}
         {meetingsTotal > 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.65rem 1.25rem', background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px' }}>
+        <div className="trial-chip" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
             <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim }}>
               {trialActive ? '🎥 Trial meetings' : 'Meeting requests this month'}
             </span>
@@ -500,39 +521,25 @@ export default function DiscoverClient({
             new
           </span>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem' }}>
+        <div className="conn-grid">
 
           {/* Profiles Liked */}
-          <div style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', padding: '0.85rem 1rem' }}>
-            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: '#f9a8d4', margin: '0 0 0.2rem', lineHeight: 1 }}>
-              {likedIds.size}
-            </p>
-            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(249,168,212,0.7)', margin: 0 }}>
-              ❤️ Profiles Liked
-            </p>
+          <div className="conn-card" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
+            <p className="conn-num" style={{ color: '#f9a8d4' }}>{likedIds.size}</p>
+            <p className="conn-label" style={{ color: 'rgba(249,168,212,0.7)' }}>❤️ Profiles Liked</p>
           </div>
 
           {/* Mutual Likes */}
-          <div style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: '10px', padding: '0.85rem 1rem' }}>
-            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: '#4ade80', margin: '0 0 0.2rem', lineHeight: 1 }}>
-              {mutualLikeIds.size}
-            </p>
-            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(74,222,128,0.7)', margin: '0 0 0.2rem' }}>
-              💚 Mutual Likes
-            </p>
-            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.75rem', fontStyle: 'italic', color: 'rgba(74,222,128,0.45)', margin: 0, lineHeight: 1.3 }}>
-              unlock video meetings
-            </p>
+          <div className="conn-card" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.2)' }}>
+            <p className="conn-num" style={{ color: '#4ade80' }}>{mutualLikeIds.size}</p>
+            <p className="conn-label" style={{ color: 'rgba(74,222,128,0.7)' }}>💚 Mutual Likes</p>
+            <p className="conn-sub" style={{ color: 'rgba(74,222,128,0.45)' }}>unlock video meetings</p>
           </div>
 
           {/* Profiles Saved */}
-          <div style={{ background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}`, borderRadius: '10px', padding: '0.85rem 1rem' }}>
-            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: c.gold, margin: '0 0 0.2rem', lineHeight: 1 }}>
-              {savedIds.size}
-            </p>
-            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(201,168,76,0.7)', margin: 0 }}>
-              ★ Profiles Saved
-            </p>
+          <div className="conn-card" style={{ background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}` }}>
+            <p className="conn-num" style={{ color: c.gold }}>{savedIds.size}</p>
+            <p className="conn-label" style={{ color: 'rgba(201,168,76,0.7)' }}>★ Profiles Saved</p>
           </div>
 
         </div>
