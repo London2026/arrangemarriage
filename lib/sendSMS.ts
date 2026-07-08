@@ -140,7 +140,7 @@ export async function sendProfileCompleteSMS(
 ) {
   await msg91Send(toPhone, process.env.MSG91_TEMPLATE_PROFILE_COMPLETE ?? '', {
     var1: firstName,
-    var2: `AM-${profileId.slice(0, 8).toUpperCase()}`,
+    var2: profileId.slice(0, 8).toUpperCase(),
   })
 }
 
