@@ -7,6 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail } from '@/lib/sendEmail'
 import { sendMeetingRequestSMS, sendMeetingAcceptedSMS, sendMeetingDeclinedSMS, sendMeetingCancelledSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
+import { isTrialActive, TRIAL_LIMITS } from '@/lib/trial'
 
 export async function deleteProfile(): Promise<never> {
   const supabase = await createClient()
@@ -58,13 +59,33 @@ export async function requestVideoMeeting(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  // Enforce paid plan for requester
-  const { data: myProfile } = await supabase.from('profiles').select('plan').eq('id', user.id).single()
-  if (!myProfile?.plan || myProfile.plan === 'free') throw new Error('Upgrade required to request meetings')
+  // Enforce meeting quota — free trial: 2 total (request or accept); paid: monthly plan limit
+  const { data: myProfile } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', user.id).single()
+  if (myProfile?.plan === 'free') {
+    if (!isTrialActive(myProfile.trial_started_at ?? null, 'free'))
+      throw new Error('Your free trial has ended. Upgrade to request video meetings.')
+    const { count: myMeetings } = await supabase.from('video_meetings')
+      .select('*', { count: 'exact', head: true })
+      .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+      .in('status', ['pending', 'accepted'])
+      .gte('created_at', myProfile.trial_started_at!)
+    if ((myMeetings ?? 0) >= TRIAL_LIMITS.meetings)
+      throw new Error(`You have used all ${TRIAL_LIMITS.meetings} video meetings in your free trial. Upgrade to continue.`)
+  }
 
-  // Enforce paid plan for recipient — free-plan members cannot receive meeting requests
-  const { data: recipientPlan } = await supabase.from('profiles').select('plan').eq('id', recipientId).single()
-  if (!recipientPlan?.plan || recipientPlan.plan === 'free') throw new Error('This member is on a free plan and cannot receive meeting requests at this time')
+  // Recipient quota check — free trial recipients can receive requests within their quota
+  const { data: recipientMeta } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', recipientId).single()
+  if (recipientMeta?.plan === 'free') {
+    if (!isTrialActive(recipientMeta.trial_started_at ?? null, 'free'))
+      throw new Error("This member's free trial has ended and they cannot receive new meeting requests.")
+    const { count: theirMeetings } = await supabase.from('video_meetings')
+      .select('*', { count: 'exact', head: true })
+      .or(`requester_id.eq.${recipientId},recipient_id.eq.${recipientId}`)
+      .in('status', ['pending', 'accepted'])
+      .gte('created_at', recipientMeta.trial_started_at!)
+    if ((theirMeetings ?? 0) >= TRIAL_LIMITS.meetings)
+      throw new Error('This member has used all their free trial meeting slots.')
+  }
 
   // Block check — either party blocking the other prevents meeting requests
   const { data: blockExists } = await supabase
@@ -167,6 +188,20 @@ export async function acceptMeeting(meetingId: string, familyMember: string = ''
     .single()
 
   if (!meeting) throw new Error('Meeting not found')
+
+  // Enforce free trial meeting quota for the acceptor
+  const { data: acceptorMeta } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', user.id).single()
+  if (acceptorMeta?.plan === 'free') {
+    if (!isTrialActive(acceptorMeta.trial_started_at ?? null, 'free'))
+      throw new Error('Your free trial has ended. Upgrade to accept meetings.')
+    const { count: myMeetings } = await supabase.from('video_meetings')
+      .select('*', { count: 'exact', head: true })
+      .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`)
+      .in('status', ['pending', 'accepted'])
+      .gte('created_at', acceptorMeta.trial_started_at!)
+    if ((myMeetings ?? 0) >= TRIAL_LIMITS.meetings)
+      throw new Error(`You have used all ${TRIAL_LIMITS.meetings} video meetings in your free trial. Upgrade to continue.`)
+  }
 
   await supabase.from('video_meetings').update({
     status: 'accepted',

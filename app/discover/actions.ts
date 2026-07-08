@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { sendPhotoRevealedEmail, sendMutualShortlistEmail, sendProfileLikedEmail, sendMutualLikeEmail } from '@/lib/sendEmail'
 import { sendPhotoRevealSMS, sendProfileLikedSMS, sendMutualLikeSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
+import { isTrialActive, TRIAL_LIMITS } from '@/lib/trial'
 
 
 export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: string }> {
@@ -12,9 +13,18 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Not authenticated')
 
-  // Enforce paid plan server-side
-  const { data: me } = await supabase.from('profiles').select('plan').eq('id', user.id).single()
-  if (!me?.plan || me.plan === 'free') throw new Error('Upgrade required to reveal photos')
+  // Enforce plan limits server-side
+  const { data: me } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', user.id).single()
+  if (me?.plan === 'free') {
+    if (!isTrialActive(me.trial_started_at ?? null, 'free'))
+      throw new Error('Your free trial has ended. Upgrade to reveal photos.')
+    const { count } = await supabase.from('photo_reveals')
+      .select('*', { count: 'exact', head: true })
+      .eq('viewer_id', user.id)
+      .gte('revealed_at', me.trial_started_at!)
+    if ((count ?? 0) >= TRIAL_LIMITS.photoReveals)
+      throw new Error(`You have used all ${TRIAL_LIMITS.photoReveals} photo reveals in your free trial. Upgrade to continue.`)
+  }
 
   // Only insert reveal + notification once
   const { data: existing } = await supabase
@@ -200,20 +210,35 @@ export async function toggleLikeProfile(likedId: string): Promise<{ liked: boole
     return { liked: false, mutual: false }
   }
 
-  // Check monthly quota
+  // Check like quota (trial users: 5 total during trial; paid: monthly limit)
   const { data: myRow } = await supabase.from('profiles')
-    .select('plan').eq('id', user.id).single()
-  const LIKE_LIMITS: Record<string, number> = { free: 2, starter: 10, standard: 15 }
-  const limit = LIKE_LIMITS[myRow?.plan ?? 'free'] ?? 2
-  const monthStart = new Date()
-  monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
-  const { count: likesThisMonth } = await supabase
+    .select('plan, trial_started_at').eq('id', user.id).single()
+  const plan = myRow?.plan ?? 'free'
+  const trialActive = isTrialActive(myRow?.trial_started_at ?? null, plan)
+
+  let limit: number
+  let since: string
+  if (plan === 'free') {
+    if (!trialActive)
+      throw new Error('Your free trial has ended. Upgrade your plan to continue liking profiles.')
+    limit = TRIAL_LIMITS.likes
+    since = myRow!.trial_started_at!
+  } else {
+    const PAID_LIKE_LIMITS: Record<string, number> = { starter: 10, standard: 15 }
+    limit = PAID_LIKE_LIMITS[plan] ?? 10
+    const monthStart = new Date()
+    monthStart.setDate(1); monthStart.setHours(0, 0, 0, 0)
+    since = monthStart.toISOString()
+  }
+  const { count: likesCount } = await supabase
     .from('profile_likes')
     .select('*', { count: 'exact', head: true })
     .eq('liker_id', user.id)
-    .gte('created_at', monthStart.toISOString())
-  if ((likesThisMonth ?? 0) >= limit) {
-    throw new Error(`You have used all ${limit} likes for this month. Upgrade your plan for more likes.`)
+    .gte('created_at', since)
+  if ((likesCount ?? 0) >= limit) {
+    throw new Error(plan === 'free'
+      ? `You have used all ${limit} likes in your free trial. Upgrade your plan to continue.`
+      : `You have used all ${limit} likes for this month. Upgrade your plan for more likes.`)
   }
 
   await supabase.from('profile_likes').insert({ liker_id: user.id, liked_id: likedId })
