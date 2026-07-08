@@ -490,6 +490,54 @@ export default function DiscoverClient({
         )}
       </div>
 
+      {/* Connections */}
+      <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem' }}>
+          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: c.ivoryDim, margin: 0 }}>
+            Connections
+          </p>
+          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', color: c.gold, padding: '0.1rem 0.5rem', borderRadius: '20px' }}>
+            new
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem' }}>
+
+          {/* Profiles Liked */}
+          <div style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '10px', padding: '0.85rem 1rem' }}>
+            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: '#f9a8d4', margin: '0 0 0.2rem', lineHeight: 1 }}>
+              {likedIds.size}
+            </p>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(249,168,212,0.7)', margin: 0 }}>
+              ❤️ Profiles Liked
+            </p>
+          </div>
+
+          {/* Mutual Likes */}
+          <div style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.2)', borderRadius: '10px', padding: '0.85rem 1rem' }}>
+            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: '#4ade80', margin: '0 0 0.2rem', lineHeight: 1 }}>
+              {mutualLikeIds.size}
+            </p>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(74,222,128,0.7)', margin: '0 0 0.2rem' }}>
+              💚 Mutual Likes
+            </p>
+            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.75rem', fontStyle: 'italic', color: 'rgba(74,222,128,0.45)', margin: 0, lineHeight: 1.3 }}>
+              unlock video meetings
+            </p>
+          </div>
+
+          {/* Profiles Saved */}
+          <div style={{ background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}`, borderRadius: '10px', padding: '0.85rem 1rem' }}>
+            <p style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.8rem', fontWeight: 700, color: c.gold, margin: '0 0 0.2rem', lineHeight: 1 }}>
+              {savedIds.size}
+            </p>
+            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(201,168,76,0.7)', margin: 0 }}>
+              ★ Profiles Saved
+            </p>
+          </div>
+
+        </div>
+      </div>
+
       {/* Find My Match button */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.75rem' }}>
         <button onClick={handleAiMatch} disabled={aiLoading} className="ai-btn"
