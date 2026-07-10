@@ -99,7 +99,7 @@ function PlanCard({ plan, onSelect, pending, stripeLoading }: {
 }) {
   const isFree = plan.key === 'free'
   return (
-    <div style={{ position: 'relative', background: isFree ? 'rgba(8,40,20,0.45)' : c.navyMid, border: plan.highlighted ? `1px solid ${c.goldLight}` : isFree ? '1px solid rgba(80,200,100,0.22)' : `1px solid ${c.border}`, borderRadius: '12px', display: 'flex', flexDirection: 'column', boxShadow: plan.highlighted ? '0 0 40px rgba(201,168,76,0.12), 0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.4)' }}>
+    <div className={`plan-card-${plan.key}`} style={{ position: 'relative', background: isFree ? 'rgba(8,40,20,0.45)' : c.navyMid, border: plan.highlighted ? `1px solid ${c.goldLight}` : isFree ? '1px solid rgba(80,200,100,0.22)' : `1px solid ${c.border}`, borderRadius: '12px', display: 'flex', flexDirection: 'column', boxShadow: plan.highlighted ? '0 0 40px rgba(201,168,76,0.12), 0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.4)' }}>
 
       {plan.highlighted && (
         <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0.25rem 1rem', borderRadius: '20px', whiteSpace: 'nowrap' }}>
@@ -252,6 +252,9 @@ export default function PricingPage() {
           .pricing-trust-grid { grid-template-columns: 1fr; }
           .pricing-h1 { font-size: 2rem !important; }
           .pricing-hindi { font-size: 1.05rem !important; }
+          .plan-card-free     { order: 1; }
+          .plan-card-starter  { order: 2; }
+          .plan-card-standard { order: 3; }
         }
         @media (max-width: 480px) {
           .pricing-h1 { font-size: 1.7rem !important; }
