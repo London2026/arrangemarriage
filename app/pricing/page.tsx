@@ -33,17 +33,17 @@ const plans = [
     price: '₹0',
     period: '',
     billing: 'No credit card required · Valid for 1 month',
-    tagline: 'Try One Month for Free · एक महीना मुफ़्त',
-    cta: 'Start Free Trial · शुरू करें',
+    tagline: 'Try One Month for Free',
+    cta: 'Start Free Trial',
     highlighted: false,
     meetings: 2,
     likes: 5,
     features: [
       { text: 'Full profile with voice introduction', included: true },
       { text: 'Browse & discover all profiles', included: true },
-      { text: '5 profile likes  ·  5 प्रोफ़ाइल लाइक', included: true },
-      { text: '5 photo reveals  ·  5 फोटो रिवील', included: true },
-      { text: '2 video meetings — request or accept  ·  2 वीडियो मीटिंग', included: true },
+      { text: '5 profile likes', included: true },
+      { text: '5 photo reveals', included: true },
+      { text: '2 video meetings — request or accept', included: true },
       { text: 'After 1 month, upgrade to continue your journey', included: true },
     ],
   },
@@ -108,7 +108,7 @@ function PlanCard({ plan, onSelect, pending, stripeLoading }: {
       )}
       {isFree && (
         <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(8,50,20,0.95)', border: '1px solid rgba(80,200,100,0.35)', color: 'rgba(100,220,120,0.9)', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', padding: '0.25rem 1rem', borderRadius: '20px', whiteSpace: 'nowrap' }}>
-          ✦ 1 Month Free · एक महीना मुफ़्त
+          ✦ 1 Month Free
         </div>
       )}
 
