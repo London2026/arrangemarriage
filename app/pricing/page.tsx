@@ -248,7 +248,7 @@ export default function PricingPage() {
         .pricing-h1 { font-size: 2.6rem; }
         .pricing-hindi { font-size: 1.25rem; }
         @media (max-width: 700px) {
-          .pricing-plans-grid { grid-template-columns: 1fr; }
+          .pricing-plans-grid { grid-template-columns: 1fr; padding-top: 1.25rem; }
           .pricing-trust-grid { grid-template-columns: 1fr; }
           .pricing-h1 { font-size: 2rem !important; }
           .pricing-hindi { font-size: 1.05rem !important; }
@@ -259,6 +259,7 @@ export default function PricingPage() {
         @media (max-width: 480px) {
           .pricing-h1 { font-size: 1.7rem !important; }
           .pricing-hindi { font-size: 0.95rem !important; }
+          .pricing-plans-grid { padding-top: 1.5rem; }
         }
       `}</style>
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 65%)' }} />
