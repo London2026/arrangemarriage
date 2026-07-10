@@ -2,4 +2,8 @@ node_modules/
 .next/
 tsconfig.tsbuildinfo
 .vercel
+
+# Environment variable files — never commit these
+.env
+.env.*
 .env*.local
