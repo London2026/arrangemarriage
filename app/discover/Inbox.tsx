@@ -43,6 +43,16 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
     setList((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
   }
 
+  // Closing the inbox means the user has seen everything currently listed —
+  // clear the unread badge instead of requiring a click on every row.
+  function closeInbox() {
+    setOpen(false)
+    const unread = list.filter((n) => !n.read)
+    if (unread.length === 0) return
+    setList((prev) => prev.map((n) => ({ ...n, read: true })))
+    unread.forEach((n) => { markNotificationRead(n.id) })
+  }
+
   if (list.length === 0) return null
 
   return (
@@ -61,7 +71,7 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
 
       {open && (
         <div
-          onClick={() => setOpen(false)}
+          onClick={closeInbox}
           style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(7,17,31,0.7)', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '3rem 1rem 2rem', overflowY: 'auto' }}
         >
           <div
@@ -72,7 +82,7 @@ export default function Inbox({ items }: { items: InboxItem[] }) {
               <p style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.5rem', fontWeight: 600, color: c.ivory, margin: 0 }}>
                 ✦ Inbox
               </p>
-              <button onClick={() => setOpen(false)} aria-label="Close" style={{ background: 'none', border: 'none', color: c.ivoryDim, fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer' }}>×</button>
+              <button onClick={closeInbox} aria-label="Close" style={{ background: 'none', border: 'none', color: c.ivoryDim, fontSize: '1.5rem', lineHeight: 1, cursor: 'pointer' }}>×</button>
             </div>
             <div style={{ maxHeight: '82vh', overflowY: 'auto', padding: '1rem' }}>
               {list.map((item) => (
