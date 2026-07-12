@@ -136,10 +136,16 @@ export default function Navigation() {
         .nav-bar { height: 80px; }
         .nav-logo-box { background: #fff; border: 2px solid #111; border-radius: 10px; width: 72px; height: 72px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .nav-logo-box img { max-width: 66px; max-height: 66px; width: auto; height: auto; object-fit: contain; display: block; }
+        .nav-user-group { gap: 1.25rem; }
+        .nav-text-links { display: flex; align-items: center; gap: 1.25rem; }
         @media (max-width: 600px) {
           .nav-bar { height: 64px; }
           .nav-logo-box { width: 54px; height: 54px; border-radius: 8px; }
           .nav-logo-box img { max-width: 48px; max-height: 48px; }
+          .nav-user-group { gap: 0.6rem; }
+        }
+        @media (max-width: 480px) {
+          .nav-text-links { display: none; }
         }
       `}</style>
       <div className="nav-bar" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -153,9 +159,11 @@ export default function Navigation() {
 
         {user ? (
           /* ── Logged-in nav ── */
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <Link href="/discover" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.ivoryDim, textDecoration: 'none', letterSpacing: '0.06em' }}>Discover</Link>
-            <Link href="/profile"  style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.ivoryDim, textDecoration: 'none', letterSpacing: '0.06em' }}>My Profile</Link>
+          <div className="nav-user-group" style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="nav-text-links">
+              <Link href="/discover" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.ivoryDim, textDecoration: 'none', letterSpacing: '0.06em' }}>Discover</Link>
+              <Link href="/profile"  style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.ivoryDim, textDecoration: 'none', letterSpacing: '0.06em' }}>My Profile</Link>
+            </div>
 
             {/* User dropdown */}
             <div ref={dropRef} style={{ position: 'relative' }}>
@@ -272,11 +280,14 @@ export default function Navigation() {
                       { label: '★ Profiles Saved',     value: user.connections.saved,    color: c.gold, href: '/discover?view=saved' },
                       { label: '👁 Viewed My Photo',   value: user.connections.viewedMe, color: '#93c5fd', href: '/discover?view=viewedme' },
                     ].map(stat => {
-                      const rowStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', textDecoration: 'none' }
+                      // Clickable rows get extra vertical padding for a comfortable touch target on mobile
+                      const rowStyle: CSSProperties = stat.href
+                        ? { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', margin: '0 -0.4rem 0.15rem', padding: '0.4rem', borderRadius: '6px', textDecoration: 'none' }
+                        : { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', textDecoration: 'none' }
                       const content = (
                         <>
                           <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>{stat.label}</span>
-                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: stat.color, minWidth: '24px', textAlign: 'right' }}>{stat.value}</span>
+                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: stat.color, minWidth: '24px', textAlign: 'right', flexShrink: 0 }}>{stat.value}</span>
                         </>
                       )
                       return stat.href ? (

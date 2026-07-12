@@ -537,14 +537,14 @@ export default function DiscoverClient({
 
       {/* Saved / Viewed Me banner (opened from the nav dropdown) */}
       {(showSaved || showViewedMe) && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', padding: '0.6rem 0.9rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, borderRadius: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem', padding: '0.6rem 0.9rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, borderRadius: '8px' }}>
           <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.gold, fontWeight: 600, letterSpacing: '0.04em' }}>
             {showSaved
               ? `★ Showing your ${savedIds.size} saved profile${savedIds.size === 1 ? '' : 's'}`
               : `👁 Showing ${revealedByProfiles.length} ${revealedByProfiles.length === 1 ? 'person' : 'people'} who viewed your photo`}
           </span>
           <button onClick={clearView}
-            style={{ background: 'none', border: 'none', color: c.sepia, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+            style={{ background: 'none', border: 'none', color: c.sepia, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline', padding: '0.3rem 0', flexShrink: 0 }}>
             ✕ Clear
           </button>
         </div>
