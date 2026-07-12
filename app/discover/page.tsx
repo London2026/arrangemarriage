@@ -6,6 +6,7 @@ import { getUsageStats } from '@/lib/usageStats'
 import ProfileCard, { type ProfileData } from './ProfileCard'
 import Inbox from './Inbox'
 import DiscoverClient from './DiscoverClient'
+import ReferralSection from '@/app/profile/ReferralSection'
 
 export default async function DiscoverPage() {
   const supabase = await createClient()
@@ -82,13 +83,14 @@ export default async function DiscoverPage() {
   const likedMeIds  = (likedMeRows ?? []).map(l => l.liker_id as string)
 
   // Existing video meetings + profiles of people who viewed me (parallel)
-  const [{ data: meetingRows }, { data: viewedMeProfileRows }] = await Promise.all([
+  const [{ data: meetingRows }, { data: viewedMeProfileRows }, { data: referralRow }] = await Promise.all([
     supabase.from('video_meetings')
       .select('room_id, requester_id, recipient_id, status')
       .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`),
     viewedMeIds.length > 0
       ? supabase.from('profiles').select(PROFILE_SELECT).in('id', viewedMeIds).eq('onboarding_complete', true)
       : Promise.resolve({ data: [] as Record<string, unknown>[], error: null }),
+    supabase.from('profiles').select('referral_code, referral_count').eq('id', user.id).maybeSingle(),
   ])
 
   const meetingByOther: Record<string, { room_id: string; status: string }> = {}
@@ -300,6 +302,17 @@ export default async function DiscoverPage() {
         ) : (
           <DiscoverClient profiles={profiles} canReveal={canReveal} canMeet={canMeet} meetingsLeft={meetingsLeft} ownProfile={ownProfile} initialSavedIds={savedIds} revealedByProfiles={revealedByProfiles} initialBlockedIds={blockedIds} initialLikedIds={likedIds} initialLikedMeIds={likedMeIds} likesLeft={likesLeft} likesUsed={likesUsed} likesTotal={likesTotal} />
         )}
+
+        {/* Invite & Earn */}
+        <div style={{ marginTop: '2rem' }}>
+          <ReferralSection
+            referralCode={(referralRow?.referral_code as string | null) ?? null}
+            referralCount={(referralRow?.referral_count as number) ?? 0}
+            planBonusUntil={me?.plan_bonus_until ?? null}
+            userId={user.id}
+            variant="card"
+          />
+        </div>
       </main>
     </div>
   )
