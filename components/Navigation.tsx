@@ -12,11 +12,18 @@ interface MeetingStats {
   waiting: number
 }
 
+interface ConnectionStats {
+  liked: number
+  mutual: number
+  saved: number
+}
+
 interface AuthUser {
   id: string
   name: string
   plan: string
   stats: MeetingStats
+  connections: ConnectionStats
 }
 
 const c = {
@@ -39,11 +46,14 @@ export default function Navigation() {
     const supabase = createClient()
 
     async function loadUser(userId: string, email?: string, fullName?: string) {
-      const [profileRes, meetingsRes] = await Promise.all([
+      const [profileRes, meetingsRes, savedRes, likedRes, likedMeRes] = await Promise.all([
         supabase.from('profiles').select('full_name, plan').eq('id', userId).maybeSingle(),
         supabase.from('video_meetings')
           .select('status, requester_id')
           .or(`requester_id.eq.${userId},recipient_id.eq.${userId}`),
+        supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', userId),
+        supabase.from('profile_likes').select('liked_id').eq('liker_id', userId),
+        supabase.from('profile_likes').select('liker_id').eq('liked_id', userId),
       ])
 
       const profile = profileRes.data
@@ -57,11 +67,20 @@ export default function Navigation() {
         waiting:   myRequests.filter(m => m.status === 'pending').length,
       }
 
+      const likedIds = new Set((likedRes.data ?? []).map(l => l.liked_id))
+      const likedMeIds = new Set((likedMeRes.data ?? []).map(l => l.liker_id))
+      const connections: ConnectionStats = {
+        liked:  likedIds.size,
+        mutual: [...likedIds].filter(id => likedMeIds.has(id)).length,
+        saved:  (savedRes.data ?? []).length,
+      }
+
       setUser({
         id: userId,
         name: profile?.full_name || fullName || email?.split('@')[0] || 'Member',
         plan: profile?.plan || 'free',
         stats,
+        connections,
       })
     }
 
@@ -165,6 +184,21 @@ export default function Navigation() {
                       { label: 'Accepted',              value: user.stats.accepted,  color: '#4ade80' },
                       { label: 'Declined',              value: user.stats.declined,  color: '#f87171' },
                       { label: 'Awaiting Confirmation', value: user.stats.waiting,   color: c.gold },
+                    ].map(stat => (
+                      <div key={stat.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>{stat.label}</span>
+                        <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: stat.color, minWidth: '24px', textAlign: 'right' }}>{stat.value}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Connections */}
+                  <div style={{ padding: '1rem 1.4rem', borderBottom: `1px solid ${c.border}` }}>
+                    <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.gold, margin: '0 0 0.75rem' }}>Connections</p>
+                    {[
+                      { label: '❤️ Profiles Liked', value: user.connections.liked,  color: '#f9a8d4' },
+                      { label: '💚 Mutual Likes',    value: user.connections.mutual, color: '#4ade80' },
+                      { label: '★ Profiles Saved',   value: user.connections.saved,  color: c.gold },
                     ].map(stat => (
                       <div key={stat.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                         <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>{stat.label}</span>

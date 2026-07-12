@@ -262,19 +262,6 @@ export default function DiscoverClient({
         .disc-filter-inp::placeholder { color: #8a9db5 !important; }
         .disc-filter-inp:focus { border-color: #c9a84c !important; }
 
-        /* Connections section */
-        .conn-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; }
-        .conn-card { border-radius: 10px; padding: 0.85rem 1rem; }
-        .conn-num { font-family: "Playfair Display",serif; font-size: 1.8rem; font-weight: 700; margin: 0 0 0.2rem; line-height: 1; }
-        .conn-label { font-family: Raleway,sans-serif; font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin: 0; }
-        .conn-sub { font-family: "Cormorant Garamond",serif; font-size: 0.75rem; font-style: italic; margin: 0.2rem 0 0; line-height: 1.3; }
-        @media (max-width: 400px) {
-          .conn-card { padding: 0.65rem 0.6rem; }
-          .conn-num { font-size: 1.4rem; }
-          .conn-label { font-size: 0.52rem; letter-spacing: 0.06em; }
-          .conn-sub { font-size: 0.68rem; }
-        }
-
         /* Trial stats row */
         .trial-stats { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
         .trial-chip { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 1rem; border-radius: 8px; }
@@ -509,40 +496,6 @@ export default function DiscoverClient({
             </span>
           </div>
         )}
-      </div>
-
-      {/* Connections */}
-      <div style={{ marginBottom: '1.75rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.85rem' }}>
-          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: c.ivoryDim, margin: 0 }}>
-            Connections
-          </p>
-          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.5rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', color: c.gold, padding: '0.1rem 0.5rem', borderRadius: '20px' }}>
-            new
-          </span>
-        </div>
-        <div className="conn-grid">
-
-          {/* Profiles Liked */}
-          <div className="conn-card" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
-            <p className="conn-num" style={{ color: '#f9a8d4' }}>{likedIds.size}</p>
-            <p className="conn-label" style={{ color: 'rgba(249,168,212,0.7)' }}>❤️ Profiles Liked</p>
-          </div>
-
-          {/* Mutual Likes */}
-          <div className="conn-card" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.2)' }}>
-            <p className="conn-num" style={{ color: '#4ade80' }}>{mutualLikeIds.size}</p>
-            <p className="conn-label" style={{ color: 'rgba(74,222,128,0.7)' }}>💚 Mutual Likes</p>
-            <p className="conn-sub" style={{ color: 'rgba(74,222,128,0.45)' }}>unlock video meetings</p>
-          </div>
-
-          {/* Profiles Saved */}
-          <div className="conn-card" style={{ background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}` }}>
-            <p className="conn-num" style={{ color: c.gold }}>{savedIds.size}</p>
-            <p className="conn-label" style={{ color: 'rgba(201,168,76,0.7)' }}>★ Profiles Saved</p>
-          </div>
-
-        </div>
       </div>
 
       {/* Find My Match button */}
