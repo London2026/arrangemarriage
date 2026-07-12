@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, MotionConfig, motion, animate } from 'framer-motion'
 import ProfileCard, { type ProfileData } from './ProfileCard'
 import { maskName } from '@/lib/maskName'
@@ -108,6 +109,20 @@ export default function DiscoverClient({
   const [showSaved, setShowSaved] = useState(false)
   const [showViewedMe, setShowViewedMe] = useState(false)
   const [blockedIds, setBlockedIds] = useState<Set<string>>(() => new Set(initialBlockedIds))
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // "Saved" / "Viewed Me" are opened from the nav dropdown via ?view=saved / ?view=viewedme
+  useEffect(() => {
+    const view = searchParams.get('view')
+    setShowSaved(view === 'saved')
+    setShowViewedMe(view === 'viewedme')
+  }, [searchParams])
+
+  function clearView() {
+    setShowSaved(false); setShowViewedMe(false)
+    router.replace('/discover')
+  }
 
   function handleToggleSave(profileId: string, nowSaved: boolean) {
     setSavedIds(prev => {
@@ -296,16 +311,6 @@ export default function DiscoverClient({
               onBlur={e => (e.target.style.borderColor = c.border)}
             />
           </div>
-          {/* Saved toggle */}
-          <button onClick={() => { setShowSaved(s => !s); setShowViewedMe(false) }} className="disc-icon-btn"
-            style={{ background: showSaved ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showSaved ? c.gold : c.border}`, color: showSaved ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-            ★<span className="btn-label">{showSaved ? ` Saved (${savedIds.size})` : ` Saved`}</span>
-          </button>
-          {/* Viewed Me toggle */}
-          <button onClick={() => { setShowViewedMe(s => !s); setShowSaved(false) }} className="disc-icon-btn"
-            style={{ background: showViewedMe ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${showViewedMe ? c.gold : c.border}`, color: showViewedMe ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
-            👁<span className="btn-label">{showViewedMe ? ` Viewed Me (${revealedByProfiles.length})` : revealedByProfiles.length > 0 ? ` Viewed Me (${revealedByProfiles.length})` : ` Viewed Me`}</span>
-          </button>
           {/* Filter toggle button */}
           <button onClick={() => setShowFilters(f => !f)} className="disc-icon-btn"
             style={{ background: showFilters ? 'rgba(201,168,76,0.18)' : c.card, border: `1px solid ${activeFilterCount > 0 ? c.gold : c.border}`, color: activeFilterCount > 0 ? c.gold : c.sepia, borderRadius: '8px', cursor: 'pointer', fontFamily: 'Raleway, sans-serif', fontSize: '0.68rem', fontWeight: 600, letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'all 0.2s' }}>
@@ -613,6 +618,21 @@ export default function DiscoverClient({
             <CompactCard profile={ownProfile} onClick={() => setSelected(ownProfile)} isOwn />
           </div>
           <div style={{ height: '1px', background: 'linear-gradient(to right, rgba(201,168,76,0.3), transparent)', margin: '1.25rem 0' }} />
+        </div>
+      )}
+
+      {/* Saved / Viewed Me banner (opened from the nav dropdown) */}
+      {(showSaved || showViewedMe) && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', padding: '0.6rem 0.9rem', background: 'rgba(201,168,76,0.08)', border: `1px solid ${c.border}`, borderRadius: '8px' }}>
+          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.gold, fontWeight: 600, letterSpacing: '0.04em' }}>
+            {showSaved
+              ? `★ Showing your ${savedIds.size} saved profile${savedIds.size === 1 ? '' : 's'}`
+              : `👁 Showing ${revealedByProfiles.length} ${revealedByProfiles.length === 1 ? 'person' : 'people'} who viewed your photo`}
+          </span>
+          <button onClick={clearView}
+            style={{ background: 'none', border: 'none', color: c.sepia, fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+            ✕ Clear
+          </button>
         </div>
       )}
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -16,6 +16,7 @@ interface ConnectionStats {
   liked: number
   mutual: number
   saved: number
+  viewedMe: number
 }
 
 interface AuthUser {
@@ -46,7 +47,7 @@ export default function Navigation() {
     const supabase = createClient()
 
     async function loadUser(userId: string, email?: string, fullName?: string) {
-      const [profileRes, meetingsRes, savedRes, likedRes, likedMeRes] = await Promise.all([
+      const [profileRes, meetingsRes, savedRes, likedRes, likedMeRes, viewedMeRes] = await Promise.all([
         supabase.from('profiles').select('full_name, plan').eq('id', userId).maybeSingle(),
         supabase.from('video_meetings')
           .select('status, requester_id')
@@ -54,6 +55,7 @@ export default function Navigation() {
         supabase.from('saved_profiles').select('saved_profile_id').eq('user_id', userId),
         supabase.from('profile_likes').select('liked_id').eq('liker_id', userId),
         supabase.from('profile_likes').select('liker_id').eq('liked_id', userId),
+        supabase.from('photo_reveals').select('viewer_id').eq('viewed_id', userId),
       ])
 
       const profile = profileRes.data
@@ -70,9 +72,10 @@ export default function Navigation() {
       const likedIds = new Set((likedRes.data ?? []).map(l => l.liked_id))
       const likedMeIds = new Set((likedMeRes.data ?? []).map(l => l.liker_id))
       const connections: ConnectionStats = {
-        liked:  likedIds.size,
-        mutual: [...likedIds].filter(id => likedMeIds.has(id)).length,
-        saved:  (savedRes.data ?? []).length,
+        liked:    likedIds.size,
+        mutual:   [...likedIds].filter(id => likedMeIds.has(id)).length,
+        saved:    (savedRes.data ?? []).length,
+        viewedMe: (viewedMeRes.data ?? []).length,
       }
 
       setUser({
@@ -196,15 +199,24 @@ export default function Navigation() {
                   <div style={{ padding: '1rem 1.4rem', borderBottom: `1px solid ${c.border}` }}>
                     <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.gold, margin: '0 0 0.75rem' }}>Connections</p>
                     {[
-                      { label: '❤️ Profiles Liked', value: user.connections.liked,  color: '#f9a8d4' },
-                      { label: '💚 Mutual Likes',    value: user.connections.mutual, color: '#4ade80' },
-                      { label: '★ Profiles Saved',   value: user.connections.saved,  color: c.gold },
-                    ].map(stat => (
-                      <div key={stat.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>{stat.label}</span>
-                        <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: stat.color, minWidth: '24px', textAlign: 'right' }}>{stat.value}</span>
-                      </div>
-                    ))}
+                      { label: '❤️ Profiles Liked',   value: user.connections.liked,    color: '#f9a8d4' },
+                      { label: '💚 Mutual Likes',      value: user.connections.mutual,   color: '#4ade80' },
+                      { label: '★ Profiles Saved',     value: user.connections.saved,    color: c.gold, href: '/discover?view=saved' },
+                      { label: '👁 Viewed My Photo',   value: user.connections.viewedMe, color: '#93c5fd', href: '/discover?view=viewedme' },
+                    ].map(stat => {
+                      const rowStyle: CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', textDecoration: 'none' }
+                      const content = (
+                        <>
+                          <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>{stat.label}</span>
+                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: stat.color, minWidth: '24px', textAlign: 'right' }}>{stat.value}</span>
+                        </>
+                      )
+                      return stat.href ? (
+                        <Link key={stat.label} href={stat.href} onClick={() => setOpen(false)} style={rowStyle}>{content}</Link>
+                      ) : (
+                        <div key={stat.label} style={rowStyle}>{content}</div>
+                      )
+                    })}
                   </div>
 
                   {/* Actions */}
