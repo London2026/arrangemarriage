@@ -205,11 +205,13 @@ export default function Navigation() {
                         </span>
                       </div>
 
-                      {user.usage.trialActive && user.usage.revealsTotal > 0 && (
+                      {(user.usage.trialActive ? user.usage.revealsTotal > 0 : user.usage.likesTotal > 0) && (
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                          <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>📸 Trial Photo Reveals</span>
-                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: user.usage.revealsLeft === 0 ? '#f87171' : '#7dd3fc' }}>
-                            {user.usage.revealsLeft} / {user.usage.revealsTotal}
+                          <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>
+                            📸 {user.usage.trialActive ? 'Trial Photo Reveals' : 'Photo Reveals'}
+                          </span>
+                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: user.usage.trialActive && user.usage.revealsLeft === 0 ? '#f87171' : '#7dd3fc' }}>
+                            {user.usage.trialActive ? `${user.usage.revealsLeft} / ${user.usage.revealsTotal}` : 'Unlimited'}
                           </span>
                         </div>
                       )}
