@@ -230,9 +230,6 @@ export default function Navigation() {
                           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(100,210,120,0.85)', margin: 0 }}>
                             ⏳ {user.usage.trialDaysLeft} day{user.usage.trialDaysLeft !== 1 ? 's' : ''} left in free trial
                           </p>
-                          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.8rem', fontStyle: 'italic', color: 'rgba(100,210,120,0.5)', margin: '0.1rem 0 0' }}>
-                            ट्रायल में {user.usage.trialDaysLeft} दिन बाकी — बाद में पेड प्लान चुनें
-                          </p>
                         </div>
                       )}
 
@@ -241,9 +238,6 @@ export default function Navigation() {
                           <div>
                             <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f87171', margin: 0 }}>
                               Free trial ended
-                            </p>
-                            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.85rem', fontStyle: 'italic', color: 'rgba(248,113,113,0.6)', margin: '0.1rem 0 0' }}>
-                              आपका ट्रायल समाप्त हो गया — पेड प्लान में अपग्रेड करें
                             </p>
                           </div>
                           <Link href="/pricing" onClick={() => setOpen(false)}
