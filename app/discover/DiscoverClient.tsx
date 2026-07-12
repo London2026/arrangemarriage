@@ -68,10 +68,9 @@ function prefScore(viewer: ProfileData, candidate: ProfileData): number {
 }
 
 export default function DiscoverClient({
-  profiles, canReveal, canMeet, meetingsLeft, meetingsTotal, meetingsUsed, ownProfile, initialSavedIds = [], revealedByProfiles = [], initialBlockedIds = [], initialLikedIds = [], initialLikedMeIds = [], likesLeft = 0, likesUsed = 0, likesTotal = 2, revealsLeft = -1, revealsTotal = -1, trialActive = false, trialDaysLeft = 0,
+  profiles, canReveal, canMeet, meetingsLeft, ownProfile, initialSavedIds = [], revealedByProfiles = [], initialBlockedIds = [], initialLikedIds = [], initialLikedMeIds = [], likesLeft = 0, likesUsed = 0, likesTotal = 2,
 }: {
   profiles: ProfileData[]; canReveal: boolean; canMeet: boolean; meetingsLeft: number
-  meetingsTotal: number; meetingsUsed: number
   ownProfile?: ProfileData | null
   initialSavedIds?: string[]
   revealedByProfiles?: ProfileData[]
@@ -81,10 +80,6 @@ export default function DiscoverClient({
   likesLeft?: number
   likesUsed?: number
   likesTotal?: number
-  revealsLeft?: number   // -1 = unlimited, >= 0 = trial count remaining
-  revealsTotal?: number  // -1 = unlimited, > 0 = trial limit
-  trialActive?: boolean
-  trialDaysLeft?: number
 }) {
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -277,14 +272,6 @@ export default function DiscoverClient({
         .disc-filter-inp::placeholder { color: #8a9db5 !important; }
         .disc-filter-inp:focus { border-color: #c9a84c !important; }
 
-        /* Trial stats row */
-        .trial-stats { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
-        .trial-chip { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 1rem; border-radius: 8px; }
-        @media (max-width: 480px) {
-          .trial-stats { gap: 0.5rem; }
-          .trial-chip { padding: 0.5rem 0.75rem; gap: 0.5rem; width: 100%; box-sizing: border-box; }
-        }
-
         .disc-toolbar { display: flex; gap: 0.6rem; flex-wrap: wrap; }
         .disc-toolbar-search { flex: 1; min-width: 160px; position: relative; }
         .disc-icon-btn { padding: 0.75rem 1rem; white-space: nowrap; }
@@ -428,79 +415,6 @@ export default function DiscoverClient({
         )}
         </AnimatePresence>
         </MotionConfig>
-      </div>
-
-      {/* Likes + meetings usage counters */}
-      <div className="trial-stats">
-        {/* Likes counter */}
-        <div className="trial-chip" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)' }}>
-          <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.ivoryDim }}>
-            ❤️ {trialActive ? 'Trial likes' : 'Likes this month'}
-          </span>
-          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.9rem', fontWeight: 700, color: clientLikesLeft === 0 ? '#f87171' : '#f9a8d4' }}>
-            {clientLikesLeft} / {likesTotal}
-          </span>
-        </div>
-
-        {/* Photo reveals counter — shown only for free trial users */}
-        {trialActive && revealsTotal > 0 && (
-          <div className="trial-chip" style={{ background: 'rgba(56,189,248,0.05)', border: '1px solid rgba(56,189,248,0.18)' }}>
-            <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: c.ivoryDim }}>
-              📸 Trial photo reveals
-            </span>
-            <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.9rem', fontWeight: 700, color: revealsLeft === 0 ? '#f87171' : '#7dd3fc' }}>
-              {revealsLeft} / {revealsTotal}
-            </span>
-          </div>
-        )}
-
-        {/* Trial days remaining badge */}
-        {trialActive && trialDaysLeft > 0 && (
-          <div className="trial-chip" style={{ background: 'rgba(8,40,20,0.6)', border: '1px solid rgba(80,200,100,0.22)', flexWrap: 'wrap' }}>
-            <div>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(100,210,120,0.85)', margin: 0 }}>
-                ⏳ {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} left in free trial
-              </p>
-              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.8rem', fontStyle: 'italic', color: 'rgba(100,210,120,0.5)', margin: '0.1rem 0 0' }}>
-                ट्रायल में {trialDaysLeft} दिन बाकी — बाद में पेड प्लान चुनें
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Trial expired banner */}
-        {!trialActive && likesTotal === 0 && (
-          <div className="trial-chip" style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-            <div>
-              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f87171', margin: 0 }}>
-                Free trial ended
-              </p>
-              <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.85rem', fontStyle: 'italic', color: 'rgba(248,113,113,0.6)', margin: '0.1rem 0 0' }}>
-                आपका ट्रायल समाप्त हो गया — पेड प्लान में अपग्रेड करें
-              </p>
-            </div>
-            <a href="/pricing" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#0d1f3c', background: 'linear-gradient(135deg, #e8c876, #c9a84c)', padding: '0.4rem 0.9rem', borderRadius: '6px', textDecoration: 'none', flexShrink: 0 }}>
-              Upgrade →
-            </a>
-          </div>
-        )}
-
-        {/* Meeting usage counter */}
-        {meetingsTotal > 0 && (
-        <div className="trial-chip" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)' }}>
-            <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.ivoryDim }}>
-              {trialActive ? '🎥 Trial meetings' : 'Meeting requests this month'}
-            </span>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
-              {Array.from({ length: meetingsTotal }).map((_, i) => (
-                <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: i < meetingsUsed ? c.gold : 'rgba(201,168,76,0.2)', border: `1px solid ${i < meetingsUsed ? c.gold : 'rgba(201,168,76,0.3)'}` }} />
-              ))}
-            </div>
-            <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '0.9rem', fontWeight: 700, color: meetingsLeft === 0 ? '#f87171' : '#4ade80' }}>
-              {meetingsLeft} remaining
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Find My Match button */}

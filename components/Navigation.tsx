@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import type { UsageStats } from '@/lib/usageStats'
 
 interface MeetingStats {
   requested: number
@@ -25,6 +26,7 @@ interface AuthUser {
   plan: string
   stats: MeetingStats
   connections: ConnectionStats
+  usage: UsageStats | null
 }
 
 const c = {
@@ -47,7 +49,7 @@ export default function Navigation() {
     const supabase = createClient()
 
     async function loadUser(userId: string, email?: string, fullName?: string) {
-      const [profileRes, meetingsRes, savedRes, likedRes, likedMeRes, viewedMeRes] = await Promise.all([
+      const [profileRes, meetingsRes, savedRes, likedRes, likedMeRes, viewedMeRes, usageRes] = await Promise.all([
         supabase.from('profiles').select('full_name, plan').eq('id', userId).maybeSingle(),
         supabase.from('video_meetings')
           .select('status, requester_id')
@@ -56,6 +58,7 @@ export default function Navigation() {
         supabase.from('profile_likes').select('liked_id').eq('liker_id', userId),
         supabase.from('profile_likes').select('liker_id').eq('liked_id', userId),
         supabase.from('photo_reveals').select('viewer_id').eq('viewed_id', userId),
+        fetch('/api/usage-stats').then(r => r.ok ? r.json() : null).catch(() => null),
       ])
 
       const profile = profileRes.data
@@ -84,6 +87,7 @@ export default function Navigation() {
         plan: profile?.plan || 'free',
         stats,
         connections,
+        usage: usageRes?.ok ? (usageRes.stats as UsageStats) : null,
       })
     }
 
@@ -178,6 +182,70 @@ export default function Navigation() {
                       {planLabel} Plan
                     </span>
                   </div>
+
+                  {/* Plan usage — likes, photo reveals, meetings, trial countdown */}
+                  {user.usage && (
+                    <div style={{ padding: '1rem 1.4rem', borderBottom: `1px solid ${c.border}` }}>
+                      <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: c.gold, margin: '0 0 0.75rem' }}>Plan Usage</p>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>
+                          ❤️ {user.usage.trialActive ? 'Trial Likes' : 'Likes this month'}
+                        </span>
+                        <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: user.usage.likesLeft === 0 ? '#f87171' : '#f9a8d4' }}>
+                          {user.usage.likesLeft} / {user.usage.likesTotal}
+                        </span>
+                      </div>
+
+                      {user.usage.trialActive && user.usage.revealsTotal > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>📸 Trial Photo Reveals</span>
+                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: user.usage.revealsLeft === 0 ? '#f87171' : '#7dd3fc' }}>
+                            {user.usage.revealsLeft} / {user.usage.revealsTotal}
+                          </span>
+                        </div>
+                      )}
+
+                      {user.usage.meetingsTotal > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim }}>
+                            🎥 {user.usage.trialActive ? 'Trial Meetings' : 'Meetings'}
+                          </span>
+                          <span style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 600, color: user.usage.meetingsLeft === 0 ? '#f87171' : '#4ade80' }}>
+                            {user.usage.meetingsLeft} remaining
+                          </span>
+                        </div>
+                      )}
+
+                      {user.usage.trialActive && user.usage.trialDaysLeft > 0 && (
+                        <div style={{ marginTop: '0.6rem', padding: '0.6rem 0.75rem', background: 'rgba(8,40,20,0.6)', border: '1px solid rgba(80,200,100,0.22)', borderRadius: '8px' }}>
+                          <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(100,210,120,0.85)', margin: 0 }}>
+                            ⏳ {user.usage.trialDaysLeft} day{user.usage.trialDaysLeft !== 1 ? 's' : ''} left in free trial
+                          </p>
+                          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.8rem', fontStyle: 'italic', color: 'rgba(100,210,120,0.5)', margin: '0.1rem 0 0' }}>
+                            ट्रायल में {user.usage.trialDaysLeft} दिन बाकी — बाद में पेड प्लान चुनें
+                          </p>
+                        </div>
+                      )}
+
+                      {!user.usage.trialActive && user.usage.likesTotal === 0 && (
+                        <div style={{ marginTop: '0.6rem', padding: '0.6rem 0.75rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <div>
+                            <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#f87171', margin: 0 }}>
+                              Free trial ended
+                            </p>
+                            <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.85rem', fontStyle: 'italic', color: 'rgba(248,113,113,0.6)', margin: '0.1rem 0 0' }}>
+                              आपका ट्रायल समाप्त हो गया — पेड प्लान में अपग्रेड करें
+                            </p>
+                          </div>
+                          <Link href="/pricing" onClick={() => setOpen(false)}
+                            style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#0d1f3c', background: 'linear-gradient(135deg, #e8c876, #c9a84c)', padding: '0.4rem 0.9rem', borderRadius: '6px', textDecoration: 'none', flexShrink: 0 }}>
+                            Upgrade →
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Meeting stats */}
                   <div style={{ padding: '1rem 1.4rem', borderBottom: `1px solid ${c.border}` }}>
