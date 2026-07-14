@@ -70,10 +70,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {formatDate(post.date)}
             </span>
           </div>
-          <h1 className="blog-post-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.75rem', lineHeight: 1.3 }}>
+          <h1 className="blog-post-h1" style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontWeight: 600, color: c.ivory, margin: '0 0 0.75rem', lineHeight: 1.3, overflowWrap: 'anywhere' }}>
             {post.title}
           </h1>
-          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.15rem', color: c.ivoryDim, lineHeight: 1.6 }}>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1.15rem', color: c.ivoryDim, lineHeight: 1.6, overflowWrap: 'anywhere' }}>
             {post.description}
           </p>
         </div>
@@ -81,15 +81,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <article>
           <ReactMarkdown
             components={{
-              h2: (p) => <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.4rem', fontWeight: 600, color: c.ivory, margin: '2rem 0 0.9rem' }} {...p} />,
-              h3: (p) => <h3 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.15rem', fontWeight: 600, color: c.ivory, margin: '1.75rem 0 0.75rem' }} {...p} />,
-              p: (p) => <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.15rem', color: '#d8d2c4', lineHeight: 1.8, margin: '0 0 1.1rem' }} {...p} />,
+              h2: (p) => <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.4rem', fontWeight: 600, color: c.ivory, margin: '2rem 0 0.9rem', overflowWrap: 'anywhere' }} {...p} />,
+              h3: (p) => <h3 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.15rem', fontWeight: 600, color: c.ivory, margin: '1.75rem 0 0.75rem', overflowWrap: 'anywhere' }} {...p} />,
+              p: (p) => <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.15rem', color: '#d8d2c4', lineHeight: 1.8, margin: '0 0 1.1rem', overflowWrap: 'anywhere' }} {...p} />,
               ul: (p) => <ul style={{ margin: '0 0 1.1rem', paddingLeft: '1.4rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }} {...p} />,
               ol: (p) => <ol style={{ margin: '0 0 1.1rem', paddingLeft: '1.4rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }} {...p} />,
-              li: (p) => <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.1rem', color: '#d8d2c4', lineHeight: 1.7 }} {...p} />,
+              li: (p) => <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.1rem', color: '#d8d2c4', lineHeight: 1.7, overflowWrap: 'anywhere' }} {...p} />,
               strong: (p) => <strong style={{ color: c.ivory, fontWeight: 700 }} {...p} />,
               em: (p) => <em style={{ color: c.gold, fontStyle: 'italic' }} {...p} />,
-              blockquote: (p) => <blockquote style={{ margin: '0 0 1.1rem', paddingLeft: '1rem', borderLeft: `2px solid ${c.border}`, fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.ivoryDim }} {...p} />,
+              a: (p) => <a style={{ color: c.gold, textDecoration: 'underline', overflowWrap: 'anywhere' }} target={p.href?.startsWith('http') ? '_blank' : undefined} rel={p.href?.startsWith('http') ? 'noopener noreferrer' : undefined} {...p} />,
+              blockquote: (p) => <blockquote style={{ margin: '0 0 1.1rem', paddingLeft: '1rem', borderLeft: `2px solid ${c.border}`, fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', color: c.ivoryDim, overflowWrap: 'anywhere' }} {...p} />,
             }}
           >
             {post.body}

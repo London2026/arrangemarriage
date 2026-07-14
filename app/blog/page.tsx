@@ -62,10 +62,10 @@ export default function BlogIndexPage() {
                     {formatDate(post.date)}
                   </span>
                 </div>
-                <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.35rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem', lineHeight: 1.35 }}>
+                <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.35rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem', lineHeight: 1.35, overflowWrap: 'anywhere' }}>
                   {post.title}
                 </h2>
-                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim, lineHeight: 1.6, margin: '0 0 0.75rem' }}>
+                <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.05rem', color: c.ivoryDim, lineHeight: 1.6, margin: '0 0 0.75rem', overflowWrap: 'anywhere' }}>
                   {post.description}
                 </p>
                 <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: c.gold }}>
