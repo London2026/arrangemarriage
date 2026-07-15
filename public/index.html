@@ -2429,7 +2429,28 @@
 </head>
 <body>
 
+<div id="cursor-glow" aria-hidden style="position:fixed;inset:0;pointer-events:none;z-index:1;"></div>
+<script>
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  if (reduceMotion || coarsePointer) return;
 
+  var el = document.getElementById('cursor-glow');
+  var frame = null, x = 0, y = 0;
+
+  function paint() {
+    el.style.background = 'radial-gradient(600px circle at ' + x + 'px ' + y + 'px, rgba(154,112,32,0.08), transparent 70%)';
+    frame = null;
+  }
+
+  window.addEventListener('mousemove', function (e) {
+    x = e.clientX; y = e.clientY;
+    if (!frame) frame = requestAnimationFrame(paint);
+  });
+  document.addEventListener('mouseleave', function () { el.style.background = 'none'; });
+})();
+</script>
 
 <!-- NAV -->
 <nav>

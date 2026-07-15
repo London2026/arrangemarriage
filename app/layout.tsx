@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+import CursorGlow from '@/components/CursorGlow'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({
@@ -45,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} ${inter.className} antialiased bg-slate-950 text-white min-h-screen`}>
+        <CursorGlow />
         {children}
       </body>
     </html>
