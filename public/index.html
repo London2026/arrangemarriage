@@ -2429,7 +2429,7 @@
 </head>
 <body>
 
-<div id="cursor-glow" aria-hidden style="position:fixed;inset:0;pointer-events:none;z-index:1;"></div>
+<div id="cursor-glow" aria-hidden style="position:fixed;inset:0;pointer-events:none;z-index:1;mix-blend-mode:screen;"></div>
 <script>
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2439,7 +2439,7 @@
   var frame = null, x = window.innerWidth / 2, y = window.innerHeight / 3;
 
   function paint() {
-    el.style.background = 'radial-gradient(450px circle at ' + x + 'px ' + y + 'px, rgba(255,250,235,0.55) 0%, rgba(212,168,53,0.2) 25%, transparent 55%)';
+    el.style.background = 'radial-gradient(360px circle at ' + x + 'px ' + y + 'px, rgba(255,255,255,0.9) 0%, rgba(212,168,53,0.55) 30%, transparent 70%)';
     frame = null;
   }
 
