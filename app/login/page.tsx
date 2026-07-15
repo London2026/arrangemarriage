@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 const c = {
@@ -47,6 +47,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const idleLogout = searchParams.get('reason') === 'idle'
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
@@ -161,6 +163,11 @@ export default function LoginPage() {
           <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '1rem', color: c.sepia, margin: 0, fontStyle: 'italic' }}>Sign in to continue your journey</p>
         </div>
         <div className="auth-card-body">
+          {idleLogout && (
+            <div style={{ background: 'rgba(139,105,20,0.08)', border: '1px solid rgba(139,105,20,0.25)', borderRadius: '4px', padding: '0.65rem 0.9rem', marginBottom: '1.1rem', color: c.gold, fontSize: '0.9rem', fontFamily: '"Cormorant Garamond",serif', textAlign: 'center' }}>
+              You were signed out after 30 minutes of inactivity. Please sign in again.
+            </div>
+          )}
           <form onSubmit={sendCode}>
             <div style={{ marginBottom: '1.25rem' }}>
               <label className="auth-lbl">Email Address</label>
