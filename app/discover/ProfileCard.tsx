@@ -313,7 +313,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                 <button
                   onClick={handleToggleSave}
                   title={saved ? 'Remove from saved' : 'Save profile'}
-                  style={{ background: 'none', border: 'none', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : 'rgba(201,168,76,0.28)' }}
+                  style={{ background: saved ? 'rgba(201,168,76,0.12)' : 'none', border: `1px solid ${saved ? c.goldLight : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : c.ivoryDim }}
                 >
                   {saved ? '★' : '☆'}
                 </button>
@@ -323,7 +323,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                   <button
                     onClick={() => setShowReport(v => !v)}
                     title="Report this profile"
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: showReport ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
+                    style={{ background: showReport ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${showReport ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: 'pointer', color: showReport ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
                   >
                     ⚑
                   </button>
@@ -332,7 +332,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                   onClick={() => setBlockStep('confirm')}
                   title="Block this member"
                   disabled={blockStep === 'loading'}
-                  style={{ background: 'none', border: 'none', cursor: blockStep === 'loading' ? 'default' : 'pointer', color: blockStep !== 'idle' ? '#f87171' : 'rgba(201,168,76,0.3)', fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s', opacity: blockStep === 'loading' ? 0.5 : 1 }}
+                  style={{ background: blockStep !== 'idle' ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${blockStep !== 'idle' ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: blockStep === 'loading' ? 'default' : 'pointer', color: blockStep !== 'idle' ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s', opacity: blockStep === 'loading' ? 0.5 : 1 }}
                 >
                   🚫
                 </button>
