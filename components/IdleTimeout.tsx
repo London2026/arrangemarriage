@@ -97,8 +97,8 @@ export default function IdleTimeout() {
   if (!warning) return null
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(7,17,31,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-      <div style={{ background: c.navy, border: `1px solid ${c.border}`, borderRadius: '14px', padding: '2rem', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(7,17,31,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <div style={{ background: c.navy, border: `1px solid ${c.border}`, borderRadius: '14px', padding: 'clamp(1.25rem, 5vw, 2rem)', maxWidth: '380px', width: '100%', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.6)' }}>
         <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⏳</div>
         <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.3rem', fontWeight: 600, color: c.ivory, margin: '0 0 0.5rem' }}>
           Still there?
