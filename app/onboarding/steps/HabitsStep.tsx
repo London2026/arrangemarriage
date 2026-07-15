@@ -18,7 +18,7 @@ function Habit({ lbl, desc, k, val, onChange }: { lbl: string; desc: string; k: 
   return (
     <div>
       <label style={labelStyle}>{lbl}</label>
-      <p style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.sepia, margin: '0 0 0.4rem', lineHeight: 1.4, minHeight: '2.6rem' }}>{desc}</p>
+      <p className="habit-desc" style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.sepia, margin: '0 0 0.4rem', lineHeight: 1.4 }}>{desc}</p>
       <select value={val} onChange={e => onChange(k, e.target.value)} style={inpStyle} onFocus={focus} onBlur={blur}>
         <option value="">Select an answer</option>
         {OPTS.map(o => <option key={o} value={o}>{o}</option>)}
@@ -30,6 +30,10 @@ function Habit({ lbl, desc, k, val, onChange }: { lbl: string; desc: string; k: 
 export default function HabitsStep({ data, onChange }: Props) {
   return (
     <div>
+      <style>{`
+        .habit-desc { min-height: 2.6rem; }
+        @media (max-width: 640px) { .habit-desc { min-height: 0; } }
+      `}</style>
       <h2 className="ob-step-h2" style={{ color: c.navy, margin: '0 0 0.25rem' }}>Lifestyle & Habits</h2>
       <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '1rem', color: c.sepia, margin: '0 0 1rem' }}>
         Shared values make for stronger partnerships
