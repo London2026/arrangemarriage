@@ -350,6 +350,7 @@ export default async function ProfilePage() {
             <Row label="Father's Occupation" value={profile.father_occupation} />
             <Row label="Mother's Occupation" value={profile.mother_occupation} />
             <Row label="Housing"            value={profile.housing} />
+            <Row label="Own Farm Land"      value={profile.own_farm_land} />
           </Section>
 
           {/* Lifestyle */}

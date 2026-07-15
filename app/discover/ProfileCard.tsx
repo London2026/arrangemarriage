@@ -35,6 +35,7 @@ export interface ProfileData {
   father_occupation?: string | null
   mother_occupation?: string | null
   housing?: string | null
+  own_farm_land?: string | null
   disability?: string | null
   food_habits?: string | null
   smoking?: string | null
@@ -485,6 +486,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         <Row label="Father's Occupation" value={profile.father_occupation} />
         <Row label="Mother's Occupation" value={profile.mother_occupation} />
         <Row label="Housing" value={profile.housing} />
+        <Row label="Own Farm Land" value={profile.own_farm_land} />
       </div>
 
       {/* ── Lifestyle ── */}
