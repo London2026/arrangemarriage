@@ -92,9 +92,14 @@ export default function LoginPage() {
     return (
       <div className="auth-page">
         <style>{STYLE}</style>
-        <div style={{ background:'#fff', borderRadius:14, padding:'18px 32px', display:'inline-block', boxShadow:'0 2px 18px rgba(13,31,60,0.09)', marginBottom:'1.25rem' }}>
-          <img src="/arrangemarriage-logo.png" alt="Arrange Marriage" style={{ width:'auto', height:175, maxWidth:380, objectFit:'contain', display:'block' }} />
-        </div>
+        <Link href="/" style={{ fontFamily:'Raleway, sans-serif', fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', color:c.sepia, textDecoration:'underline', marginBottom:'0.85rem' }}>
+          ← Home
+        </Link>
+        <Link href="/" style={{ display:'inline-block', marginBottom:'1.25rem' }}>
+          <div style={{ background:'#fff', borderRadius:14, padding:'18px 32px', display:'inline-block', boxShadow:'0 2px 18px rgba(13,31,60,0.09)', cursor:'pointer' }}>
+            <img src="/arrangemarriage-logo.png" alt="Go to home page" style={{ width:'auto', height:175, maxWidth:380, objectFit:'contain', display:'block' }} />
+          </div>
+        </Link>
         <div className="auth-card">
           <div className="auth-card-head">
             <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>📬</div>
@@ -142,6 +147,9 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <style>{STYLE}</style>
+      <Link href="/" style={{ fontFamily:'Raleway, sans-serif', fontSize:'0.72rem', fontWeight:600, letterSpacing:'0.1em', textTransform:'uppercase', color:c.sepia, textDecoration:'underline', marginBottom:'0.85rem' }}>
+        ← Home
+      </Link>
       <Link href="/" style={{ display:'inline-block', marginBottom:'1.25rem' }}>
         <div style={{ background:'#fff', borderRadius:14, padding:'18px 32px', display:'inline-block', boxShadow:'0 2px 18px rgba(13,31,60,0.09)', cursor:'pointer' }}>
           <img src="/arrangemarriage-logo.png" alt="Go to home page" style={{ width:'auto', height:175, maxWidth:380, objectFit:'contain', display:'block' }} />
