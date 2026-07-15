@@ -18,7 +18,7 @@ function Habit({ lbl, desc, k, val, onChange }: { lbl: string; desc: string; k: 
   return (
     <div>
       <label style={labelStyle}>{lbl}</label>
-      <p style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.sepia, margin: '0 0 0.4rem', lineHeight: 1.4 }}>{desc}</p>
+      <p style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontStyle: 'italic', fontSize: '0.9rem', color: c.sepia, margin: '0 0 0.4rem', lineHeight: 1.4, minHeight: '2.6rem' }}>{desc}</p>
       <select value={val} onChange={e => onChange(k, e.target.value)} style={inpStyle} onFocus={focus} onBlur={blur}>
         <option value="">Select an answer</option>
         {OPTS.map(o => <option key={o} value={o}>{o}</option>)}
