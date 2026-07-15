@@ -137,7 +137,7 @@ function StarRating({ meetingId, alreadyRated }: { meetingId: string; alreadyRat
             onMouseEnter={() => setHovered(star)}
             onMouseLeave={() => setHovered(0)}
             disabled={saving}
-            style={{ background: 'none', border: 'none', cursor: saving ? 'default' : 'pointer', padding: '0.1rem', fontSize: '1.6rem', lineHeight: 1, color: star <= (hovered || selected) ? c.goldLight : 'rgba(201,168,76,0.25)', transition: 'color 0.1s' }}
+            style={{ background: 'none', border: 'none', cursor: saving ? 'default' : 'pointer', padding: '0.1rem', fontSize: '1.6rem', lineHeight: 1, color: star <= (hovered || selected) ? c.goldLight : c.ivoryDim, transition: 'color 0.1s' }}
           >
             ★
           </button>
