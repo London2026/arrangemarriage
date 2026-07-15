@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { hasCountryCode } from '@/lib/validatePhone'
 import AboutStep from './steps/AboutStep'
 import HabitsStep from './steps/HabitsStep'
 import BackgroundStep from './steps/BackgroundStep'
@@ -277,6 +278,7 @@ function OnboardingPage() {
       if (!draft.city || !draft.country) return 'Please enter your city and country.'
     }
     if (step === 0 && !draft.phone.trim()) return 'Mobile number is required.'
+    if (step === 0 && !hasCountryCode(draft.phone)) return 'Please include your country code (e.g. +91 98765 43210).'
     if (step === 2 && (!draft.religion || !draft.motherTongue || !draft.education || !draft.occupation))
       return 'Please complete religion, mother tongue, education and occupation.'
     if (step === 3) {
