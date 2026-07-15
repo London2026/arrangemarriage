@@ -56,7 +56,7 @@ export default function SignupPage() {
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim()) { setError('Please enter your name.'); return }
+    if (!name.trim()) { setError('Please enter your first name.'); return }
     if (!email.trim()) { setError('Please enter your email address.'); return }
     setLoading(true); setError('')
     const supabase = createClient()
@@ -159,8 +159,8 @@ export default function SignupPage() {
         <div className="auth-card-body">
           <form onSubmit={sendCode}>
             <div style={{ marginBottom: '1.1rem' }}>
-              <label className="auth-lbl">Your Name</label>
-              <input type="text" value={name} required placeholder="First and last name" autoFocus
+              <label className="auth-lbl">First Name</label>
+              <input type="text" value={name} required placeholder="e.g. Priya" autoFocus
                 onChange={e => { setName(e.target.value); setError('') }}
                 className="auth-inp"
                 onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
