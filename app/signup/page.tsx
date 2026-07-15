@@ -107,7 +107,6 @@ export default function SignupPage() {
         </Link>
         <div className="auth-card">
           <div className="auth-card-head">
-            <div style={{ fontSize: '2rem', marginBottom: '0.4rem' }}>📬</div>
             <h2 style={{ fontFamily: 'var(--font-playfair,"Playfair Display",serif)', fontSize: '1.5rem', fontWeight: 600, color: c.navy, margin: '0 0 0.2rem' }}>Enter your code</h2>
             <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '0.95rem', fontStyle: 'italic', color: c.sepia, margin: 0 }}>
               We sent a 8-digit code to <strong style={{ color: c.navy, fontStyle: 'normal' }}>{email}</strong>
