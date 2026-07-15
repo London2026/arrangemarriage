@@ -17,7 +17,7 @@ export default function CursorGlow() {
     let y = window.innerHeight / 3
 
     function paint() {
-      if (el) el.style.background = `radial-gradient(360px circle at ${x}px ${y}px, rgba(255,255,255,0.9) 0%, rgba(232,200,118,0.55) 30%, transparent 70%)`
+      if (el) el.style.background = `radial-gradient(420px circle at ${x}px ${y}px, rgba(255,255,255,1) 0%, rgba(255,221,120,0.85) 15%, rgba(255,183,51,0.35) 40%, transparent 65%)`
       frame = 0
     }
 
@@ -41,5 +41,5 @@ export default function CursorGlow() {
     }
   }, [])
 
-  return <div ref={ref} aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1, mixBlendMode: 'screen' }} />
+  return <div ref={ref} aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 40, mixBlendMode: 'screen' }} />
 }
