@@ -114,6 +114,9 @@ export default function SignupPage() {
             </p>
           </div>
           <div className="auth-card-body">
+            <div style={{ background: 'rgba(139,105,20,0.08)', border: '1px solid rgba(139,105,20,0.25)', borderRadius: '4px', padding: '0.65rem 0.9rem', marginBottom: '1.25rem', color: c.gold, fontSize: '0.85rem', fontFamily: 'Raleway, sans-serif', fontWeight: 600, textAlign: 'center' }}>
+              📥 Don&apos;t see it? Please check your Spam / Junk folder too.
+            </div>
             <form onSubmit={verifyCode}>
               <div style={{ marginBottom: '1.25rem' }}>
                 <label className="auth-lbl">Verification Code</label>
