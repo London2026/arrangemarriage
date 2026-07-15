@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { hasFirstAndLastName } from '@/lib/maskName'
 
 const c = {
   cream: '#f4f1eb', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -56,7 +57,7 @@ export default function SignupPage() {
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
-    if (!name.trim()) { setError('Please enter your first name.'); return }
+    if (!hasFirstAndLastName(name)) { setError('Please enter both your first and last name.'); return }
     if (!email.trim()) { setError('Please enter your email address.'); return }
     setLoading(true); setError('')
     const supabase = createClient()
@@ -159,8 +160,8 @@ export default function SignupPage() {
         <div className="auth-card-body">
           <form onSubmit={sendCode}>
             <div style={{ marginBottom: '1.1rem' }}>
-              <label className="auth-lbl">First Name</label>
-              <input type="text" value={name} required placeholder="e.g. Priya" autoFocus
+              <label className="auth-lbl">Your Name</label>
+              <input type="text" value={name} required placeholder="First and last name" autoFocus
                 onChange={e => { setName(e.target.value); setError('') }}
                 className="auth-inp"
                 onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
