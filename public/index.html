@@ -2433,17 +2433,17 @@
 <script>
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-  if (reduceMotion || coarsePointer) return;
+  if (reduceMotion) return;
 
   var el = document.getElementById('cursor-glow');
-  var frame = null, x = 0, y = 0;
+  var frame = null, x = window.innerWidth / 2, y = window.innerHeight / 3;
 
   function paint() {
-    el.style.background = 'radial-gradient(600px circle at ' + x + 'px ' + y + 'px, rgba(154,112,32,0.08), transparent 70%)';
+    el.style.background = 'radial-gradient(650px circle at ' + x + 'px ' + y + 'px, rgba(154,112,32,0.20) 0%, rgba(154,112,32,0.09) 35%, transparent 70%)';
     frame = null;
   }
 
+  paint();
   window.addEventListener('mousemove', function (e) {
     x = e.clientX; y = e.clientY;
     if (!frame) frame = requestAnimationFrame(paint);

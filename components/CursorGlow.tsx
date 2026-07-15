@@ -2,23 +2,22 @@
 
 import { useEffect, useRef } from 'react'
 
-/** A soft gold light that follows the cursor. Skipped on touch devices and for reduced-motion users. */
+/** A soft gold light that follows the cursor. Skipped for reduced-motion users. */
 export default function CursorGlow() {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (window.matchMedia('(pointer: coarse)').matches) return
 
     const el = ref.current
     if (!el) return
 
     let frame = 0
-    let x = 0
-    let y = 0
+    let x = window.innerWidth / 2
+    let y = window.innerHeight / 3
 
     function paint() {
-      if (el) el.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(201,168,76,0.10), transparent 70%)`
+      if (el) el.style.background = `radial-gradient(650px circle at ${x}px ${y}px, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.10) 35%, transparent 70%)`
       frame = 0
     }
 
@@ -32,6 +31,7 @@ export default function CursorGlow() {
       if (el) el.style.background = 'none'
     }
 
+    paint()
     window.addEventListener('mousemove', handleMove)
     document.addEventListener('mouseleave', handleLeave)
     return () => {
