@@ -17,7 +17,7 @@ export default function CursorGlow() {
     let y = window.innerHeight / 3
 
     function paint() {
-      if (el) el.style.background = `radial-gradient(650px circle at ${x}px ${y}px, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.10) 35%, transparent 70%)`
+      if (el) el.style.background = `radial-gradient(450px circle at ${x}px ${y}px, rgba(255,246,224,0.5) 0%, rgba(232,200,118,0.18) 25%, transparent 55%)`
       frame = 0
     }
 
