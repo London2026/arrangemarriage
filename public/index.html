@@ -2433,7 +2433,8 @@
 <script>
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduceMotion) return;
+  var isDesktop = window.matchMedia('(min-width: 601px)').matches;
+  if (reduceMotion || !isDesktop) return;
 
   var el = document.getElementById('cursor-glow');
   var frame = null, x = window.innerWidth / 2, y = window.innerHeight / 3;
