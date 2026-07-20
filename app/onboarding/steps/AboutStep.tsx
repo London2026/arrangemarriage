@@ -17,11 +17,12 @@ const RASHI = [
   'Dhanu (Sagittarius)', 'Makara (Capricorn)', 'Kumbha (Aquarius)', 'Meena (Pisces)',
   "Don't know",
 ]
+const SEXUAL_ORIENTATIONS = ['Straight', 'Gay', 'Lesbian', 'Bisexual', 'Other', 'Prefer not to say']
 
 interface Props {
   data: {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
-    height: string; weight: string; rashi: string
+    height: string; weight: string; rashi: string; sexualOrientation: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
     housing: string; ownFarmLand: string; disability: string; foodHabits: string; hobby: string
   }
@@ -101,10 +102,11 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Weight" k="weight" val={data.weight} ph="e.g. 70 kg" onChange={onChange} />
       </Row>
 
-      {/* Rashi / Zodiac sign */}
-      <div style={field}>
+      {/* Rashi / Zodiac sign + Sexual Orientation */}
+      <Row>
         <Sel lbl="Rashi / Zodiac Sign" k="rashi" val={data.rashi} opts={RASHI} ph="Select Rashi" onChange={onChange} />
-      </div>
+        <Sel lbl="Sexual Orientation" k="sexualOrientation" val={data.sexualOrientation} opts={SEXUAL_ORIENTATIONS} ph="Select" onChange={onChange} />
+      </Row>
 
       {/* City + Country */}
       <Row>

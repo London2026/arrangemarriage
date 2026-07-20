@@ -325,6 +325,7 @@ export default async function ProfilePage() {
             <Row label="Height"          value={profile.height} />
             <Row label="Weight"          value={profile.weight} />
             <Row label="Rashi / Zodiac Sign" value={profile.rashi} />
+            <Row label="Sexual Orientation" value={profile.sexual_orientation} />
             <Row label="Marital Status"  value={profile.marital_status} />
             <Row label="Children"        value={profile.has_kids} />
             <Row label="Disability"      value={profile.disability} />

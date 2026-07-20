@@ -30,6 +30,7 @@ export interface ProfileData {
   height?: string | null
   weight?: string | null
   rashi?: string | null
+  sexual_orientation?: string | null
   brothers?: string | null
   sisters?: string | null
   father_occupation?: string | null
@@ -461,6 +462,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         <Row label="Height" value={profile.height} />
         <Row label="Weight" value={profile.weight} />
         <Row label="Rashi / Zodiac Sign" value={profile.rashi} />
+        <Row label="Sexual Orientation" value={profile.sexual_orientation} />
         <Row label="Marital Status" value={profile.marital_status} />
         <Row label="Children" value={profile.has_kids} />
         <Row label="Disability" value={profile.disability} />
