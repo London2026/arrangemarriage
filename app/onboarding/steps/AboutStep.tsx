@@ -18,11 +18,12 @@ const RASHI = [
   "Don't know",
 ]
 const SEXUAL_ORIENTATIONS = ['Straight', 'Gay', 'Lesbian', 'Bisexual', 'Other', 'Prefer not to say']
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', "Don't know"]
 
 interface Props {
   data: {
     firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
-    height: string; weight: string; rashi: string; sexualOrientation: string
+    height: string; weight: string; rashi: string; sexualOrientation: string; bloodGroup: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
     housing: string; ownFarmLand: string; disability: string; foodHabits: string; hobby: string
   }
@@ -102,11 +103,16 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Weight" k="weight" val={data.weight} ph="e.g. 70 kg" onChange={onChange} />
       </Row>
 
-      {/* Rashi / Zodiac sign + Sexual Orientation */}
+      {/* Blood Group + Rashi */}
       <Row>
+        <Sel lbl="Blood Group" k="bloodGroup" val={data.bloodGroup} opts={BLOOD_GROUPS} ph="Select blood group" onChange={onChange} />
         <Sel lbl="Rashi / Zodiac Sign" k="rashi" val={data.rashi} opts={RASHI} ph="Select Rashi" onChange={onChange} />
-        <Sel lbl="Sexual Orientation" k="sexualOrientation" val={data.sexualOrientation} opts={SEXUAL_ORIENTATIONS} ph="Select" onChange={onChange} />
       </Row>
+
+      {/* Sexual Orientation */}
+      <div style={field}>
+        <Sel lbl="Sexual Orientation" k="sexualOrientation" val={data.sexualOrientation} opts={SEXUAL_ORIENTATIONS} ph="Select" onChange={onChange} />
+      </div>
 
       {/* City + Country */}
       <Row>

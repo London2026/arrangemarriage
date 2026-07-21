@@ -324,6 +324,7 @@ export default async function ProfilePage() {
             <SecHead icon="👤" title="Personal Details" />
             <Row label="Height"          value={profile.height} />
             <Row label="Weight"          value={profile.weight} />
+            <Row label="Blood Group"     value={profile.blood_group} />
             <Row label="Rashi / Zodiac Sign" value={profile.rashi} />
             <Row label="Sexual Orientation" value={profile.sexual_orientation} />
             <Row label="Marital Status"  value={profile.marital_status} />

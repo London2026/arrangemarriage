@@ -31,6 +31,7 @@ export interface ProfileData {
   weight?: string | null
   rashi?: string | null
   sexual_orientation?: string | null
+  blood_group?: string | null
   brothers?: string | null
   sisters?: string | null
   father_occupation?: string | null
@@ -461,6 +462,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         <Row label="Mother Tongue" value={profile.mother_tongue} />
         <Row label="Height" value={profile.height} />
         <Row label="Weight" value={profile.weight} />
+        <Row label="Blood Group" value={profile.blood_group} />
         <Row label="Rashi / Zodiac Sign" value={profile.rashi} />
         <Row label="Sexual Orientation" value={profile.sexual_orientation} />
         <Row label="Marital Status" value={profile.marital_status} />
