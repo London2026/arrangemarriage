@@ -322,6 +322,7 @@ export default async function ProfilePage() {
           {/* Personal Details */}
           <Section>
             <SecHead icon="👤" title="Personal Details" />
+            <Row label="Birth Year"      value={profile.birth_year} />
             <Row label="Height"          value={profile.height} />
             <Row label="Weight"          value={profile.weight} />
             <Row label="Blood Group"     value={profile.blood_group} />

@@ -10,6 +10,7 @@ const REPORT_REASONS = ['Fake profile', 'Inappropriate content', 'Harassment or 
 export interface ProfileData {
   id: string
   full_name: string
+  birth_year?: number | null
   age: number
   gender: string
   city: string
@@ -107,8 +108,8 @@ function SectionHead({ icon, title }: { icon: string; title: string }) {
 }
 
 // Key-value row
-function Row({ label, value }: { label: string; value: string | null | undefined }) {
-  if (!value) return null
+function Row({ label, value }: { label: string; value: string | number | null | undefined }) {
+  if (!value && value !== 0) return null
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.9rem' }}>
       <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.02em', color: c.ivoryDim, minWidth: '185px', flexShrink: 0 }}>{label}</span>
@@ -459,6 +460,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
       {/* ── Personal Details ── */}
       <div className="pc-section">
         <SectionHead icon="👤" title="Personal Details" />
+        <Row label="Birth Year" value={profile.birth_year} />
         <Row label="Mother Tongue" value={profile.mother_tongue} />
         <Row label="Height" value={profile.height} />
         <Row label="Weight" value={profile.weight} />

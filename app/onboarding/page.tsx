@@ -24,7 +24,7 @@ const c = {
 }
 
 interface Draft {
-  firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
+  firstName: string; lastName: string; birthYear: string; age: string; gender: string; city: string; country: string; phone: string
   height: string; weight: string; rashi: string; sexualOrientation: string; bloodGroup: string
   brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
   housing: string; ownFarmLand: string; disability: string; foodHabits: string; smoking: string; alcohol: string; drugs: string; betting: string
@@ -39,7 +39,7 @@ interface Draft {
 }
 
 const EMPTY: Draft = {
-  firstName: '', lastName: '', age: '', gender: '', city: '', country: '', phone: '',
+  firstName: '', lastName: '', birthYear: '', age: '', gender: '', city: '', country: '', phone: '',
   height: '', weight: '', rashi: '', sexualOrientation: '', bloodGroup: '',
   brothers: '', sisters: '', fatherOccupation: '', motherOccupation: '',
   housing: '', ownFarmLand: '', disability: '', foodHabits: '', smoking: '', alcohol: '', drugs: '', betting: '',
@@ -131,6 +131,7 @@ function OnboardingPage() {
         setDraft({
           firstName: nameParts[0] ?? '',
           lastName: nameParts.slice(1).join(' ') ?? '',
+          birthYear: profile.birth_year ? String(profile.birth_year) : '',
           age: profile.age ? String(profile.age) : '',
           gender: profile.gender ?? '',
           city: profile.city ?? '',
@@ -276,6 +277,7 @@ function OnboardingPage() {
     if (step === 0) {
       if (!draft.firstName.trim() || !draft.lastName.trim()) return 'Please enter your first and last name.'
       if (!draft.age || parseInt(draft.age) < 18) return 'Please enter a valid age (18+).'
+      if (draft.birthYear && (parseInt(draft.birthYear) < 1930 || parseInt(draft.birthYear) > new Date().getFullYear())) return 'Please enter a valid birth year.'
       if (!draft.gender) return 'Please select your gender.'
       if (!draft.city || !draft.country) return 'Please enter your city and country.'
     }
@@ -359,6 +361,7 @@ function OnboardingPage() {
       const update: Record<string, unknown> = {
         id: userId,
         full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim(),
+        birth_year: draft.birthYear ? parseInt(draft.birthYear) : null,
         age: parseInt(draft.age), gender: draft.gender,
         city: draft.city, country: draft.country, religion: draft.religion,
         caste: draft.caste || null,
@@ -450,6 +453,7 @@ function OnboardingPage() {
     const { error: saveErr } = await supabase.from('profiles').upsert({
       id: userId,
       full_name: (draft.firstName.trim() + ' ' + draft.lastName.trim()).trim() || null,
+      birth_year: draft.birthYear ? parseInt(draft.birthYear) : null,
       age: draft.age ? parseInt(draft.age) : null,
       gender: draft.gender || null, city: draft.city || null, country: draft.country || null,
       phone: draft.phone.trim() || null,
@@ -601,7 +605,7 @@ function OnboardingPage() {
             exit={{ opacity: 0, x: -28 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
           >
-          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, sexualOrientation: draft.sexualOrientation, bloodGroup: draft.bloodGroup, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, ownFarmLand: draft.ownFarmLand, disability: draft.disability, foodHabits: draft.foodHabits, hobby: draft.hobby }} onChange={change} />}
+          {step === 0 && <AboutStep data={{ firstName: draft.firstName, lastName: draft.lastName, birthYear: draft.birthYear, age: draft.age, gender: draft.gender, city: draft.city, country: draft.country, phone: draft.phone, height: draft.height, weight: draft.weight, rashi: draft.rashi, sexualOrientation: draft.sexualOrientation, bloodGroup: draft.bloodGroup, brothers: draft.brothers, sisters: draft.sisters, fatherOccupation: draft.fatherOccupation, motherOccupation: draft.motherOccupation, housing: draft.housing, ownFarmLand: draft.ownFarmLand, disability: draft.disability, foodHabits: draft.foodHabits, hobby: draft.hobby }} onChange={change} />}
           {step === 1 && <HabitsStep data={{ smoking: draft.smoking, alcohol: draft.alcohol, drugs: draft.drugs, betting: draft.betting }} onChange={change} />}
           {step === 2 && <BackgroundStep data={{ religion: draft.religion, caste: draft.caste, motherTongue: draft.motherTongue, education: draft.education, universityName: draft.universityName, educationSubject: draft.educationSubject, otherQualifications: draft.otherQualifications, occupation: draft.occupation, occupationCity: draft.occupationCity, annualSalary: draft.annualSalary, maritalStatus: draft.maritalStatus, hasKids: draft.hasKids }} onChange={change} />}
           {step === 3 && <PreferencesStep data={{ prefGender: draft.prefGender, prefAgeMin: draft.prefAgeMin, prefAgeMax: draft.prefAgeMax, prefLocation: draft.prefLocation, prefReligion: draft.prefReligion, prefCaste: draft.prefCaste, prefEducation: draft.prefEducation, prefHeight: draft.prefHeight, prefCooking: draft.prefCooking, prefOther: draft.prefOther }} onChange={change} />}

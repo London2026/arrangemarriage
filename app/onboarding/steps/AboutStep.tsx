@@ -22,7 +22,7 @@ const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', "Don't k
 
 interface Props {
   data: {
-    firstName: string; lastName: string; age: string; gender: string; city: string; country: string; phone: string
+    firstName: string; lastName: string; birthYear: string; age: string; gender: string; city: string; country: string; phone: string
     height: string; weight: string; rashi: string; sexualOrientation: string; bloodGroup: string
     brothers: string; sisters: string; fatherOccupation: string; motherOccupation: string
     housing: string; ownFarmLand: string; disability: string; foodHabits: string; hobby: string
@@ -79,6 +79,14 @@ export default function AboutStep({ data, onChange }: Props) {
             Others see first name + initial only
           </p>
         </div>
+      </div>
+
+      {/* Birth Year */}
+      <div style={field}>
+        <Inp lbl="Birth Year" k="birthYear" val={data.birthYear} ph="e.g. 1995" type="number" onChange={onChange} />
+        <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', color: c.sepia, margin: '0.3rem 0 0', letterSpacing: '0.05em' }}>
+          We only ask for your birth year, not your full date of birth
+        </p>
       </div>
 
       {/* Age + Gender */}
