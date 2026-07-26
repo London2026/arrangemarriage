@@ -599,10 +599,12 @@ export default function DiscoverClient({
             exit={{ opacity: 0, scale: 0.97, y: 10 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
             style={{ position: 'relative', width: '100%', maxWidth: '820px', maxHeight: '93vh', overflowY: 'auto', borderRadius: '16px' }}>
-            <button onClick={() => setSelected(null)}
-              style={{ position: 'sticky', top: '0.75rem', float: 'right', marginRight: '0.75rem', zIndex: 10, width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,26,53,0.9)', border: `1px solid ${c.border}`, color: c.ivoryDim, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              ✕
-            </button>
+            <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'flex-end', padding: '0.75rem 0.75rem 0', pointerEvents: 'none' }}>
+              <button onClick={() => setSelected(null)}
+                style={{ pointerEvents: 'auto', width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(14,26,53,0.9)', border: `1px solid ${c.border}`, color: c.ivoryDim, fontSize: '1.1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                ✕
+              </button>
+            </div>
             {ownProfile && selected.id === ownProfile.id && (
               <div style={{ padding: '0.75rem 1.25rem', background: 'rgba(74,222,128,0.08)', borderBottom: '1px solid rgba(74,222,128,0.2)', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600, color: '#4ade80', letterSpacing: '0.06em' }}>
                 👤 This is your profile — exactly as other members see it

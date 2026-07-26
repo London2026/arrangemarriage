@@ -270,6 +270,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         .pc-id { font-size: 1rem; }
         .pc-section { padding: 1.5rem 2rem; border-top: 1px solid rgba(201,168,76,0.07); }
         .pc-actions { padding: 1.5rem 2rem; }
+        .pc-action-row { display: flex; gap: 0.4rem; justify-content: flex-end; margin-top: 0.6rem; }
         @media (max-width: 600px) {
           .pc-header { padding: 1.2rem 1.2rem 1rem; }
           .pc-name { font-size: 1.5rem !important; }
@@ -278,6 +279,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
           .pc-id { font-size: 0.75rem !important; }
           .pc-section { padding: 1.1rem 1.2rem; }
           .pc-actions { padding: 1.1rem 1.2rem; }
+          .pc-action-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
         }
         @media (max-width: 400px) {
           .pc-row-label { min-width: 130px !important; }
@@ -307,48 +309,49 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                 {tag}
               </span>
             ))}
-            {!isOwnProfile && (
-              <>
-                {/* Like button — gateway to video meetings */}
-                <button
-                  onClick={handleToggleLike}
-                  title={isLiked ? 'Unlike this profile' : likesLeft === 0 ? 'No likes remaining this month' : 'Like this profile to unlock video meetings'}
-                  disabled={likingToggle}
-                  style={{ background: isLiked ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${isLiked ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.18)'}`, borderRadius: '8px', cursor: likingToggle ? 'default' : 'pointer', fontSize: '1.1rem', padding: '0.5rem 0.7rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', transition: 'all 0.15s', opacity: likingToggle ? 0.5 : 1 }}
-                >
-                  <span>{isLiked ? '❤️' : '🤍'}</span>
-                  {isLiked && hasMutualLike && <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.06em', color: '#f87171', textTransform: 'uppercase' }}>Mutual</span>}
-                </button>
-                <button
-                  onClick={handleToggleSave}
-                  title={saved ? 'Remove from saved' : 'Save profile'}
-                  style={{ background: saved ? 'rgba(201,168,76,0.12)' : 'none', border: `1px solid ${saved ? c.goldLight : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : c.ivoryDim }}
-                >
-                  {saved ? '★' : '☆'}
-                </button>
-                {reportDone ? (
-                  <span title="Reported" style={{ fontSize: '0.7rem', color: '#9ca3af', fontFamily: 'Raleway, sans-serif', padding: '0.3rem 0', letterSpacing: '0.05em' }}>Reported</span>
-                ) : (
-                  <button
-                    onClick={() => setShowReport(v => !v)}
-                    title="Report this profile"
-                    style={{ background: showReport ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${showReport ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: 'pointer', color: showReport ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
-                  >
-                    ⚑
-                  </button>
-                )}
-                <button
-                  onClick={() => setBlockStep('confirm')}
-                  title="Block this member"
-                  disabled={blockStep === 'loading'}
-                  style={{ background: blockStep !== 'idle' ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${blockStep !== 'idle' ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: blockStep === 'loading' ? 'default' : 'pointer', color: blockStep !== 'idle' ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s', opacity: blockStep === 'loading' ? 0.5 : 1 }}
-                >
-                  🚫
-                </button>
-              </>
-            )}
           </div>
         </div>
+
+        {!isOwnProfile && (
+          <div className="pc-action-row">
+            {/* Like button — gateway to video meetings */}
+            <button
+              onClick={handleToggleLike}
+              title={isLiked ? 'Unlike this profile' : likesLeft === 0 ? 'No likes remaining this month' : 'Like this profile to unlock video meetings'}
+              disabled={likingToggle}
+              style={{ background: isLiked ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${isLiked ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.18)'}`, borderRadius: '8px', cursor: likingToggle ? 'default' : 'pointer', fontSize: '1.1rem', padding: '0.5rem 0.7rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', transition: 'all 0.15s', opacity: likingToggle ? 0.5 : 1 }}
+            >
+              <span>{isLiked ? '❤️' : '🤍'}</span>
+              {isLiked && hasMutualLike && <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.06em', color: '#f87171', textTransform: 'uppercase' }}>Mutual</span>}
+            </button>
+            <button
+              onClick={handleToggleSave}
+              title={saved ? 'Remove from saved' : 'Save profile'}
+              style={{ background: saved ? 'rgba(201,168,76,0.12)' : 'none', border: `1px solid ${saved ? c.goldLight : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: savingToggle ? 'default' : 'pointer', fontSize: '1.2rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s, opacity 0.15s', opacity: savingToggle ? 0.5 : 1, color: saved ? c.goldLight : c.ivoryDim }}
+            >
+              {saved ? '★' : '☆'}
+            </button>
+            {reportDone ? (
+              <span title="Reported" style={{ fontSize: '0.7rem', color: '#9ca3af', fontFamily: 'Raleway, sans-serif', letterSpacing: '0.05em', minHeight: '44px', border: '1px solid rgba(201,168,76,0.18)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Reported</span>
+            ) : (
+              <button
+                onClick={() => setShowReport(v => !v)}
+                title="Report this profile"
+                style={{ background: showReport ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${showReport ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: 'pointer', color: showReport ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s' }}
+              >
+                ⚑
+              </button>
+            )}
+            <button
+              onClick={() => setBlockStep('confirm')}
+              title="Block this member"
+              disabled={blockStep === 'loading'}
+              style={{ background: blockStep !== 'idle' ? 'rgba(248,113,113,0.12)' : 'none', border: `1px solid ${blockStep !== 'idle' ? 'rgba(248,113,113,0.5)' : 'rgba(201,168,76,0.4)'}`, borderRadius: '8px', cursor: blockStep === 'loading' ? 'default' : 'pointer', color: blockStep !== 'idle' ? '#f87171' : c.ivoryDim, fontSize: '1rem', padding: '0.5rem', lineHeight: 1, minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.15s', opacity: blockStep === 'loading' ? 0.5 : 1 }}
+            >
+              🚫
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Report panel ── */}
