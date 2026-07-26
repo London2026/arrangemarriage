@@ -362,6 +362,8 @@ export default async function ProfilePage() {
             <Row label="Food Habits"       value={profile.food_habits} />
             <Row label="Smoking"           value={profile.smoking} />
             <Row label="Alcohol"           value={profile.alcohol} />
+            <Row label="Recreational Drugs" value={profile.drugs} />
+            <Row label="Gambling & Betting" value={profile.betting} />
             <Row label="Hobbies & Interests" value={profile.hobby} />
           </Section>
 

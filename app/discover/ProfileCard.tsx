@@ -43,6 +43,8 @@ export interface ProfileData {
   food_habits?: string | null
   smoking?: string | null
   alcohol?: string | null
+  drugs?: string | null
+  betting?: string | null
   hobby?: string | null
   back_photo_1_url: string | null
   back_photo_2_url: string | null
@@ -501,6 +503,8 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         <Row label="Food Habits" value={profile.food_habits} />
         <Row label="Smoking" value={profile.smoking} />
         <Row label="Alcohol" value={profile.alcohol} />
+        <Row label="Recreational Drugs" value={profile.drugs} />
+        <Row label="Gambling & Betting" value={profile.betting} />
         <Row label="Hobbies & Interests" value={profile.hobby} />
       </div>
 
