@@ -114,7 +114,7 @@ function Row({ label, value }: { label: string; value: string | number | null | 
   if (!value && value !== 0) return null
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.9rem' }}>
-      <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.02em', color: c.ivoryDim, minWidth: '185px', flexShrink: 0 }}>{label}</span>
+      <span className="pc-row-label" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.02em', color: c.ivoryDim, minWidth: '185px', flexShrink: 0 }}>{label}</span>
       <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.35rem', color: c.ivory, lineHeight: 1.5 }}>{value}</span>
     </div>
   )
@@ -278,6 +278,9 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
           .pc-id { font-size: 0.75rem !important; }
           .pc-section { padding: 1.1rem 1.2rem; }
           .pc-actions { padding: 1.1rem 1.2rem; }
+        }
+        @media (max-width: 400px) {
+          .pc-row-label { min-width: 130px !important; }
         }
       `}</style>
 
