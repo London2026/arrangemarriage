@@ -463,13 +463,14 @@ export async function sendProfileCompleteEmail(to: string, firstName: string, pr
       <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 12px;">What You Can Do Now</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🔍 <strong>Discover profiles</strong> — Browse members using filters for religion, caste, location, education, and more.</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">✨ <strong>Find My Match</strong> — Click the AI-powered "Find My Match" button to receive personalised compatibility scores for every profile based on your full profile.</p>
-      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">📸 <strong>Reveal face photos</strong> — Upgrade to a paid plan to reveal other members' face photos. They are notified the moment you do.</p>
-      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🎥 <strong>Request video meetings</strong> — Connect face-to-face with members you are interested in (available on paid plans).</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">💛 <strong>Like profiles you're interested in</strong> — When the other member likes you back, it's a Mutual Like — your video meeting feature is unlocked.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">📸 <strong>Reveal face photos</strong> — Reveal other members' face photos within your plan's limit. They are notified the moment you do — and you'll be notified the moment someone reveals yours.</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 10px;">🎥 <strong>Request video meetings</strong> — Once you have a Mutual Like, connect face-to-face with a private video meeting.</p>
       <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">✏️ <strong>Update your profile anytime</strong> — Go to My Profile → Edit Profile to update your details, photos, or voice recordings.</p>
     </div>
     <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
     <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 10px;">बधाई हो! 🎉 Arrange Marriage पर आपकी प्रोफ़ाइल अब पूर्ण हो गई है और अन्य सदस्यों को दिखाई देने लगी है।</p>
-    <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">🔍 प्रोफ़ाइल खोजें &nbsp;✨ AI से जोड़ी खोजें &nbsp;📸 चेहरे की फ़ोटो देखें (पेड प्लान) &nbsp;🎥 वीडियो मीटिंग करें (पेड प्लान) &nbsp;✏️ प्रोफ़ाइल कभी भी अपडेट करें</p>
+    <p style="font-family:Georgia,serif;font-size:14px;color:#5a6e82;line-height:1.9;margin:0 0 20px;">🔍 प्रोफ़ाइल खोजें &nbsp;✨ AI से जोड़ी खोजें &nbsp;💛 प्रोफ़ाइल पसंद करें &nbsp;📸 चेहरे की फ़ोटो देखें &nbsp;🎥 वीडियो मीटिंग करें &nbsp;✏️ प्रोफ़ाइल कभी भी अपडेट करें</p>
     <div style="text-align:center;margin:20px 0 8px;">
       <a href="https://arrangemarriage.co.in/discover" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Start Discovering →</a>
     </div>
@@ -634,7 +635,7 @@ export async function sendWeeklyDigestEmail(
     </div>
     ${viewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">
       <strong>${viewCount} member${viewCount > 1 ? 's' : ''}</strong> viewed your profile on Arrange Marriage this week.
-      ${viewCount > 1 ? 'They could be considering sending you a meeting request.' : 'They could be considering sending you a meeting request.'}
+      If they like your profile and you like them back, it becomes a Mutual Like — and your video meeting feature unlocks.
     </p>` : ''}
     ${nearbyNewCount > 0 ? `<p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 12px;">
       <strong>${nearbyNewCount} new member${nearbyNewCount > 1 ? 's' : ''}</strong> from ${location} joined this week — log in to discover them.
