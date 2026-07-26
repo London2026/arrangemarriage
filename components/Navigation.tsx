@@ -182,7 +182,7 @@ export default function Navigation() {
 
               {/* Dropdown panel */}
               {open && (
-                <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 'min(310px, calc(100vw - 1.5rem))', background: '#0d1f3c', border: `1px solid ${c.border}`, borderRadius: '12px', boxShadow: '0 16px 48px rgba(0,0,0,0.6)', overflow: 'hidden', zIndex: 200 }}>
+                <div style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, width: 'min(310px, calc(100vw - 1.5rem))', maxHeight: 'calc(100dvh - 90px)', background: '#0d1f3c', border: `1px solid ${c.border}`, borderRadius: '12px', boxShadow: '0 16px 48px rgba(0,0,0,0.6)', overflowY: 'auto', overflowX: 'hidden', zIndex: 200 }}>
 
                   {/* Profile header */}
                   <div style={{ padding: '1.25rem 1.4rem', borderBottom: `1px solid ${c.border}`, background: 'rgba(30,51,88,0.5)' }}>
