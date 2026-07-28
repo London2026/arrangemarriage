@@ -1,4 +1,5 @@
 import React from 'react'
+import { COUNTRY_CODES, splitPhone, joinPhone } from '@/lib/validatePhone'
 
 const c = { navy: '#0d1f3c', gold: '#8b6914', sepia: '#5a6e82', textMid: '#2c4a6e', rose: '#9e2a2b', teal: '#1D5252' }
 const label = { display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 600 as const, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: c.textMid, marginBottom: '0.45rem' }
@@ -128,16 +129,30 @@ export default function AboutStep({ data, onChange }: Props) {
         <Inp lbl="Country" k="country" val={data.country} ph="India" onChange={onChange} />
       </Row>
 
-      {/* Mobile — required */}
+      {/* Mobile — required, country code and number kept in separate fields */}
       <div style={{ ...field }}>
         <label style={{ ...label, color: c.teal }}>
           Mobile Number <span style={{ color: '#e74c3c' }}>*</span>
         </label>
-        <input type="tel" value={data.phone} onChange={e => onChange('phone', e.target.value)}
-          placeholder="+91 98765 43210" style={inp} onFocus={focus} onBlur={blur} required />
+        {(() => {
+          const { countryCode, localNumber } = splitPhone(data.phone)
+          return (
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <select value={countryCode} style={{ ...inp, width: '128px', flexShrink: 0 }}
+                onChange={e => onChange('phone', joinPhone(e.target.value, localNumber))}
+                onFocus={focus} onBlur={blur}>
+                {COUNTRY_CODES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
+              </select>
+              <input type="tel" value={localNumber} placeholder="98765 43210" required
+                style={{ ...inp, flex: 1 }}
+                onChange={e => onChange('phone', joinPhone(countryCode, e.target.value.replace(/[^\d\s-]/g, '')))}
+                onFocus={focus} onBlur={blur} />
+            </div>
+          )
+        })()}
         <div style={{ marginTop: '0.4rem', background: 'rgba(29,82,82,0.06)', border: '1px solid rgba(29,82,82,0.2)', borderRadius: '4px', padding: '0.45rem 0.7rem' }}>
           <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.78rem', color: c.sepia, margin: 0, lineHeight: 1.5 }}>
-            📲 Meeting requests will be sent to this number. Include country code — e.g. <strong style={{ color: c.navy }}>+91</strong> for India.
+            📲 Meeting requests will be sent to this number.
           </p>
         </div>
       </div>
