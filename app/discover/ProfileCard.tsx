@@ -10,6 +10,7 @@ const REPORT_REASONS = ['Fake profile', 'Inappropriate content', 'Harassment or 
 export interface ProfileData {
   id: string
   full_name: string
+  is_demo?: boolean | null
   birth_year?: number | null
   age: number
   gender: string
@@ -298,6 +299,11 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
               <span className="pc-id" style={{ fontFamily: '"Courier New", monospace', fontWeight: 700, color: c.goldLight, background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)', padding: '0.18rem 0.5rem', borderRadius: '4px', letterSpacing: '0.08em', flexShrink: 0 }}>
                 AM-{profile.id.slice(0, 8).toUpperCase()}
               </span>
+              {profile.is_demo && (
+                <span title="This is a sample profile for illustration — not a real member" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fbbf24', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.4)', padding: '0.18rem 0.6rem', borderRadius: '20px', flexShrink: 0 }}>
+                  🎭 Demo Profile
+                </span>
+              )}
             </div>
             <p className="pc-meta" style={{ fontFamily: '"Cormorant Garamond", serif', color: c.ivoryDim, margin: 0 }}>
               {profile.age} yrs · {profile.gender} · {profile.city}, {profile.country}

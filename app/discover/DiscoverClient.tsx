@@ -478,6 +478,11 @@ export default function DiscoverClient({
                   <span style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.75rem', color: c.sepia }}>
                     {m.profile?.age} yrs · {m.profile?.city}
                   </span>
+                  {m.profile?.is_demo && (
+                    <span title="Sample profile for illustration — not a real member" style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0d1f3c', background: 'rgba(251,191,36,0.9)', borderRadius: '4px', padding: '0.15rem 0.5rem' }}>
+                      🎭 Demo
+                    </span>
+                  )}
                   <span style={{ marginLeft: 'auto', fontFamily: 'Raleway, sans-serif', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em', color: scoreColor(m.score), background: `${scoreColor(m.score)}18`, border: `1px solid ${scoreColor(m.score)}40`, padding: '0.3rem 0.75rem', borderRadius: '20px', whiteSpace: 'nowrap' }}>
                     {scoreLabel(m.score)}
                   </span>
@@ -632,6 +637,11 @@ function CompactCard({ profile, onClick, isOwn, isSaved, isLiked, isMutual }: { 
       {isOwn && (
         <div style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', zIndex: 2, fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#fff', background: 'rgba(74,222,128,0.85)', borderRadius: '4px', padding: '0.15rem 0.45rem' }}>
           You
+        </div>
+      )}
+      {!isOwn && profile.is_demo && (
+        <div title="Sample profile for illustration — not a real member" style={{ position: 'absolute', top: '0.4rem', left: '0.4rem', zIndex: 2, fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0d1f3c', background: 'rgba(251,191,36,0.9)', borderRadius: '4px', padding: '0.15rem 0.45rem' }}>
+          🎭 Demo
         </div>
       )}
       {isMutual && (
