@@ -8,22 +8,29 @@ export function hasCountryCode(phone: string): boolean {
 
 export interface CountryCodeOption { code: string; label: string }
 
-/** Country codes offered in onboarding's Country Code dropdown — India first (primary market), then common NRI/diaspora destinations. */
+/**
+ * Country codes offered in onboarding's Country Code dropdown — India first (primary market), then
+ * common NRI/diaspora destinations. Labels are kept short (code + 2-letter abbreviation) rather than
+ * full country names — the dropdown box is only ~128px wide, and full names like "+966 Saudi Arabia"
+ * or "+27 South Africa" overflow that width on narrow mobile screens (verified: 8 of 14 would clip on
+ * the app's smallest supported breakpoint). UK/UAE are kept as-is since they're already short and are
+ * more widely recognized in that form than their ISO codes (GB/AE).
+ */
 export const COUNTRY_CODES: CountryCodeOption[] = [
-  { code: '+91',  label: '+91 India' },
-  { code: '+1',   label: '+1 USA / Canada' },
+  { code: '+91',  label: '+91 IN' },
+  { code: '+1',   label: '+1 US/CA' },
   { code: '+44',  label: '+44 UK' },
   { code: '+971', label: '+971 UAE' },
-  { code: '+966', label: '+966 Saudi Arabia' },
-  { code: '+974', label: '+974 Qatar' },
-  { code: '+968', label: '+968 Oman' },
-  { code: '+973', label: '+973 Bahrain' },
-  { code: '+965', label: '+965 Kuwait' },
-  { code: '+61',  label: '+61 Australia' },
-  { code: '+65',  label: '+65 Singapore' },
-  { code: '+60',  label: '+60 Malaysia' },
-  { code: '+27',  label: '+27 South Africa' },
-  { code: '+64',  label: '+64 New Zealand' },
+  { code: '+966', label: '+966 SA' },
+  { code: '+974', label: '+974 QA' },
+  { code: '+968', label: '+968 OM' },
+  { code: '+973', label: '+973 BH' },
+  { code: '+965', label: '+965 KW' },
+  { code: '+61',  label: '+61 AU' },
+  { code: '+65',  label: '+65 SG' },
+  { code: '+60',  label: '+60 MY' },
+  { code: '+27',  label: '+27 ZA' },
+  { code: '+64',  label: '+64 NZ' },
 ]
 
 /** Splits a stored phone value like "+91 98765 43210" into its country code and local number. Defaults to +91 if the value doesn't start with a known code. */
