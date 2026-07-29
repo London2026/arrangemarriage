@@ -20,7 +20,17 @@
   --background-end-rgb: 15, 23, 42;
 }
 
+/* Guards against any stray element (a few px too wide, a negative margin, an
+   absolutely-positioned popover) causing the whole page to become horizontally
+   scrollable on mobile — visible as the page shifting left with a white gap on
+   the right. The static landing page (public/index.html) already has this same
+   guard; the app pages never did. */
+html {
+  overflow-x: hidden;
+}
+
 body {
+  overflow-x: hidden;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
   min-height: 100vh;
