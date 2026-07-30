@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 import Navigation from '@/components/Navigation'
 import BottomNav from '@/components/BottomNav'
+import Footer from '@/components/Footer'
 import { BLOG_POSTS, getBlogPost, getSortedBlogPosts } from '@/content/blog-posts'
 
 const c = {
@@ -113,6 +114,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
         )}
+
+        <Footer />
       </main>
 
       <BottomNav />

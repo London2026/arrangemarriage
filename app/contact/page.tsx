@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import Footer from '@/components/Footer'
 
 const c = {
   cream: '#FFF9F2', navy: '#0D2B2B', navyMid: '#1A3D3D',
@@ -168,6 +169,8 @@ export default function ContactPage() {
           ))}
         </div>
       </div>
+
+      <Footer dark={false} />
     </div>
   )
 }

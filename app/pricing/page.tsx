@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
 import { selectPlan } from './actions'
 
 declare global {
@@ -333,6 +334,7 @@ export default function PricingPage() {
         <p style={{ textAlign: 'center', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', letterSpacing: '0.08em', color: 'rgba(189,181,166,0.35)', marginTop: '1.5rem' }}>
           Prices in INR · Monthly subscription · Cancel before next billing date
         </p>
+        <Footer />
       </main>
     </div>
   )

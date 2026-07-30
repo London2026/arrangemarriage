@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Navigation from '@/components/Navigation'
 import BottomNav from '@/components/BottomNav'
+import Footer from '@/components/Footer'
 import { getSortedBlogPosts } from '@/content/blog-posts'
 
 export const metadata: Metadata = {
@@ -75,6 +76,8 @@ export default function BlogIndexPage() {
             </Link>
           ))}
         </div>
+
+        <Footer />
       </main>
 
       <BottomNav />
