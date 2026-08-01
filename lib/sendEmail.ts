@@ -714,3 +714,32 @@ export async function sendOnboardingReminderEmail(to: string, firstName: string,
   `, userId ? unsubUrl(userId) : undefined)
   await send(to, subject, html)
 }
+
+export async function sendTrialEndingEmail(to: string, firstName: string, daysLeft: number, userId?: string) {
+  const dayWord = daysLeft === 1 ? 'day' : 'days'
+  const subject = `Your free trial ends in ${daysLeft} ${dayWord} — continue your search on Arrange Marriage`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 4px;">Your Free Trial Is Ending Soon</h2>
+    <p style="font-family:Arial,sans-serif;font-size:11px;color:#8b6914;letter-spacing:2px;text-transform:uppercase;margin:0 0 16px;">आपका निःशुल्क ट्रायल समाप्त हो रहा है</p>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:24px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.8;margin:0 0 16px;">Dear <strong>${firstName}</strong>,</p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#0d1f3c;line-height:1.8;margin:0 0 16px;">
+      Your one-month free trial of Arrange Marriage will end in <strong>${daysLeft} ${dayWord}</strong>. Once it ends, you will no longer be able to like profiles, reveal photos, or request meetings until you upgrade to a paid plan.
+    </p>
+    <div style="background:#f8f5ef;border-left:3px solid #c9a84c;padding:16px 20px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8b6914;margin:0 0 10px;">Upgrade now to keep, without interruption:</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">💛 Unlimited likes and photo reveals</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 8px;">📹 Video meeting requests with matches</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">✨ Full access to your Discover feed</p>
+    </div>
+    <hr style="border:none;border-top:1px solid #f0e8d5;margin:20px 0;">
+    <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;line-height:1.9;margin:0 0 16px;">
+      प्रिय <strong>${firstName}</strong>, आपका एक महीने का निःशुल्क ट्रायल <strong>${daysLeft} दिनों</strong> में समाप्त हो जाएगा। अपनी खोज जारी रखने के लिए कृपया अभी एक सशुल्क योजना चुनें।
+    </p>
+    <div style="text-align:center;margin:20px 0 8px;">
+      <a href="https://arrangemarriage.co.in/pricing" style="display:inline-block;padding:14px 40px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:6px;">Choose a Plan & Continue →</a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;text-align:center;margin:8px 0 0;font-style:italic;">Don't let your search pause now. — The Arrange Marriage Team</p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}

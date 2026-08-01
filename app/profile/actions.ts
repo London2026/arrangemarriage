@@ -8,6 +8,7 @@ import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmed
 import { sendMeetingRequestSMS, sendMeetingAcceptedSMS, sendMeetingDeclinedSMS, sendMeetingCancelledSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 import { isTrialActive, TRIAL_LIMITS } from '@/lib/trial'
+import { recordTrialEmail } from '@/lib/trialLedger'
 
 export async function deleteProfile(): Promise<never> {
   const supabase = await createClient()
@@ -36,6 +37,13 @@ export async function deleteProfile(): Promise<never> {
   ].filter((p): p is string => !!p)
   if (storagePaths.length) {
     await supabase.storage.from('profile-media').remove(storagePaths)
+  }
+
+  // Record this email in the trial ledger (kept forever) so re-signing up
+  // with the same email cannot start a brand new free trial — regardless
+  // of whether this account ended on the free plan or a paid one
+  if (user.email && profile?.trial_started_at) {
+    await recordTrialEmail(user.email, profile.trial_started_at)
   }
 
   // Delete profile row (FK cascades will clean up related rows)

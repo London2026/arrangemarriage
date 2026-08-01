@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { sendWelcomeEmail } from '@/lib/sendEmail'
+import { getPriorTrialStart } from '@/lib/trialLedger'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -45,6 +46,15 @@ export async function GET(request: NextRequest) {
           if (user.email) {
             const firstName = (user.user_metadata?.full_name ?? user.email).split(' ')[0]
             sendWelcomeEmail(user.email, firstName, user.id).catch(() => {})
+
+            // If this email already consumed a free trial on a previous
+            // (deleted) account, pre-create the profile row with the
+            // original trial start date so they cannot get a brand new
+            // 30-day trial.
+            const priorTrialStart = await getPriorTrialStart(user.email)
+            if (priorTrialStart) {
+              await supabase.from('profiles').upsert({ id: user.id, trial_started_at: priorTrialStart })
+            }
           }
           return NextResponse.redirect(`${origin}/pricing`)
         }
