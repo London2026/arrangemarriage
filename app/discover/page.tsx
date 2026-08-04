@@ -38,7 +38,7 @@ export default async function DiscoverPage() {
   } = await getUsageStats(supabase, user.id)
 
   const PROFILE_SELECT = `
-    id, full_name, birth_year, age, gender, city, country, plan, is_demo,
+    id, full_name, birth_year, age, gender, city, country, plan,
     religion, caste, mother_tongue, education, university_name, education_subject, other_qualifications,
     occupation, occupation_city, annual_salary, marital_status, has_kids, id_verified,
     height, weight, rashi, sexual_orientation, blood_group, brothers, sisters, father_occupation, mother_occupation,
@@ -137,7 +137,7 @@ export default async function DiscoverPage() {
     return {
       id: p.id,
       full_name: p.full_name,
-      is_demo: p.is_demo ?? false,
+      is_demo: false, // is_demo column not yet added to the database — see add_is_demo_column.sql
       birth_year: p.birth_year ?? null,
       age: p.age,
       gender: p.gender,
