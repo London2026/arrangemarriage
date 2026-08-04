@@ -50,7 +50,7 @@ export default async function DiscoverPage() {
   `
 
   // Fetch own profile + all other complete profiles in parallel
-  const [{ data: ownRow }, { data: rows }] = await Promise.all([
+  const [{ data: ownRow, error: ownRowError }, { data: rows, error: rowsError }] = await Promise.all([
     supabase.from('profiles').select(PROFILE_SELECT).eq('id', user.id).maybeSingle(),
     supabase.from('profiles').select(PROFILE_SELECT)
       .eq('onboarding_complete', true)
@@ -58,6 +58,15 @@ export default async function DiscoverPage() {
       .order('created_at', { ascending: false })
       .limit(30),
   ])
+
+  // Same failure mode as the guard query above: a schema mismatch (e.g. a
+  // column in PROFILE_SELECT that doesn't exist yet) must not be silently
+  // treated as "no profiles" — that's what made Discover look empty for
+  // every user while is_demo was missing from the database.
+  if (ownRowError || rowsError) {
+    console.error('Discover profile query failed:', ownRowError?.message ?? rowsError?.message)
+    throw new Error(`Profile lookup failed: ${ownRowError?.message ?? rowsError?.message}`)
+  }
 
   // Which profiles has the current user already revealed, saved, or liked?
   const [{ data: myReveals }, { data: mySaved }, { data: viewedMeRows }, { data: myBlocked }, { data: blockedMe }, { data: myLikes }, { data: likedMeRows }] = await Promise.all([
