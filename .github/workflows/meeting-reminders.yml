@@ -1,0 +1,18 @@
+name: Meeting reminders
+
+# Vercel Cron on the Hobby plan can only run once per day, which can't
+# support a 60/15-minute pre-meeting reminder. GitHub Actions has no such
+# restriction, so it pings the reminder endpoint every 5 minutes instead.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger /api/meeting-reminders
+        run: |
+          curl -sf -X GET "https://www.arrangemarriage.co.in/api/meeting-reminders" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

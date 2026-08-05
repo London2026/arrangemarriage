@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation'
 import Razorpay from 'razorpay'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail } from '@/lib/sendEmail'
-import { sendMeetingRequestSMS, sendMeetingAcceptedSMS, sendMeetingDeclinedSMS, sendMeetingCancelledSMS } from '@/lib/sendSMS'
+import { sendMeetingRequestEmail, sendMeetingAcceptedEmail, sendMeetingConfirmedAcceptorEmail, sendMeetingCancelledEmail, sendMeetingRescheduledEmail } from '@/lib/sendEmail'
+import { sendMeetingRequestSMS, sendMeetingAcceptedSMS, sendMeetingDeclinedSMS, sendMeetingCancelledSMS, sendMeetingRescheduledSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 import { isTrialActive, TRIAL_LIMITS } from '@/lib/trial'
 import { recordTrialEmail } from '@/lib/trialLedger'
@@ -308,6 +308,57 @@ export async function cancelMeeting(meetingId: string): Promise<void> {
       : Promise.resolve(),
     otherProfileFull?.phone
       ? sendMeetingCancelledSMS(otherProfileFull.phone, firstNameOnly(otherProfileFull.full_name ?? ''), me?.full_name ?? 'Your match', dateStr)
+      : Promise.resolve(),
+  ])
+}
+
+export async function rescheduleMeeting(meetingId: string, newDate: string, newTime: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  if (!newDate || !newTime) throw new Error('Please choose a new date and time')
+
+  const { data: meeting } = await supabase
+    .from('video_meetings')
+    .select('requester_id, recipient_id, room_id, status')
+    .eq('id', meetingId)
+    .single()
+
+  if (!meeting) throw new Error('Meeting not found')
+  if (meeting.requester_id !== user.id && meeting.recipient_id !== user.id) throw new Error('Not authorised')
+  if (meeting.status !== 'accepted') throw new Error('Only a confirmed meeting can be rescheduled')
+
+  // Reset reminder flags so the 60/15-min reminders fire again for the new time
+  await supabase.from('video_meetings').update({
+    preferred_date: newDate,
+    preferred_time: newTime,
+    reminder_60_sent_at: null,
+    reminder_15_sent_at: null,
+  }).eq('id', meetingId)
+
+  const otherId = meeting.requester_id === user.id ? meeting.recipient_id : meeting.requester_id
+  const { data: me } = await supabase.from('profiles').select('full_name').eq('id', user.id).single()
+  const changerName = me?.full_name ?? 'Your match'
+  const dateStr = new Date(newDate).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+
+  await supabase.from('notifications').insert({
+    recipient_id: otherId,
+    sender_id: user.id,
+    type: 'meeting_rescheduled',
+    message: `${changerName} has changed your video meeting to ${dateStr} at ${newTime}. The meeting is still confirmed.`,
+    meeting_id: meetingId,
+  })
+
+  const admin = createAdminClient()
+  const { data: otherAuth } = await admin.auth.admin.getUserById(otherId)
+  const otherEmail = otherAuth?.user?.email
+  const { data: otherProfile } = await supabase.from('profiles').select('full_name, phone').eq('id', otherId).single()
+  await Promise.all([
+    otherEmail
+      ? sendMeetingRescheduledEmail(otherEmail, firstNameOnly(otherProfile?.full_name ?? ''), changerName, dateStr, newTime, meeting.room_id, otherId)
+      : Promise.resolve(),
+    otherProfile?.phone
+      ? sendMeetingRescheduledSMS(otherProfile.phone, firstNameOnly(otherProfile.full_name ?? ''), changerName, dateStr, newTime)
       : Promise.resolve(),
   ])
 }

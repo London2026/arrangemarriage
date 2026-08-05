@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { acceptMeeting, declineMeeting } from './actions'
+import { acceptMeeting, declineMeeting, cancelMeeting, rescheduleMeeting } from './actions'
 import { maskName, firstNameOnly } from '@/lib/maskName'
 
 interface Props {
@@ -25,17 +25,45 @@ const c = { navy: '#0d1f3c', gold: '#8b6914', goldLight: '#c9a84c', sepia: '#5a6
 
 export default function MeetingCard({ meeting }: Props) {
   const [status, setStatus] = useState(meeting.status)
-  const [loading, setLoading] = useState<'accept' | 'decline' | null>(null)
+  const [loading, setLoading] = useState<'accept' | 'decline' | 'cancel' | 'reschedule' | null>(null)
   const [myFamilyMember, setMyFamilyMember] = useState('')
   const [myMessage, setMyMessage] = useState('')
   const [acceptorFamilyMember, setAcceptorFamilyMember] = useState(meeting.acceptor_family_member ?? '')
   const [acceptorMessage, setAcceptorMessage] = useState(meeting.acceptor_message ?? '')
+  const [preferredDate, setPreferredDate] = useState(meeting.preferred_date ?? '')
+  const [preferredTime, setPreferredTime] = useState(meeting.preferred_time ?? '')
+  const [showReschedule, setShowReschedule] = useState(false)
+  const [newDate, setNewDate] = useState('')
+  const [newTime, setNewTime] = useState('')
+  const [error, setError] = useState('')
 
   const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${meeting.room_id}`
 
-  const dateStr = meeting.preferred_date
-    ? new Date(meeting.preferred_date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+  const dateStr = preferredDate
+    ? new Date(preferredDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
     : null
+
+  async function handleCancel() {
+    if (!confirm('Cancel this video meeting? The other member will be notified, and your meeting slot will be returned.')) return
+    setLoading('cancel'); setError('')
+    try { await cancelMeeting(meeting.id); setStatus('cancelled') }
+    catch (err) { setError(err instanceof Error ? err.message : 'Failed to cancel') }
+    finally { setLoading(null) }
+  }
+
+  async function handleReschedule() {
+    if (!newDate || !newTime) { setError('Please choose a new date and time.'); return }
+    setLoading('reschedule'); setError('')
+    try {
+      await rescheduleMeeting(meeting.id, newDate, newTime)
+      setPreferredDate(newDate)
+      setPreferredTime(newTime)
+      setShowReschedule(false)
+      setNewDate(''); setNewTime('')
+    }
+    catch (err) { setError(err instanceof Error ? err.message : 'Failed to reschedule') }
+    finally { setLoading(null) }
+  }
 
   const timeAgo = (() => {
     const diff = Date.now() - new Date(meeting.created_at).getTime()
@@ -63,7 +91,7 @@ export default function MeetingCard({ meeting }: Props) {
     finally { setLoading(null) }
   }
 
-  const statusColor = status === 'accepted' ? '#4ade80' : status === 'declined' ? '#f87171' : c.goldLight
+  const statusColor = status === 'accepted' ? '#4ade80' : status === 'declined' || status === 'cancelled' ? '#f87171' : c.goldLight
 
   return (
     <div style={{ background: 'rgba(14,26,53,0.5)', border: `1px solid ${c.border}`, borderRadius: '10px', padding: '1.1rem 1.25rem', marginBottom: '0.75rem' }}>
@@ -75,7 +103,7 @@ export default function MeetingCard({ meeting }: Props) {
           </p>
           {dateStr && (
             <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.7rem', color: c.goldLight, margin: '0 0 0.15rem', letterSpacing: '0.06em' }}>
-              📅 {dateStr}{meeting.preferred_time ? ` at ${meeting.preferred_time}` : ''}
+              📅 {dateStr}{preferredTime ? ` at ${preferredTime}` : ''}
             </p>
           )}
           {meeting.family_member && (
@@ -151,9 +179,55 @@ export default function MeetingCard({ meeting }: Props) {
         </a>
       )}
 
+      {status === 'accepted' && !showReschedule && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <button onClick={() => { setShowReschedule(true); setNewDate(preferredDate); setNewTime(preferredTime) }} disabled={!!loading}
+            style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.goldLight, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
+            🕐 Change Time
+          </button>
+          <button onClick={handleCancel} disabled={!!loading}
+            style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+            {loading === 'cancel' ? 'Cancelling…' : '✕ Cancel Meeting'}
+          </button>
+        </div>
+      )}
+
+      {status === 'accepted' && showReschedule && (
+        <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}`, borderRadius: '6px' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)}
+              style={{ flex: 1, padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
+            <input type="time" value={newTime} onChange={e => setNewTime(e.target.value)}
+              style={{ flex: 1, padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={handleReschedule} disabled={!!loading}
+              style={{ flex: 1, padding: '0.55rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+              {loading === 'reschedule' ? 'Saving…' : 'Save New Time'}
+            </button>
+            <button onClick={() => { setShowReschedule(false); setError('') }} disabled={!!loading}
+              style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivoryDim, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
+              Nevermind
+            </button>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.85rem', color: '#f87171', margin: '0.5rem 0 0', textAlign: 'center' }}>
+          {error}
+        </p>
+      )}
+
       {status === 'declined' && (
         <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: '#f87171', margin: '0.5rem 0 0', textAlign: 'center' }}>
           This meeting was declined.
+        </p>
+      )}
+
+      {status === 'cancelled' && (
+        <p style={{ fontFamily: '"Cormorant Garamond", serif', fontStyle: 'italic', fontSize: '0.9rem', color: '#f87171', margin: '0.5rem 0 0', textAlign: 'center' }}>
+          This meeting was cancelled. Your meeting slot has been returned.
         </p>
       )}
     </div>

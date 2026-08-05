@@ -389,6 +389,78 @@ export async function sendMeetingCancelledEmail(
   await send(to, subject, html)
 }
 
+export async function sendMeetingRescheduledEmail(
+  to: string,
+  recipientFirstName: string,
+  changerName: string,
+  newDateStr: string,
+  newTime: string,
+  roomId: string,
+  userId?: string,
+) {
+  const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
+  const subject = `Your video meeting with ${changerName} was rescheduled`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 12px;">Meeting Time Changed</h2>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:20px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 16px;">
+      Hi <strong>${recipientFirstName}</strong>,
+    </p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.7;margin:0 0 16px;">
+      <strong style="color:#0d1f3c;">${changerName}</strong> has changed the time of your upcoming video meeting. Your meeting is still confirmed — just at a new time:
+    </p>
+    <div style="background:#f4f1eb;border-left:3px solid #c9a84c;padding:14px 18px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#8b6914;margin:0 0 8px;">New Meeting Time</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 4px;">📅 ${newDateStr}</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">🕐 ${newTime}</p>
+    </div>
+    <div style="text-align:center;margin-bottom:8px;">
+      <a href="${meetingUrl}" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+        🎥 View Meeting Link →
+      </a>
+    </div>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
+export async function sendMeetingReminderEmail(
+  to: string,
+  recipientFirstName: string,
+  otherName: string,
+  dateStr: string,
+  time: string,
+  roomId: string,
+  minutesBefore: 60 | 15,
+  userId?: string,
+) {
+  const meetingUrl = `https://meet.jit.si/ArrangeMarriage-${roomId}`
+  const whenLabel = minutesBefore === 60 ? 'in 1 hour' : 'in 15 minutes'
+  const subject = `Reminder: your video meeting with ${otherName} starts ${whenLabel}`
+  const html = wrap(`
+    <h2 style="font-family:Georgia,serif;font-size:22px;color:#0d1f3c;margin:0 0 12px;">Your Meeting Starts ${whenLabel === 'in 1 hour' ? 'In 1 Hour' : 'In 15 Minutes'}</h2>
+    <div style="height:2px;background:linear-gradient(to right,#c9a84c,transparent);margin-bottom:20px;"></div>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#2c4a6e;line-height:1.7;margin:0 0 16px;">
+      Hi <strong>${recipientFirstName}</strong>,
+    </p>
+    <p style="font-family:Georgia,serif;font-size:16px;color:#5a6e82;line-height:1.7;margin:0 0 16px;">
+      Just a friendly reminder — your video meeting with <strong style="color:#0d1f3c;">${otherName}</strong> starts <strong>${whenLabel}</strong>.
+    </p>
+    <div style="background:#f4f1eb;border-left:3px solid #c9a84c;padding:14px 18px;margin-bottom:20px;border-radius:0 6px 6px 0;">
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0 0 4px;">📅 ${dateStr}</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#0d1f3c;margin:0;">🕐 ${time}</p>
+    </div>
+    <div style="text-align:center;margin-bottom:16px;">
+      <a href="${meetingUrl}" style="display:inline-block;padding:13px 36px;background:linear-gradient(135deg,#e8c876,#c9a84c);color:#0d1f3c;font-family:Arial,sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;">
+        🎥 Join Meeting →
+      </a>
+    </div>
+    <p style="font-family:Georgia,serif;font-size:13px;color:#9aabb8;font-style:italic;margin:0;text-align:center;">
+      Need to change the time or can't make it? You can reschedule or cancel from your Profile page — your meeting slot won't be lost.
+    </p>
+  `, userId ? unsubUrl(userId) : undefined)
+  await send(to, subject, html)
+}
+
 // ── Welcome email (sent on first sign-up) ────────────────────────────────────
 export async function sendWelcomeEmail(to: string, firstName: string, userId?: string) {
   const subject = `Welcome to Arrange Marriage — Your Journey Begins Here 💘`

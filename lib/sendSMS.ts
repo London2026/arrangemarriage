@@ -190,6 +190,36 @@ export async function sendProfileLikedSMS(
   })
 }
 
+export async function sendMeetingRescheduledSMS(
+  toPhone: string,
+  recipientFirstName: string,
+  changerName: string,
+  dateStr: string,
+  time: string,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_MEETING_RESCHEDULED ?? '', {
+    var1: recipientFirstName,
+    var2: changerName,
+    var3: dateStr,
+    var4: time,
+  })
+}
+
+export async function sendMeetingReminderSMS(
+  toPhone: string,
+  recipientFirstName: string,
+  otherName: string,
+  time: string,
+  minutesBefore: 60 | 15,
+) {
+  await msg91Send(toPhone, process.env.MSG91_TEMPLATE_MEETING_REMINDER ?? '', {
+    var1: recipientFirstName,
+    var2: otherName,
+    var3: minutesBefore === 60 ? '1 hour' : '15 minutes',
+    var4: time,
+  })
+}
+
 export async function sendMutualLikeSMS(
   toPhone: string,
   recipientFirstName: string,
