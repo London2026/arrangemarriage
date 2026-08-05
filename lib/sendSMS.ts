@@ -1,4 +1,16 @@
-async function msg91Send(mobile: string, templateId: string, variables: Record<string, string>) {
+import { createAdminClient } from './supabase/admin'
+
+// TRAI's DLT scrubbing layer rejects SMS ("invalid SMS timing on DLT") sent
+// outside 9 AM–9 PM IST. Outside that window we queue instead of sending —
+// see /api/send-queued-sms, which dispatches the queue at 9 AM IST daily.
+function isWithinSmsSendWindow(): boolean {
+  const now = new Date()
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes()
+  const istMinutes = (utcMinutes + 330) % 1440 // IST = UTC + 5:30
+  return istMinutes >= 9 * 60 && istMinutes < 21 * 60
+}
+
+export async function sendViaMsg91Api(mobile: string, templateId: string, variables: Record<string, string>) {
   const authKey  = process.env.MSG91_AUTH_KEY
   const senderId = process.env.MSG91_SENDER_ID ?? 'AARMRG'
 
@@ -39,12 +51,35 @@ async function msg91Send(mobile: string, templateId: string, variables: Record<s
     const json = await res.json()
     if (json.type !== 'success') {
       console.error('SMS send error:', JSON.stringify(json))
-    } else {
-      console.log('SMS sent to:', normalized)
+      throw new Error(JSON.stringify(json))
     }
+    console.log('SMS sent to:', normalized)
   } catch (err) {
     console.error('SMS send error:', err)
+    throw err
   }
+}
+
+async function msg91Send(mobile: string, templateId: string, variables: Record<string, string>) {
+  if (!templateId) {
+    console.warn('MSG91 template id not set — SMS skipped')
+    return
+  }
+
+  if (isWithinSmsSendWindow()) {
+    await sendViaMsg91Api(mobile, templateId, variables).catch(() => {})
+    return
+  }
+
+  // Outside the permitted DLT window — queue for the 9 AM IST dispatch run
+  const admin = createAdminClient()
+  const { error } = await admin.from('sms_queue').insert({
+    phone: mobile,
+    template_id: templateId,
+    variables,
+  })
+  if (error) console.error('Failed to queue SMS:', error.message)
+  else console.log('SMS queued for 9 AM IST dispatch:', mobile)
 }
 
 export async function sendMeetingRequestSMS(
