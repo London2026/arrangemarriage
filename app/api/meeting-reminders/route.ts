@@ -4,10 +4,9 @@ import { sendMeetingReminderEmail } from '@/lib/sendEmail'
 import { sendMeetingReminderSMS } from '@/lib/sendSMS'
 import { firstNameOnly } from '@/lib/maskName'
 
-// Triggered every 5 minutes by a GitHub Actions workflow (Vercel Cron on the
-// Hobby plan can only run once per day, which can't support a 60/15-minute
-// pre-meeting reminder). Sends a reminder to both parties of every confirmed
-// meeting starting in ~60 minutes or ~15 minutes.
+// Runs every 5 minutes via Vercel Cron (vercel.json). Sends a reminder to
+// both parties of every confirmed meeting starting in ~60 minutes or ~15
+// minutes.
 export async function GET(req: NextRequest) {
   const cronSecret = process.env.CRON_SECRET
   if (cronSecret) {
