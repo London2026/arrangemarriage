@@ -180,13 +180,13 @@ export default function MeetingCard({ meeting }: Props) {
       )}
 
       {status === 'accepted' && !showReschedule && (
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
           <button onClick={() => { setShowReschedule(true); setNewDate(preferredDate); setNewTime(preferredTime) }} disabled={!!loading}
-            style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.goldLight, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
+            style={{ flex: '1 1 110px', minWidth: '110px', padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.goldLight, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
             🕐 Change Time
           </button>
           <button onClick={handleCancel} disabled={!!loading}
-            style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+            style={{ flex: '1 1 110px', minWidth: '110px', padding: '0.55rem', background: 'transparent', border: '1px solid rgba(248,113,113,0.3)', color: '#f87171', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
             {loading === 'cancel' ? 'Cancelling…' : '✕ Cancel Meeting'}
           </button>
         </div>
@@ -194,19 +194,19 @@ export default function MeetingCard({ meeting }: Props) {
 
       {status === 'accepted' && showReschedule && (
         <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(201,168,76,0.05)', border: `1px solid ${c.border}`, borderRadius: '6px' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <input type="date" value={newDate} onChange={e => setNewDate(e.target.value)}
-              style={{ flex: 1, padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
+              style={{ flex: '1 1 130px', minWidth: '130px', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
             <input type="time" value={newTime} onChange={e => setNewTime(e.target.value)}
-              style={{ flex: 1, padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
+              style={{ flex: '1 1 130px', minWidth: '130px', padding: '0.5rem', background: 'rgba(14,26,53,0.8)', border: `1px solid rgba(201,168,76,0.2)`, color: c.ivory, fontFamily: '"Cormorant Garamond", serif', fontSize: '0.9rem', borderRadius: '4px', outline: 'none', colorScheme: 'dark' }} />
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             <button onClick={handleReschedule} disabled={!!loading}
-              style={{ flex: 1, padding: '0.55rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
+              style={{ flex: '1 1 110px', minWidth: '110px', padding: '0.55rem', background: `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px', opacity: loading ? 0.7 : 1 }}>
               {loading === 'reschedule' ? 'Saving…' : 'Save New Time'}
             </button>
             <button onClick={() => { setShowReschedule(false); setError('') }} disabled={!!loading}
-              style={{ flex: 1, padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivoryDim, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
+              style={{ flex: '1 1 110px', minWidth: '110px', padding: '0.55rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivoryDim, fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: loading ? 'default' : 'pointer', borderRadius: '4px' }}>
               Nevermind
             </button>
           </div>
