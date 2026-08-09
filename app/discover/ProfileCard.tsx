@@ -427,7 +427,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
       {/* ── Like error ── */}
       {likeError && (
         <div style={{ background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', borderTop: 'none', padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', color: '#f87171', margin: 0 }}>{likeError}</p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', color: '#f87171', margin: 0, whiteSpace: 'pre-line' }}>{likeError}</p>
           <button onClick={() => setLikeError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#f87171', fontSize: '0.9rem', padding: '0.2rem', flexShrink: 0 }}>✕</button>
         </div>
       )}
@@ -649,7 +649,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
                 <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1.1rem', color: c.ivory, textAlign: 'center', margin: 0, fontStyle: 'italic' }}>
                   Face photo is blurred for privacy
                 </p>
-                {revealError && <p style={{ color: '#F87171', fontSize: '0.9rem', margin: 0, textAlign: 'center' }}>{revealError}</p>}
+                {revealError && <p style={{ color: '#F87171', fontSize: '0.9rem', margin: 0, textAlign: 'center', whiteSpace: 'pre-line' }}>{revealError}</p>}
                 {canReveal ? (
                   <button onClick={handleReveal} disabled={revealing}
                     style={{ padding: '0.85rem 2rem', background: revealing ? 'rgba(201,168,76,0.4)' : `linear-gradient(135deg, #e8c876, ${c.goldLight})`, color: c.navy, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: revealing ? 'default' : 'pointer', borderRadius: '8px', transition: 'all 0.2s', boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>

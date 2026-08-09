@@ -35,6 +35,13 @@ export async function revealPhoto(viewedUserId: string): Promise<{ signedUrl: st
     .maybeSingle()
 
   if (!existing) {
+    // Don't let members reveal a profile whose free trial has ended —
+    // they can't reciprocate or be contacted until they upgrade
+    const { data: viewedRow } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', viewedUserId).single()
+    if (viewedRow?.plan === 'free' && !isTrialActive(viewedRow.trial_started_at ?? null, 'free')) {
+      throw new Error('This profile is not currently active.\nयह प्रोफ़ाइल अभी सक्रिय नहीं है।')
+    }
+
     await supabase.from('photo_reveals').insert({
       viewer_id: user.id,
       viewed_id: viewedUserId,
@@ -208,6 +215,13 @@ export async function toggleLikeProfile(likedId: string): Promise<{ liked: boole
     await supabase.from('profile_likes').delete()
       .eq('liker_id', user.id).eq('liked_id', likedId)
     return { liked: false, mutual: false }
+  }
+
+  // Don't let members like a profile whose free trial has ended — they
+  // can't reciprocate or be contacted until they upgrade
+  const { data: likedRow } = await supabase.from('profiles').select('plan, trial_started_at').eq('id', likedId).single()
+  if (likedRow?.plan === 'free' && !isTrialActive(likedRow.trial_started_at ?? null, 'free')) {
+    throw new Error('This profile is not currently active.\nयह प्रोफ़ाइल अभी सक्रिय नहीं है।')
   }
 
   // Check like quota (trial users: 5 total during trial; paid: monthly limit)
