@@ -284,6 +284,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         }
         @media (max-width: 400px) {
           .pc-row-label { min-width: 130px !important; }
+          .pc-meet-datetime { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -731,7 +732,7 @@ export default function ProfileCard({ profile, canReveal = true, canMeet = true,
         ) : showForm ? (
           <form onSubmit={handleRequestMeeting} style={{ background: 'rgba(14,26,53,0.6)', border: `1px solid ${c.border}`, borderRadius: '8px', padding: '1rem' }}>
             <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 0.75rem' }}>📅 Request Meeting with {firstName}</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.65rem' }}>
+            <div className="pc-meet-datetime" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginBottom: '0.65rem' }}>
               <div>
                 <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.ivoryDim, marginBottom: '0.3rem' }}>Date</label>
                 <input type="date" required value={meetDate} onChange={e => setMeetDate(e.target.value)} min={new Date().toISOString().split('T')[0]}
