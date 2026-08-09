@@ -173,9 +173,11 @@ export default function PricingPage() {
   const [pending, startTransition] = useTransition()
   const [stripeLoading, setStripeLoading] = useState(false)
   const [stripeError, setStripeError] = useState('')
+  const [confirmPlan, setConfirmPlan] = useState<string | null>(null)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const router = useRouter()
 
-  async function handleSelect(planKey: string) {
+  function handleSelect(planKey: string) {
     setStripeError('')
 
     // Free plan — no payment needed
@@ -183,6 +185,14 @@ export default function PricingPage() {
       startTransition(async () => { await selectPlan('free') })
       return
     }
+
+    // Paid plans — show the billing disclosure/consent step first
+    setAgreedToTerms(false)
+    setConfirmPlan(planKey)
+  }
+
+  async function proceedToPayment(planKey: string) {
+    setConfirmPlan(null)
 
     // Paid plans — open Razorpay checkout
     setStripeLoading(true)
@@ -336,6 +346,53 @@ export default function PricingPage() {
         </p>
         <Footer />
       </main>
+
+      {confirmPlan && (() => {
+        const plan = plans.find(p => p.key === confirmPlan)
+        if (!plan) return null
+        return (
+          <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(7,17,31,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+            onClick={() => setConfirmPlan(null)}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '440px', background: c.navyMid, border: `1px solid ${c.border}`, borderRadius: '12px', padding: '1.75rem', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+              <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 0.4rem' }}>Before You Pay</p>
+              <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.5rem', fontWeight: 600, color: c.ivory, margin: '0 0 1rem' }}>
+                {plan.name} — {plan.price}{plan.period}
+              </h2>
+              <ul style={{ margin: '0 0 1.25rem', padding: '0 0 0 1.1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.ivoryDim, lineHeight: 1.6 }}>
+                  <strong style={{ color: c.ivory }}>Amount:</strong> {plan.price} charged today, then {plan.price} every billing cycle.
+                </li>
+                <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.ivoryDim, lineHeight: 1.6 }}>
+                  <strong style={{ color: c.ivory }}>Billing frequency:</strong> Monthly, charged automatically on the same date each month.
+                </li>
+                <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.ivoryDim, lineHeight: 1.6 }}>
+                  <strong style={{ color: c.ivory }}>Auto-renewal:</strong> Your subscription renews automatically each month until you cancel — there is no fixed term.
+                </li>
+                <li style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: c.ivoryDim, lineHeight: 1.6 }}>
+                  <strong style={{ color: c.ivory }}>Cancellation:</strong> Cancel anytime from your Profile page before your next billing date. No cancellation fee; you keep access until the period you already paid for ends.
+                </li>
+              </ul>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', cursor: 'pointer', marginBottom: '1.25rem' }}>
+                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
+                  style={{ marginTop: '0.2rem', width: '18px', height: '18px', flexShrink: 0, accentColor: c.goldLight }} />
+                <span style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.95rem', color: c.ivoryDim, lineHeight: 1.5 }}>
+                  I have read and agree to be charged {plan.price}{plan.period}, automatically renewing until I cancel.
+                </span>
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                <button onClick={() => setConfirmPlan(null)}
+                  style={{ flex: '1 1 100px', minWidth: '100px', padding: '0.75rem', background: 'transparent', border: `1px solid ${c.border}`, color: c.ivoryDim, fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '6px' }}>
+                  Cancel
+                </button>
+                <button onClick={() => proceedToPayment(confirmPlan)} disabled={!agreedToTerms}
+                  style={{ flex: '1 1 160px', minWidth: '160px', padding: '0.75rem', background: agreedToTerms ? `linear-gradient(135deg, #e8c876, ${c.goldLight})` : 'rgba(201,168,76,0.2)', color: agreedToTerms ? c.navy : c.ivoryDim, border: 'none', fontFamily: 'Raleway, sans-serif', fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: agreedToTerms ? 'pointer' : 'default', borderRadius: '6px' }}>
+                  Proceed to Payment →
+                </button>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

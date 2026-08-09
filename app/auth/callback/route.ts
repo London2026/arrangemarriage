@@ -4,6 +4,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { sendWelcomeEmail } from '@/lib/sendEmail'
 import { getPriorTrialStart } from '@/lib/trialLedger'
+import { isOldEnough } from '@/lib/age'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -42,7 +44,17 @@ export async function GET(request: NextRequest) {
         } else if (profile?.plan) {
           return NextResponse.redirect(`${origin}/onboarding`)
         } else {
-          // Brand new user — send welcome email (fire and forget)
+          // Brand new user — server-side age gate first, before anything
+          // else is created, so it can't be bypassed by skipping the
+          // signup form's client-side check.
+          const dob = typeof user.user_metadata?.dob === 'string' ? user.user_metadata.dob : undefined
+          if (!dob || !isOldEnough(dob)) {
+            const admin = createAdminClient()
+            await admin.auth.admin.deleteUser(user.id)
+            await supabase.auth.signOut()
+            return NextResponse.redirect(`${origin}/signup?error=underage`)
+          }
+
           if (user.email) {
             const firstName = (user.user_metadata?.full_name ?? user.email).split(' ')[0]
             sendWelcomeEmail(user.email, firstName, user.id).catch(() => {})
@@ -52,9 +64,11 @@ export async function GET(request: NextRequest) {
             // original trial start date so they cannot get a brand new
             // 30-day trial.
             const priorTrialStart = await getPriorTrialStart(user.email)
-            if (priorTrialStart) {
-              await supabase.from('profiles').upsert({ id: user.id, trial_started_at: priorTrialStart })
-            }
+            await supabase.from('profiles').upsert({
+              id: user.id,
+              date_of_birth: dob,
+              ...(priorTrialStart ? { trial_started_at: priorTrialStart } : {}),
+            })
           }
           return NextResponse.redirect(`${origin}/pricing`)
         }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { hasFirstAndLastName } from '@/lib/maskName'
+import { isOldEnough, MINIMUM_AGE } from '@/lib/age'
 
 const c = {
   cream: '#f4f1eb', navy: '#0d1f3c', navyMid: '#1a3a5c',
@@ -44,6 +45,7 @@ const STYLE = `
 export default function SignupPage() {
   const [step, setStep] = useState<'details' | 'code'>('details')
   const [name, setName] = useState('')
+  const [dob, setDob] = useState('')
   const [email, setEmail] = useState('')
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
@@ -51,19 +53,25 @@ export default function SignupPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const ref = new URLSearchParams(window.location.search).get('ref')
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
     if (ref && /^[A-Z0-9]{10}$/i.test(ref)) localStorage.setItem('am_referral', ref.toUpperCase())
+    if (params.get('error') === 'underage') {
+      setError(`You must be at least ${MINIMUM_AGE} years old to create an account on Arrange Marriage.`)
+    }
   }, [])
 
   async function sendCode(e: React.FormEvent) {
     e.preventDefault()
     if (!hasFirstAndLastName(name)) { setError('Please enter both your first and last name.'); return }
+    if (!dob) { setError('Please enter your date of birth.'); return }
+    if (!isOldEnough(dob)) { setError(`You must be at least ${MINIMUM_AGE} years old to create an account.`); return }
     if (!email.trim()) { setError('Please enter your email address.'); return }
     setLoading(true); setError('')
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true, data: { full_name: name.trim() } },
+      options: { shouldCreateUser: true, data: { full_name: name.trim(), dob } },
     })
     setLoading(false)
     if (error) { setError(error.message); return }
@@ -136,7 +144,7 @@ export default function SignupPage() {
               <button className="auth-sub-btn" style={{ color: c.burgundy }} onClick={async () => {
                 setError(''); setCode('')
                 const supabase = createClient()
-                await supabase.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true, data: { full_name: name.trim() } } })
+                await supabase.auth.signInWithOtp({ email: email.trim(), options: { shouldCreateUser: true, data: { full_name: name.trim(), dob } } })
                 setError('A new code has been sent to your email.')
               }}>Resend code</button>
               <button className="auth-sub-btn" style={{ color: c.sepia }}
@@ -176,6 +184,18 @@ export default function SignupPage() {
                 className="auth-inp"
                 onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
                 onBlur={e => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')} />
+            </div>
+            <div style={{ marginBottom: '1.1rem' }}>
+              <label className="auth-lbl">Date of Birth</label>
+              <input type="date" value={dob} required
+                max={new Date(Date.now() - MINIMUM_AGE * 365.25 * 86400000).toISOString().split('T')[0]}
+                onChange={e => { setDob(e.target.value); setError('') }}
+                className="auth-inp"
+                onFocus={e => (e.target.style.borderColor = '#1b3a6b')}
+                onBlur={e => (e.target.style.borderColor = 'rgba(13,31,60,0.18)')} />
+              <p style={{ fontFamily: '"Cormorant Garamond",serif', fontSize: '0.8rem', fontStyle: 'italic', color: c.sepia, margin: '0.35rem 0 0' }}>
+                You must be {MINIMUM_AGE}+ to use Arrange Marriage.
+              </p>
             </div>
             <div style={{ marginBottom: '1.25rem' }}>
               <label className="auth-lbl">Email Address</label>
