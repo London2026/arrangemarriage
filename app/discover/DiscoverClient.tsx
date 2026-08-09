@@ -101,6 +101,7 @@ export default function DiscoverClient({
   const [likedIds, setLikedIds] = useState<Set<string>>(() => new Set(initialLikedIds))
   const [likedMeIds] = useState<Set<string>>(() => new Set(initialLikedMeIds))
   const [clientLikesLeft, setClientLikesLeft] = useState(likesLeft)
+  const [likeToast, setLikeToast] = useState<string | null>(null)
   const [showSaved, setShowSaved] = useState(false)
   const [showViewedMe, setShowViewedMe] = useState(false)
   const [blockedIds, setBlockedIds] = useState<Set<string>>(() => new Set(initialBlockedIds))
@@ -127,13 +128,17 @@ export default function DiscoverClient({
     })
   }
 
-  function handleToggleLike(profileId: string, nowLiked: boolean) {
+  function handleToggleLike(profileId: string, nowLiked: boolean, profileName: string) {
     setLikedIds(prev => {
       const next = new Set(prev)
       if (nowLiked) next.add(profileId); else next.delete(profileId)
       return next
     })
     setClientLikesLeft(prev => nowLiked ? Math.max(0, prev - 1) : Math.min(likesTotal, prev + 1))
+    if (nowLiked) {
+      setLikeToast(maskName(profileName))
+      setTimeout(() => setLikeToast(null), 5000)
+    }
   }
 
   const mutualLikeIds = useMemo(
@@ -211,6 +216,10 @@ export default function DiscoverClient({
     <>
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes likeToastIn {
+          from { opacity: 0; transform: translate(-50%, 12px); }
+          to   { opacity: 1; transform: translate(-50%, 0); }
+        }
 
         .disc-grid {
           display: grid;
@@ -284,6 +293,17 @@ export default function DiscoverClient({
           .disc-icon-btn { flex: 1; justify-content: center; }
         }
       `}</style>
+
+      {likeToast && (
+        <div style={{ position: 'fixed', left: '50%', bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))', transform: 'translateX(-50%)', zIndex: 200, maxWidth: 'min(92vw, 420px)', animation: 'likeToastIn 0.25s ease-out', background: '#0d1f3c', border: '1px solid rgba(201,168,76,0.35)', borderRadius: '10px', boxShadow: '0 12px 40px rgba(0,0,0,0.45)', padding: '0.85rem 1.1rem', textAlign: 'center' }}>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '1rem', color: '#f5f0e6', margin: '0 0 0.3rem', lineHeight: 1.5 }}>
+            ❤️ You liked <strong style={{ color: '#c9a84c' }}>{likeToast}</strong>&rsquo;s profile! If they like you back, your video call booking will be activated.
+          </p>
+          <p style={{ fontFamily: '"Cormorant Garamond", serif', fontSize: '0.92rem', color: 'rgba(245,240,230,0.75)', margin: 0, lineHeight: 1.6 }}>
+            आपने <strong style={{ color: '#c9a84c' }}>{likeToast}</strong> की प्रोफ़ाइल को लाइक किया! अगर वे भी आपको लाइक करते हैं, तो आपकी वीडियो कॉल बुकिंग शुरू हो जाएगी।
+          </p>
+        </div>
+      )}
 
       {/* Search bar + filter toggle */}
       <div style={{ marginBottom: '0.75rem' }}>
@@ -615,7 +635,7 @@ export default function DiscoverClient({
                 👤 This is your profile — exactly as other members see it
               </div>
             )}
-            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} isLiked={likedIds.has(selected.id)} hasMutualLike={mutualLikeIds.has(selected.id)} onToggleLike={nowLiked => handleToggleLike(selected.id, nowLiked)} likesLeft={clientLikesLeft} />
+            <ProfileCard profile={selected} canReveal={ownProfile?.id !== selected.id && canReveal} canMeet={ownProfile?.id !== selected.id && canMeet} meetingsLeft={meetingsLeft} isOwnProfile={ownProfile?.id === selected.id} isSaved={savedIds.has(selected.id)} onToggleSave={nowSaved => handleToggleSave(selected.id, nowSaved)} onBlock={() => handleBlock(selected.id)} isLiked={likedIds.has(selected.id)} hasMutualLike={mutualLikeIds.has(selected.id)} onToggleLike={nowLiked => handleToggleLike(selected.id, nowLiked, selected.full_name)} likesLeft={clientLikesLeft} />
           </motion.div>
         </motion.div>
       )}
