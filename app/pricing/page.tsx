@@ -351,9 +351,9 @@ export default function PricingPage() {
         const plan = plans.find(p => p.key === confirmPlan)
         if (!plan) return null
         return (
-          <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(7,17,31,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+          <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, zIndex: 300, background: 'rgba(7,17,31,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', overflowY: 'auto' }}
             onClick={() => setConfirmPlan(null)}>
-            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '440px', background: c.navyMid, border: `1px solid ${c.border}`, borderRadius: '12px', padding: '1.75rem', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+            <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '440px', maxHeight: '90vh', overflowY: 'auto', background: c.navyMid, border: `1px solid ${c.border}`, borderRadius: '12px', padding: '1.75rem', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', boxSizing: 'border-box' }}>
               <p style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: c.goldLight, margin: '0 0 0.4rem' }}>Before You Pay</p>
               <h2 style={{ fontFamily: 'var(--font-playfair, "Playfair Display", serif)', fontSize: '1.5rem', fontWeight: 600, color: c.ivory, margin: '0 0 1rem' }}>
                 {plan.name} — {plan.price}{plan.period}
