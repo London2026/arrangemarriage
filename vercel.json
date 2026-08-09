@@ -21,6 +21,10 @@
       "schedule": "0 4 * * *"
     },
     {
+      "path": "/api/trial-ended",
+      "schedule": "30 4 * * *"
+    },
+    {
       "path": "/api/send-queued-sms",
       "schedule": "30 3 * * *"
     },
