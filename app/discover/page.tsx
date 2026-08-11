@@ -16,7 +16,7 @@ export default async function DiscoverPage() {
   // Guard: onboarding must be complete, not suspended
   const { data: me, error: meError } = await supabase
     .from('profiles')
-    .select('onboarding_complete, plan, plan_bonus_until, suspended, trial_started_at')
+    .select('onboarding_complete, plan, plan_bonus_until, suspended, trial_started_at, pref_gender')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -49,14 +49,20 @@ export default async function DiscoverPage() {
     pref_education, pref_height, pref_cooking, pref_other
   `
 
+  // Only show profiles matching what this member said they're looking for.
+  // 'Either' (or no preference set, e.g. legacy accounts) shows everyone.
+  let otherProfilesQuery = supabase.from('profiles').select(PROFILE_SELECT)
+    .eq('onboarding_complete', true)
+    .neq('id', user.id)
+  if (me?.pref_gender === 'Man' || me?.pref_gender === 'Woman') {
+    otherProfilesQuery = otherProfilesQuery.eq('gender', me.pref_gender)
+  }
+  otherProfilesQuery = otherProfilesQuery.order('created_at', { ascending: false }).limit(30)
+
   // Fetch own profile + all other complete profiles in parallel
   const [{ data: ownRow, error: ownRowError }, { data: rows, error: rowsError }] = await Promise.all([
     supabase.from('profiles').select(PROFILE_SELECT).eq('id', user.id).maybeSingle(),
-    supabase.from('profiles').select(PROFILE_SELECT)
-      .eq('onboarding_complete', true)
-      .neq('id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(30),
+    otherProfilesQuery,
   ])
 
   // Same failure mode as the guard query above: a schema mismatch (e.g. a
