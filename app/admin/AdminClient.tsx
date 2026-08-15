@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote, updateReportStatus, saveReportNote, suspendMember, unsuspendMember } from './actions'
+import { verifyMember, rejectMemberId, saveCrmStatus, saveCrmNote, updateTicketStatus, saveTicketNote, updateReportStatus, saveReportNote, suspendMember, unsuspendMember, updateMemberProfile, deleteMemberProfile } from './actions'
 
 const c = {
   navy: '#0d1f3c', navy2: '#122d52', navy3: '#1a3a6b',
@@ -229,6 +229,64 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
     else await unsuspendMember(profileId)
   }
 
+  const [editOpen, setEditOpen] = useState<Record<string, boolean>>({})
+  const [editForm, setEditForm] = useState<Record<string, Record<string, string>>>({})
+  const [editSaving, setEditSaving] = useState<Record<string, boolean>>({})
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set())
+  const [deleting, setDeleting] = useState<Record<string, boolean>>({})
+
+  function toggleEdit(m: Record<string, unknown>) {
+    const id = m.id as string
+    if (!editOpen[id]) {
+      setEditForm(f => ({ ...f, [id]: {
+        full_name: (m.full_name as string) ?? '', age: m.age != null ? String(m.age) : '', gender: (m.gender as string) ?? '',
+        city: (m.city as string) ?? '', country: (m.country as string) ?? '', religion: (m.religion as string) ?? '',
+        caste: (m.caste as string) ?? '', mother_tongue: (m.mother_tongue as string) ?? '', education: (m.education as string) ?? '',
+        occupation: (m.occupation as string) ?? '', phone: (m.phone as string) ?? '', marital_status: (m.marital_status as string) ?? '',
+      } }))
+    }
+    setEditOpen(o => ({ ...o, [id]: !o[id] }))
+  }
+
+  async function handleSaveEdit(id: string) {
+    const f = editForm[id]
+    if (!f) return
+    setEditSaving(s => ({ ...s, [id]: true }))
+    try {
+      await updateMemberProfile(id, {
+        full_name: f.full_name || null,
+        age: f.age ? parseInt(f.age, 10) : null,
+        gender: f.gender || null,
+        city: f.city || null,
+        country: f.country || null,
+        religion: f.religion || null,
+        caste: f.caste || null,
+        mother_tongue: f.mother_tongue || null,
+        education: f.education || null,
+        occupation: f.occupation || null,
+        phone: f.phone || null,
+        marital_status: f.marital_status || null,
+      })
+      setEditOpen(o => ({ ...o, [id]: false }))
+      router.refresh()
+    } finally {
+      setEditSaving(s => ({ ...s, [id]: false }))
+    }
+  }
+
+  async function handleDelete(profileId: string, name: string) {
+    if (!confirm(`Permanently delete ${name || 'this member'}'s account?\n\nThis cannot be undone — their profile, photos, and login will be permanently removed.`)) return
+    setDeleting(d => ({ ...d, [profileId]: true }))
+    try {
+      await deleteMemberProfile(profileId)
+      setDeletedIds(prev => new Set(prev).add(profileId))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to delete member')
+    } finally {
+      setDeleting(d => { const n = { ...d }; delete n[profileId]; return n })
+    }
+  }
+
   async function handleLogout() {
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -386,10 +444,10 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
             <div style={{ overflowX: 'auto', border: `1px solid ${c.border2}`, borderRadius: 6 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr>{['Profile ID','Name','Age','Gender','Location','Religion','Plan','Phone','Joined','Status','Notes'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
+                  <tr>{['Profile ID','Name','Age','Gender','Location','Religion','Plan','Phone','Joined','Status','Notes','Actions'].map(h => <th key={h} style={th}>{h}</th>)}</tr>
                 </thead>
                 <tbody>
-                  {members.filter((m: any) => m.onboarding_complete).map((m: any) => {
+                  {members.filter((m: any) => m.onboarding_complete && !deletedIds.has(m.id as string)).map((m: any) => {
                     const row = crm[m.id as string] ?? { status: 'new', notes: '', open: false }
                     const statusColour: Record<string, string> = {
                       new:       c.text3,
@@ -436,10 +494,24 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                               {row.open ? '▲ hide' : row.notes ? '📝 note' : '+ note'}
                             </button>
                           </td>
+                          <td style={td}>
+                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                              <button onClick={() => toggleEdit(m)}
+                                style={{ background: editOpen[m.id as string] ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${editOpen[m.id as string] ? c.border : 'rgba(255,255,255,0.08)'}`, borderRadius: 4, color: editOpen[m.id as string] ? c.gold : c.text3, cursor: 'pointer', fontSize: '0.78rem', padding: '0.25rem 0.55rem', fontFamily: 'Raleway, sans-serif' }}>
+                                ✎ Edit
+                              </button>
+                              {adminRole === 'owner' && (
+                                <button onClick={() => handleDelete(m.id as string, m.full_name as string)} disabled={!!deleting[m.id as string]}
+                                  style={{ background: 'rgba(158,42,43,0.1)', border: '1px solid rgba(158,42,43,0.35)', borderRadius: 4, color: '#f87171', cursor: deleting[m.id as string] ? 'default' : 'pointer', fontSize: '0.78rem', padding: '0.25rem 0.55rem', fontFamily: 'Raleway, sans-serif', opacity: deleting[m.id as string] ? 0.6 : 1 }}>
+                                  {deleting[m.id as string] ? 'Deleting…' : '🗑 Delete'}
+                                </button>
+                              )}
+                            </div>
+                          </td>
                         </tr>
                         {row.open && (
                           <tr key={`notes-${m.id}`} style={{ background: 'rgba(0,0,0,0.2)' }}>
-                            <td colSpan={11} style={{ padding: '0.6rem 1rem 0.75rem' }}>
+                            <td colSpan={12} style={{ padding: '0.6rem 1rem 0.75rem' }}>
                               <textarea
                                 defaultValue={row.notes}
                                 onBlur={e => {
@@ -454,6 +526,47 @@ export default function AdminClient({ adminRole, stats, members, meetings, revea
                             </td>
                           </tr>
                         )}
+                        {editOpen[m.id as string] && (() => {
+                          const f = editForm[m.id as string] ?? {}
+                          const fld = (key: string, label: string, placeholder = '') => (
+                            <div key={key}>
+                              <label style={{ display: 'block', fontFamily: 'Raleway, sans-serif', fontSize: '0.58rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: c.text3, marginBottom: '0.25rem' }}>{label}</label>
+                              <input value={f[key] ?? ''} placeholder={placeholder}
+                                onChange={e => setEditForm(ef => ({ ...ef, [m.id as string]: { ...ef[m.id as string], [key]: e.target.value } }))}
+                                style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: `1px solid ${c.border}`, color: c.text, fontFamily: 'Raleway, sans-serif', fontSize: '0.8rem', padding: '0.4rem 0.55rem', borderRadius: 4, outline: 'none', boxSizing: 'border-box' }} />
+                            </div>
+                          )
+                          return (
+                            <tr key={`edit-${m.id}`} style={{ background: 'rgba(201,168,76,0.04)' }}>
+                              <td colSpan={12} style={{ padding: '0.9rem 1rem' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                                  {fld('full_name', 'Full Name')}
+                                  {fld('age', 'Age')}
+                                  {fld('gender', 'Gender', 'Man / Woman / Other')}
+                                  {fld('city', 'City')}
+                                  {fld('country', 'Country')}
+                                  {fld('religion', 'Religion')}
+                                  {fld('caste', 'Caste')}
+                                  {fld('mother_tongue', 'Mother Tongue')}
+                                  {fld('education', 'Education')}
+                                  {fld('occupation', 'Occupation')}
+                                  {fld('phone', 'Phone')}
+                                  {fld('marital_status', 'Marital Status')}
+                                </div>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button onClick={() => handleSaveEdit(m.id as string)} disabled={!!editSaving[m.id as string]}
+                                    style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: 'none', background: c.gold, color: c.navy, cursor: editSaving[m.id as string] ? 'default' : 'pointer', opacity: editSaving[m.id as string] ? 0.7 : 1 }}>
+                                    {editSaving[m.id as string] ? 'Saving…' : 'Save Changes'}
+                                  </button>
+                                  <button onClick={() => setEditOpen(o => ({ ...o, [m.id as string]: false }))}
+                                    style={{ fontFamily: 'Raleway, sans-serif', fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.4rem 0.9rem', borderRadius: 4, border: `1px solid ${c.border}`, background: 'transparent', color: c.text3, cursor: 'pointer' }}>
+                                    Cancel
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })()}
                       </>
                     )
                   })}
