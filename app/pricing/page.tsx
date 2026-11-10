@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from '@/components/Navigation'
+import BottomNav from '@/components/BottomNav'
 import Footer from '@/components/Footer'
 import { selectPlan } from './actions'
 
@@ -346,6 +347,8 @@ export default function PricingPage() {
         </p>
         <Footer />
       </main>
+
+      <BottomNav />
 
       {confirmPlan && (() => {
         const plan = plans.find(p => p.key === confirmPlan)
