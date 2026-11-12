@@ -208,10 +208,7 @@ export default function PricingPage() {
       })
       if (!res.ok) {
         if (res.status === 503) {
-          // Payment gateway not configured yet — activate the plan directly for testing
-          setStripeLoading(false)
-          startTransition(async () => { await selectPlan(planKey) })
-          return
+          throw new Error('Payments are temporarily unavailable. Please try again shortly or contact support.')
         }
         const err = await res.json()
         throw new Error(err.error || 'Could not start checkout')
