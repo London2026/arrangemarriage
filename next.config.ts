@@ -6,6 +6,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com data:",
   "img-src 'self' data: blob: https://xkgorkcrkignmpkjlbda.supabase.co https://lslrojmffvresxtkqyle.supabase.co",
+  "media-src 'self' blob: https://xkgorkcrkignmpkjlbda.supabase.co https://lslrojmffvresxtkqyle.supabase.co",
   "connect-src 'self' https://xkgorkcrkignmpkjlbda.supabase.co https://lslrojmffvresxtkqyle.supabase.co https://checkout.razorpay.com https://*.razorpay.com https://cdn.jsdelivr.net",
   "frame-src 'self' https://*.razorpay.com",
   "frame-ancestors 'none'",
